@@ -8,12 +8,12 @@
 #
 # http://www.cmake.org/Wiki/CMake_Cross_Compiling
 #
-# https://cmake.org/pipermail/cmake-developers/2014-September/023068.html [cmake-developers] iOS support
 # https://github.com/Kitware/VTK/blob/master/CMake/ios.toolchain.xcode.cmake
 # https://github.com/cristeab/ios-cmake
 # https://github.com/plenluno/ios-cmake
 # https://code.google.com/archive/p/ios-cmake
 # https://llvm.org/svn/llvm-project/llvm/trunk/cmake/platforms/iOS.cmake
+# https://cmake.org/pipermail/cmake-developers/2014-September/023068.html [cmake-developers] iOS support
 #
 ################################################################################
 
@@ -27,13 +27,14 @@ set( APPLE true )
 set( iOS   true )
 
 # Skip the platform compiler checks for cross compiling (or not)...
-set( CMAKE_CXX_COMPILER_WORKS false                       )
+set( CMAKE_CXX_COMPILER_WORKS true CACHE STRING "Skip CMake compiler detection (requires a functioning code signing identity and provisioning profile)." )
 set( CMAKE_C_COMPILER_WORKS   ${CMAKE_CXX_COMPILER_WORKS} )
 if ( NOT CMAKE_CXX_COMPILER_WORKS )
     # Make sure all executables are bundles otherwise try compiles will fail.
-    set( CMAKE_MACOSX_BUNDLE                      true )
-    set( CMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "iPhone Developer" CACHE STRING "how to sign executables" )
-    set( MACOSX_BUNDLE_GUI_IDENTIFIER             "com.le.cmake-try-compile" )
+    set( CMAKE_MACOSX_BUNDLE                         true                         )
+    set( CMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY    "iPhone Developer"           )
+   #set( CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED "NO"                         )
+    set( MACOSX_BUNDLE_GUI_IDENTIFIER                "com.tnun.cmake-try-compile" )
 endif()
 
 
@@ -44,9 +45,9 @@ set( CMAKE_IOS_DEVELOPER_ROOT "/Applications/Xcode.app/Contents/Developer/Platfo
 
 set( CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY libc++ )
 
-set( CMAKE_OSX_ARCHITECTURES                "${ARCHS_STANDARD}" ) # http://www.cocoanetics.com/2014/10/xcode-6-drops-armv7s
-set( CMAKE_XCODE_ATTRIBUTE_ARCHS            "${ARCHS_STANDARD}" )
-set( CMAKE_XCODE_ATTRIBUTE_VALID_ARCHS      "${ARCHS_STANDARD}" )
+set( CMAKE_OSX_ARCHITECTURES                "$(ARCHS_STANDARD)" ) # http://www.cocoanetics.com/2014/10/xcode-6-drops-armv7s
+set( CMAKE_XCODE_ATTRIBUTE_ARCHS            "$(ARCHS_STANDARD)" )
+set( CMAKE_XCODE_ATTRIBUTE_VALID_ARCHS      "$(ARCHS_STANDARD)" )
 set( CMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH NO                  )
 set( CMAKE_XCODE_ATTRIBUTE_SDKROOT          iphoneos            ) # iphoneos == "Latest iOS"
 
