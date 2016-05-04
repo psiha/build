@@ -51,6 +51,10 @@ set( CMAKE_XCODE_ATTRIBUTE_VALID_ARCHS      "$(ARCHS_STANDARD)" )
 set( CMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH NO                  )
 set( CMAKE_XCODE_ATTRIBUTE_SDKROOT          iphoneos            ) # iphoneos == "Latest iOS"
 
+set( CMAKE_XCODE_ATTRIBUTE_GCC_C_LANGUAGE_STANDARD     gnu11   )
+set( CMAKE_XCODE_ATTRIBUTE_GCC_CXX_LANGUAGE_STANDARD   gnu++14 )
+set( CMAKE_XCODE_ATTRIBUTE_GCC_C++_LANGUAGE_STANDARD   gnu++14 )
+set( CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD gnu++14 )
 
 # set_xcode_property( TARGET XCODE_PROPERTY XCODE_VALUE )
 #  A convenience macro for setting xcode specific properties on targets
