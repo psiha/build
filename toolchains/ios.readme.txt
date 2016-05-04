@@ -1,0 +1,19 @@
+################################################################################
+#
+# iOS platform basic build instructions and information
+#
+# Copyright (c) 2016. Domagoj Saric. All rights reserved.
+#
+################################################################################
+
+* Build environment:
+    - Xcode (latest/7.3) under OS X
+        - it is recommended that you turn off the "Autocreate schemes" in Xcode
+          (to avoid Xcode from automatically cluttering your workspace with too
+          many redundant schemes)
+
+* Building/Debugging:
+    - use the standard CMake-based procedure (@https://bitbucket.org/psiha/build/wiki/Home)
+    - Xcode generator
+    - specify the appropriate toolchain file (ios.toolchain.cmake), usually
+      located @ <project>/build/toolchains.
