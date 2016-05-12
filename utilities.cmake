@@ -14,7 +14,7 @@ cmake_minimum_required( VERSION 3.0 )
 ################################################################################
 
 function( TNUN_make_temp_path file_name_variable )
-    if    ( EXISTS $ENV{TEMP} )
+        if( EXISTS $ENV{TEMP} )
         set( temp_dir "$ENV{TEMP}" )
     elseif( EXISTS $ENV{TMP} )
         set( temp_dir "$ENV{TMP}" )
