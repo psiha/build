@@ -56,6 +56,9 @@ set( CMAKE_XCODE_ATTRIBUTE_GCC_CXX_LANGUAGE_STANDARD   gnu++14 )
 set( CMAKE_XCODE_ATTRIBUTE_GCC_C++_LANGUAGE_STANDARD   gnu++14 )
 set( CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD gnu++14 )
 
+include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
+
+
 # set_xcode_property( TARGET XCODE_PROPERTY XCODE_VALUE )
 #  A convenience macro for setting xcode specific properties on targets
 #  example: set_xcode_property (myioslib IPHONEOS_DEPLOYMENT_TARGET "3.1")
