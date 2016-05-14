@@ -11,7 +11,30 @@ if ( WIN32 )
     include( "${CMAKE_CURRENT_LIST_DIR}/toolchains/msvc.toolchain.cmake" )
 elseif( APPLE AND NOT iOS )
     include( "${CMAKE_CURRENT_LIST_DIR}/toolchains/osx.toolchain.cmake" )
+else()
+    # Android and iOS (crosscompiling platforms) have to specify the toolchain
+    # file explicitly.
 endif()
 
-# For Android and iOS (crosscompiling platforms) have to specify the toolchain
-# file explicitly.
+
+################################################################################
+#
+# add_compile_options()
+#
+################################################################################
+
+function( TNUN_add_compile_options configuration )
+    # Implementation note:
+    # The builtin add_compile_options() seems broken (w/ CMake 3.5.2) when used
+    # with multiple options: the "$<1" and ">" suffix end up in the compiler
+    # options.
+    # https://cmake.org/cmake/help/v3.5/command/add_compile_options.html
+    # https://cmake.org/pipermail/cmake-developers/2012-August/016617.html
+    # http://stackoverflow.com/a/35361099/6041906
+    #                                         (14.05.2016.) (Domagoj Saric)
+    foreach( arg ${ARGN} )
+        add_compile_options( $<$<CONFIG:${configuration}>:${arg}> )
+    endforeach()
+endfunction()
+
+TNUN_add_compile_options( Release ${TNUN_compiler_release_flags} )

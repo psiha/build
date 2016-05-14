@@ -8,7 +8,7 @@
 
 include( "${CMAKE_CURRENT_LIST_DIR}/gcc_compatibles.cmake" )
 
-set( TNUN_compiler_optimize_for_speed "${TNUN_compiler_optimize_for_speed} -fvectorize -fslp-vectorize -fslp-vectorize-aggressive" )
+list( APPEND TNUN_compiler_optimize_for_speed -fvectorize -fslp-vectorize -fslp-vectorize-aggressive )
 # Implementation note:
 # Disable optimiser pass reports for iOS builds as they get run by the
 # ios.universal_build.sh script and then Xcode interprets this optimiser output
@@ -16,7 +16,7 @@ set( TNUN_compiler_optimize_for_speed "${TNUN_compiler_optimize_for_speed} -fvec
 # ...mrmlj...iOS/Xcode specific knowledge...cleanup...
 #                                             (13.05.2016.) (Domagoj Saric)
 if ( NOT iOS )
-    set( vectorizeOnSwitch "${vectorizeOnSwitch} -Rpass=loop-.*" ) #-Rpass-missed=loop-vectorize -Rpass-analysis=loop-vectorize -mllvm -bb-vectorize-aligned-only
+    list( APPEND TNUN_compiler_optimize_for_speed -Rpass=loop-.* ) #-Rpass-missed=loop-vectorize -Rpass-analysis=loop-vectorize -mllvm -bb-vectorize-aligned-only
 endif()
 
-set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fconstant-cfstrings -fobjc-call-cxx-cdtors -Wheader-guard" )
+add_compile_options( -fconstant-cfstrings -fobjc-call-cxx-cdtors -Wheader-guard )
