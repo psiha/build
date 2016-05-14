@@ -21,6 +21,7 @@ set( TNUN_compiler_release_flags /DNDEBUG /Bt /Ox /Ob2 /Oy /GF /Gw /Gm- /GS- /Gy
 
 add_compile_options( /MP /Oi /W4 /Zc:threadSafeInit- )
 add_definitions(
+    -D_CRT_SECURE_NO_WARNINGS
     -D_SBCS
     -D_WIN32_WINNT=0x0601 # Win7
 )
