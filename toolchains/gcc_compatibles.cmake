@@ -6,8 +6,10 @@
 #
 ################################################################################
 
-set( CMAKE_VISIBILITY_INLINES_HIDDEN    true )
+# https://cmake.org/Bug/view.php?id=15939
+# http://stackoverflow.com/questions/31355692/cmake-support-for-gccs-link-time-optimization-lto
 set( CMAKE_INTERPROCEDURAL_OPTIMIZATION true )
+set( CMAKE_VISIBILITY_INLINES_HIDDEN    true )
 
 set( TNUN_compiler_debug_symbols      -g                             )
 set( TNUN_compiler_LTO                -flto                          )
