@@ -45,3 +45,7 @@ Reusable components for cross-platform project builds.
 4. Build the "Release" build/version of the "PACKAGE" target.
 5. Test/verify.
 6. Publish.
+
+## Related/similar endeavours
+
+* http://nickhutchinson.me/cmake-toolkit
