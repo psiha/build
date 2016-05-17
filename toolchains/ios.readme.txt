@@ -13,7 +13,7 @@
           many redundant schemes)
 
 * Building/Debugging:
-    - use the standard CMake-based procedure (@https://bitbucket.org/psiha/build/wiki/Home)
+    - use the standard CMake-based procedure (@ https://github.com/psiha/build/blob/master/README.md)
     - Xcode generator
     - specify the appropriate toolchain file (ios.toolchain.cmake), usually
       located @ <project>/build/toolchains.
