@@ -38,3 +38,19 @@ function( TNUN_add_compile_options configuration )
 endfunction()
 
 TNUN_add_compile_options( Release ${TNUN_compiler_release_flags} )
+
+
+################################################################################
+#
+# add_link_options()
+#
+################################################################################
+
+function( TNUN_add_link_options configuration options )
+    # Implementation note:
+    # Function for symmetry/consistency with the TNUN_add_compile_options()
+    # function (with a major the difference: this function accepts a single
+    # string of options as opposed to a list).
+    #                                         (24.05.2016.) (Domagoj Saric)
+    set( CMAKE_EXE_LINKER_FLAGS_${configuration} "${CMAKE_EXE_LINKER_FLAGS_${configuration}} ${options}" PARENT_SCOPE )
+endfunction()
