@@ -52,5 +52,6 @@ function( TNUN_add_link_options configuration options )
     # function (with a major the difference: this function accepts a single
     # string of options as opposed to a list).
     #                                         (24.05.2016.) (Domagoj Saric)
+    string( TOUPPER ${configuration} configuration )
     set( CMAKE_EXE_LINKER_FLAGS_${configuration} "${CMAKE_EXE_LINKER_FLAGS_${configuration}} ${options}" PARENT_SCOPE )
 endfunction()
