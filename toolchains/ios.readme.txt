@@ -11,6 +11,10 @@
         - it is recommended that you turn off the "Autocreate schemes" in Xcode
           (to avoid Xcode from automatically cluttering your workspace with too
           many redundant schemes)
+    - Provisioning profiles, testing, signing, distribution...
+        - https://developer.apple.com/library/mac/documentation/IDEs/Conceptual/AppDistributionGuide/MaintainingProfiles/MaintainingProfiles.html
+        - https://livecode.com/how-to-create-a-free-ios-development-provisioning-profile
+        - http://www.idownloadblog.com/2015/12/24/how-to-create-a-free-apple-developer-account-xcode
 
 * Building/Debugging:
     - use the standard CMake-based procedure (@ https://github.com/psiha/build/blob/master/README.md)
