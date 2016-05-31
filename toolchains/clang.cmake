@@ -5,6 +5,8 @@
 # Copyright (c) 2016. Domagoj Saric. All rights reserved.
 #
 ################################################################################
+# http://stackoverflow.com/questions/15548023/clang-optimization-levels
+################################################################################
 
 include( "${CMAKE_CURRENT_LIST_DIR}/gcc_compatibles.cmake" )
 
@@ -19,4 +21,4 @@ if ( NOT iOS )
     list( APPEND TNUN_compiler_optimize_for_speed -Rpass=loop-.* ) #-Rpass-missed=loop-vectorize -Rpass-analysis=loop-vectorize -mllvm -bb-vectorize-aligned-only
 endif()
 
-add_compile_options( -fconstant-cfstrings -fobjc-call-cxx-cdtors -Wheader-guard )
+add_compile_options( -Wheader-guard )
