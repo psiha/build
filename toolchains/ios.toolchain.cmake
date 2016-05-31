@@ -18,6 +18,8 @@
 ################################################################################
 
 
+include( "${CMAKE_CURRENT_LIST_DIR}/apple.cmake" )
+
 # Standard settings
 set( CMAKE_SYSTEM_NAME    Darwin )
 set( CMAKE_SYSTEM_VERSION 6      )
@@ -43,20 +45,7 @@ endif()
 set( CMAKE_XCODE_EFFECTIVE_PLATFORMS "-universal;-iphonesimulator;-iphoneos;" )
 set( CMAKE_IOS_DEVELOPER_ROOT "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer" )
 
-set( CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY libc++ )
-
-set( CMAKE_OSX_ARCHITECTURES                "$(ARCHS_STANDARD)" ) # http://www.cocoanetics.com/2014/10/xcode-6-drops-armv7s
-set( CMAKE_XCODE_ATTRIBUTE_ARCHS            "$(ARCHS_STANDARD)" )
-set( CMAKE_XCODE_ATTRIBUTE_VALID_ARCHS      "$(ARCHS_STANDARD)" )
-set( CMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH NO                  )
-set( CMAKE_XCODE_ATTRIBUTE_SDKROOT          iphoneos            ) # iphoneos == "Latest iOS"
-
-set( CMAKE_XCODE_ATTRIBUTE_GCC_C_LANGUAGE_STANDARD     gnu11   )
-set( CMAKE_XCODE_ATTRIBUTE_GCC_CXX_LANGUAGE_STANDARD   gnu++14 )
-set( CMAKE_XCODE_ATTRIBUTE_GCC_C++_LANGUAGE_STANDARD   gnu++14 )
-set( CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD gnu++14 )
-
-include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
+set( CMAKE_XCODE_ATTRIBUTE_SDKROOT iphoneos ) # iphoneos == "Latest iOS"
 
 
 # set_xcode_property( TARGET XCODE_PROPERTY XCODE_VALUE )
