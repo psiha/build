@@ -6,6 +6,8 @@
 #
 ################################################################################
 
+# http://www.cmake.org/Wiki/CMake_Cross_Compiling
+# https://cmake.org/cmake/help/latest/manual/cmake-toolchains.7.html
 # http://stackoverflow.com/questions/12802377/in-cmake-how-can-i-find-the-directory-of-an-included-file
 if ( WIN32 )
     include( "${CMAKE_CURRENT_LIST_DIR}/toolchains/msvc.toolchain.cmake" )
@@ -32,6 +34,7 @@ function( TNUN_add_compile_options configuration )
     # https://cmake.org/pipermail/cmake-developers/2012-August/016617.html
     # http://stackoverflow.com/a/35361099/6041906
     #                                         (14.05.2016.) (Domagoj Saric)
+    string( TOUPPER ${configuration} configuration )
     foreach( arg ${ARGN} )
         add_compile_options( $<$<CONFIG:${configuration}>:${arg}> )
     endforeach()
@@ -46,12 +49,14 @@ TNUN_add_compile_options( Release ${TNUN_compiler_release_flags} )
 #
 ################################################################################
 
-function( TNUN_add_link_options configuration options )
+function( TNUN_add_link_options configuration )
     # Implementation note:
-    # Function for symmetry/consistency with the TNUN_add_compile_options()
-    # function (with a major the difference: this function accepts a single
-    # string of options as opposed to a list).
-    #                                         (24.05.2016.) (Domagoj Saric)
+    # The documented feature of link_libraries(), that it also accepts linker
+    # options, is (ab)used here to simulate add_compile_options() behaviour.
+    # https://cmake.org/cmake/help/latest/prop_tgt/LINK_LIBRARIES.html
+    #                                         (01.06.2016.) (Domagoj Saric)
     string( TOUPPER ${configuration} configuration )
-    set( CMAKE_EXE_LINKER_FLAGS_${configuration} "${CMAKE_EXE_LINKER_FLAGS_${configuration}} ${options}" PARENT_SCOPE )
+    foreach( arg ${ARGN} )
+        link_libraries( $<$<CONFIG:${configuration}>:${arg}> )
+    endforeach()
 endfunction()
