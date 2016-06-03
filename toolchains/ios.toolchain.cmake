@@ -24,9 +24,13 @@ include( "${CMAKE_CURRENT_LIST_DIR}/apple.cmake" )
 set( CMAKE_SYSTEM_NAME    Darwin )
 set( CMAKE_SYSTEM_VERSION 6      )
 set( CMAKE_SYSTEM_PROCESSOR arm  )
-set( UNIX  true )
 set( APPLE true )
 set( iOS   true )
+set( UNIX  true )
+
+set( TNUN_os_suffix iOS )
+
+set( TNUN_cpu_archs default )
 
 # Skip the platform compiler checks for cross compiling (or not)...
 set( CMAKE_CXX_COMPILER_WORKS true CACHE STRING "Skip CMake compiler detection (requires a functioning code signing identity and provisioning profile)." )
@@ -39,14 +43,39 @@ if ( NOT CMAKE_CXX_COMPILER_WORKS )
     set( MACOSX_BUNDLE_GUI_IDENTIFIER                "com.tnun.cmake-try-compile" )
 endif()
 
-
 # http://code.google.com/p/ios-cmake/source/browse/toolchain/iOS.cmake
 # http://stackoverflow.com/questions/5010062/xcodebuild-simulator-or-device
 set( CMAKE_XCODE_EFFECTIVE_PLATFORMS "-universal;-iphonesimulator;-iphoneos;" )
-set( CMAKE_IOS_DEVELOPER_ROOT "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer" )
+set( CMAKE_IOS_DEVELOPER_ROOT        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer" )
+set( CMAKE_XCODE_ATTRIBUTE_SDKROOT   iphoneos ) # "Latest iOS"
 
-set( CMAKE_XCODE_ATTRIBUTE_SDKROOT iphoneos ) # iphoneos == "Latest iOS"
+list( APPEND TNUN_compiler_optimize_for_size -mthumb ) #...mrmlj...this will cause (harmless) warnings on ARM64 builds...
+set( XCODE_ATTRIBUTE_CFLAGS_armv7  "-mcpu=cortex-a8 -mtune=cortex-a9"  ) 
+set( XCODE_ATTRIBUTE_CFLAGS_armv7s "                -mtune=cortex-a15" ) # http://www.anandtech.com/show/6292/iphone-5-a6-not-a15-custom-core
 
+
+# Implementation note:
+# Disable optimiser pass reports for iOS builds as they get run by the
+# ios.universal_build.sh script and then Xcode interprets this optimiser output
+# from the child-build process as errors.
+#                                             (13.05.2016.) (Domagoj Saric)
+string( REPLACE "-Rpass=loop-.*" "" TNUN_compiler_optimize_for_speed  "${TNUN_compiler_optimize_for_speed}" )
+
+
+################################################################################
+# TNUN_ios_add_universal_build()
+################################################################################
+set( TNUN_toolchains_dir "${CMAKE_CURRENT_LIST_DIR}" )
+function( TNUN_ios_add_universal_build target )
+    # Generate a 'universal'/'fat' (i.e. simulator+device) build:
+    add_custom_command(
+        TARGET ${target}
+        POST_BUILD
+        COMMAND "${TNUN_toolchains_dir}/ios.universal_build.sh"
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        VERBATIM
+    )
+endfunction()
 
 # set_xcode_property( TARGET XCODE_PROPERTY XCODE_VALUE )
 #  A convenience macro for setting xcode specific properties on targets

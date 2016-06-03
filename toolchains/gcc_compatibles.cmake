@@ -31,8 +31,8 @@ add_compile_options( -fstrict-aliasing -fstrict-enums -fvisibility=hidden -fvisi
 # https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#logical-expressions
 add_compile_options( $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++1z> )
 add_compile_options( $<$<NOT:$<COMPILE_LANGUAGE:CXX>>:-std=gnu11> )
+set( CMAKE_C_STANDARD   11 )
+set( CMAKE_CXX_STANDARD 14 )
 
-link_libraries( "-Wl,--no-undefined" "-Wl,-z,relro" "-Wl,-z,now" "-Wl,-z,nocopyreloc" )
-link_libraries( $<$<CONFIG:RELEASE>:-Wl,--gc-sections> )
-link_libraries( $<$<CONFIG:RELEASE>:-Wl,--icf=all>     ) # http://research.google.com/pubs/pub36912.html Safe ICF: Pointer Safe and Unwinding Aware Identical Code Folding in Gold
-#-fuse-ld=gold ...mrmlj...does not work with Android NDK r11 (but should be the default)
+# https://cmake.org/cmake/help/v3.3/policy/CMP0063.html
+cmake_policy( SET CMP0063 NEW )

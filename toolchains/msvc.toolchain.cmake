@@ -6,6 +6,8 @@
 #
 ################################################################################
 
+include( "${CMAKE_CURRENT_LIST_DIR}/windows.cmake" )
+
 # www.drdobbs.com/cpp/the-most-underused-compiler-switches-in/240166599
 
 # Implementation note: Use the dash (instead of slash) syntax as the compiler
@@ -27,8 +29,48 @@ set( TNUN_compiler_release_flags -DNDEBUG -Bt -Ox -Ob2 -Oy -GF -Gw -Gm- -GS- -Gy
 
 add_compile_options( -MP -Oi -W4 -Zc:threadSafeInit- -wd4324 ) # w4324 = 'structure was padded due to alignment specifier'
 add_definitions(
-    -D_CRT_SECURE_NO_WARNINGS
-    -D_SCL_SECURE_NO_WARNINGS
-    -D_SBCS
-    -D_WIN32_WINNT=0x0601 # Win7
+  -D_CRT_SECURE_NO_WARNINGS
+  -D_SCL_SECURE_NO_WARNINGS
+  -D_SBCS
+  -D_WIN32_WINNT=0x0601 # Win7
 )
+
+
+set( TNUN_ABIs
+  Win32
+  x64
+)
+
+if( NOT DEFINED TNUN_ABI )
+  if ( ${CMAKE_GENERATOR} MATCHES 64 )
+    set( TNUN_ABI x64 )
+  else()
+    set( TNUN_ABI Win32 )
+  endif()
+endif()
+
+
+set( TNUN_arch_include_dir "${CMAKE_CURRENT_LIST_DIR}/windows" )
+include( "${TNUN_arch_include_dir}/${TNUN_ABI}.abi.cmake" )
+
+
+################################################################################
+# TNUN_setup_target_for_arch()
+################################################################################
+
+function( TNUN_setup_target_for_arch target base_target_name arch )
+  include( "${TNUN_arch_include_dir}/${arch}.arch.cmake" )
+
+  if ( NOT TNUN_binary_dir )
+    set( TNUN_binary_dir "${PROJECT_BINARY_DIR}" )
+  endif()
+
+  set( LIBRARY_OUTPUT_PATH "${TNUN_binary_dir}/lib/${TNUN_ABI}" )
+  set_property( TARGET ${target} PROPERTY ARCHIVE_OUTPUT_DIRECTORY         "${LIBRARY_OUTPUT_PATH}" )
+  set_property( TARGET ${target} PROPERTY LIBRARY_OUTPUT_DIRECTORY         "${LIBRARY_OUTPUT_PATH}" )
+  set_property( TARGET ${target} PROPERTY ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${LIBRARY_OUTPUT_PATH}" )
+  set_property( TARGET ${target} PROPERTY LIBRARY_OUTPUT_DIRECTORY_RELEASE "${LIBRARY_OUTPUT_PATH}" )
+  set_property( TARGET ${target} PROPERTY OUTPUT_NAME              "${base_target_name}_${TNUN_arch_suffix}_${TNUN_os_suffix}" )
+
+  target_compile_options( ${target} PRIVATE ${TNUN_arch_compiler_options} )
+endfunction()

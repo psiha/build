@@ -1,6 +1,6 @@
 ################################################################################
 #
-# T:N.U.N. Android CMake tool chain file.
+# T:N.U.N. Android CMake toolchain file.
 #
 # Copyright (c) 2016. Domagoj Saric. All rights reserved.
 #
@@ -83,26 +83,14 @@ if ( NOT ANDROID_NDK )
 endif ( NOT ANDROID_NDK )
 
 
-set( ANDROID_NATIVE_API_LEVEL 15 )
-if ( TNUN_subproject_build )
-        if ( LE_BUILD_ABI MATCHES arm-linux-androideabi )
-        set( ANDROID_NATIVE_API_LEVEL 15 ) # ICS
-    elseif ( LE_BUILD_ABI STREQUAL x86 )
-        set( ANDROID_NATIVE_API_LEVEL 18 ) # JB
-    else() # 64bit
-        set( ANDROID_NATIVE_API_LEVEL 21 ) # L
-    endif()
-endif()
-
-set( CMAKE_ANDROID_API_MIN ${ANDROID_NATIVE_API_LEVEL} )
-message( STATUS "[TNUN] Targeting Android API level ${ANDROID_NATIVE_API_LEVEL}." )
-
 # Standard settings
 set( CMAKE_SYSTEM_NAME    Android )
 set( CMAKE_SYSTEM_VERSION 2.6     )
 
-set( UNIX    true )
 set( ANDROID true )
+set( UNIX    true )
+
+set( TNUN_os_suffix Android )
 
 # Detect current host platform (to support builds on 32 bit hosts).
 if ( NOT DEFINED ANDROID_NDK_HOST_X64 AND (CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "amd64|x86_64|AMD64" OR CMAKE_HOST_APPLE) )
@@ -126,115 +114,79 @@ elseif( CMAKE_HOST_UNIX )
     set( ANDROID_NDK_HOST_SYSTEM_NAME "linux-x86" )
   endif()
 else()
-  message( FATAL_ERROR "Cross-compilation on your platform is not supported by this CMake toolchain" )
+  message( FATAL_ERROR "[TNUN] Cross-compilation on your platform is not supported by this CMake toolchain" )
 endif()
 
-
-# Target ABI options
-if( NOT ANDROID_ABI )
-  set( ANDROID_ABI "armeabi-v7a" )
-endif()
-
-set( gcc_ver   4.9 )
-set( abi_sufix ""  )
-
-if( ANDROID_ABI STREQUAL "x86" )
-  set( x86 true )
-  set( ANDROID_NDK_ABI_NAME   "x86"  )
-  set( ANDROID_ARCH_NAME      "x86"  )
-  set( CMAKE_SYSTEM_PROCESSOR "i686" )
-elseif( ANDROID_ABI STREQUAL "x86_64" )
-  set( x86    true )
-  set( x86_64 true )
-  set( ANDROID_NDK_ABI_NAME   "x86_64" )
-  set( ANDROID_ARCH_NAME      "x86_64" )
-  set( CMAKE_SYSTEM_PROCESSOR "x86_64" )
-elseif( ANDROID_ABI STREQUAL "mips64" )
-  set( MIPS64                 true     )
-  set( ANDROID_NDK_ABI_NAME   "mips64" )
-  set( ANDROID_ARCH_NAME      "mips64" )
-  set( CMAKE_SYSTEM_PROCESSOR "mips64" )
-elseif( ANDROID_ABI STREQUAL "mips" )
-  set( MIPS true )
-  set( ANDROID_NDK_ABI_NAME   "mips" )
-  set( ANDROID_ARCH_NAME      "mips" )
-  set( CMAKE_SYSTEM_PROCESSOR "mips" )
-elseif( ANDROID_ABI STREQUAL "arm64-v8a" )
-  set( ARM64_V8A true )
-  set( ANDROID_NDK_ABI_NAME   "arm64-v8a" )
-  set( ANDROID_ARCH_NAME      "arm64"     )
-  set( CMAKE_SYSTEM_PROCESSOR "aarch64"   )
-  set( NEON true )
-elseif( ANDROID_ABI STREQUAL "armeabi-v7a" )
-  set( ARMEABI_V7A true )
-  set( ANDROID_NDK_ABI_NAME   "armeabi-v7a" )
-  set( ANDROID_ARCH_NAME      "arm"   )
-  set( CMAKE_SYSTEM_PROCESSOR "armv7-a" )
-  set( abi_sufix "eabi" )
-elseif( ANDROID_ABI STREQUAL "armeabi-v7a with NEON" )
-  set( ARMEABI_V7A true )
-  set( ANDROID_NDK_ABI_NAME "armeabi-v7a" )
-  set( ANDROID_ARCH_NAME "arm" )
-  set( CMAKE_SYSTEM_PROCESSOR "armv7-a" )
-  set( NEON true )
-  set( abi_sufix "eabi" )
-else()
-  message( SEND_ERROR "Unknown ANDROID_ABI=\"${ANDROID_ABI}\" is specified." )
-endif()
-
-
-set( ANDROID_LLVM_TRIPLE            "${CMAKE_SYSTEM_PROCESSOR}-none-linux-android${abi_sufix}" )
-set( ANDROID_TOOLCHAIN_MACHINE_NAME "${ANDROID_ARCH_NAME}-linux-android${abi_sufix}" )
-set( ANDROID_GCC_TOOLCHAIN_NAME     "${ANDROID_TOOLCHAIN_MACHINE_NAME}-${gcc_ver}" )
-# The armeabi-v7a is the only ABI where the CMAKE_SYSTEM_PROCESSOR and LLVM
-# triple do not match:
-string( REPLACE "armv7-a" "armv7" ANDROID_LLVM_TRIPLE "${ANDROID_LLVM_TRIPLE}" )
 
 set( ANDROID_NDK_TOOLCHAINS_PATH    "${ANDROID_NDK}/toolchains" )
 set( ANDROID_NDK_TOOLCHAINS_SUBPATH "/prebuilt/${ANDROID_NDK_HOST_SYSTEM_NAME}" )
 set( ANDROID_CLANG_TOOLCHAIN_ROOT   "${ANDROID_NDK_TOOLCHAINS_PATH}/llvm${ANDROID_NDK_TOOLCHAINS_SUBPATH}" )
-set( ANDROID_TOOLCHAIN_ROOT         "${ANDROID_NDK_TOOLCHAINS_PATH}/${ANDROID_GCC_TOOLCHAIN_NAME}${ANDROID_NDK_TOOLCHAINS_SUBPATH}" )
-set( ANDROID_SYSROOT                "${ANDROID_NDK}/platforms/android-${ANDROID_NATIVE_API_LEVEL}/arch-${ANDROID_ARCH_NAME}" )
 
-set( ANDROID_CXX_ROOT         "${ANDROID_NDK}/sources/cxx-stl" )
-set( ANDROID_LLVM_ROOT        "${ANDROID_CXX_ROOT}/llvm-libc++" )
-set( ANDROID_ABI_INCLUDE_DIRS "${ANDROID_CXX_ROOT}/llvm-libc++abi/libcxxabi/include" )
-set( ANDROID_STL_INCLUDE_DIRS "${ANDROID_LLVM_ROOT}/libcxx/include"
-                              "${ANDROID_ABI_INCLUDE_DIRS}" )
 
-# Standard Android directory layout for per-ABI libraries:
-set( LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib/${ANDROID_NDK_ABI_NAME}" )
+set( TNUN_ABIs
+  aarch64-linux-android
+  arm-linux-androideabi
+  x86_64
+  x86
+)
+
+
+if( NOT DEFINED TNUN_ABI )
+  include( CMakeForceCompiler )
+  CMAKE_FORCE_CXX_COMPILER( "${CMAKE_COMMAND}" none_yet )
+  CMAKE_FORCE_C_COMPILER  ( "${CMAKE_COMMAND}" none_yet )
+  #...mrmlj...this fails to work...the sub-builds, even though they get a properly defined TNUN_ABI fail @ the compiler check !??
+  #return()
+  #...mrmlj...as a workaround set a default abi to make the checks pass and then unset it at the end (so that sub_project.cmake can detect that this is the root 'invocation' and skip creating any targets)...
+  set( TNUN_ABI arm-linux-androideabi )
+  set( TNUN_internal_workaround_unset_abi true )
+endif()
+
+
+if ( NOT ANDROID_NATIVE_API_LEVEL )
+    if ( TNUN_ABI MATCHES arm-linux-androideabi )
+    set( ANDROID_NATIVE_API_LEVEL 15 ) # ICS
+  elseif ( TNUN_ABI STREQUAL x86 )
+    set( ANDROID_NATIVE_API_LEVEL 18 ) # JB
+  else() # 64bit
+    set( ANDROID_NATIVE_API_LEVEL 21 ) # L
+  endif()
+endif()
+
+set( CMAKE_ANDROID_API_MIN ${ANDROID_NATIVE_API_LEVEL} )
+if ( CROSS_COMPILING )
+  message( STATUS "[TNUN] Targeting Android API level ${ANDROID_NATIVE_API_LEVEL}." )
+endif()
+
+set( CMAKE_ANDROID_STL_TYPE c++_static )
+
+set( gcc_ver   4.9 )
+set( abi_sufix ""  )
+
+# http://clang.llvm.org/docs/CrossCompilation.html
+set( TNUN_arch_include_dir "${CMAKE_CURRENT_LIST_DIR}/android" )
+include( "${TNUN_arch_include_dir}/${TNUN_ABI}.abi.cmake" )
+
+set( ANDROID_GCC_TOOLCHAIN_NAME "${TNUN_ABI}-${gcc_ver}" )
+set( ANDROID_TOOLCHAIN_ROOT     "${ANDROID_NDK_TOOLCHAINS_PATH}/${ANDROID_GCC_TOOLCHAIN_NAME}${ANDROID_NDK_TOOLCHAINS_SUBPATH}" )
+set( ANDROID_LLVM_TRIPLE        "${CMAKE_SYSTEM_PROCESSOR}-none-linux-android${abi_sufix}" )
 
 # Global includes and link directories
 # Android support files
-include_directories( SYSTEM ${ANDROID_NDK}/sources/android/support/include               )
-include_directories( SYSTEM "${ANDROID_SYSROOT}/usr/include" ${ANDROID_STL_INCLUDE_DIRS} )
-link_directories   ( "${ANDROID_SYSROOT}/usr/lib"                        )
-link_directories   ( "${ANDROID_LLVM_ROOT}/libs/${ANDROID_NDK_ABI_NAME}" )
+set( ANDROID_CXX_ROOT         "${ANDROID_NDK}/sources/cxx-stl"                       )
+set( ANDROID_LLVM_ROOT        "${ANDROID_CXX_ROOT}/llvm-libc++"                      )
+set( TNUN_ABI_INCLUDE_DIRS "${ANDROID_CXX_ROOT}/llvm-libc++abi/libcxxabi/include" )
+set( ANDROID_STL_INCLUDE_DIRS "${ANDROID_LLVM_ROOT}/libcxx/include"
+                              "${TNUN_ABI_INCLUDE_DIRS}"                          )
+set( ANDROID_SYSROOT          "${ANDROID_NDK}/platforms/android-${ANDROID_NATIVE_API_LEVEL}/arch-${ANDROID_ARCH_NAME}" )
 
-set( CMAKE_C_COMPILER   "${ANDROID_CLANG_TOOLCHAIN_ROOT}/bin/clang${TOOL_OS_SUFFIX}"                               CACHE FILEPATH "C compiler"   FORCE )
-set( CMAKE_CXX_COMPILER "${ANDROID_CLANG_TOOLCHAIN_ROOT}/bin/clang++${TOOL_OS_SUFFIX}"                             CACHE FILEPATH "C++ compiler" FORCE )
-set( CMAKE_ASM_COMPILER "${ANDROID_TOOLCHAIN_ROOT}/bin/${ANDROID_TOOLCHAIN_MACHINE_NAME}-gcc${TOOL_OS_SUFFIX}"     CACHE FILEPATH "assembler"    FORCE )
-set( CMAKE_STRIP        "${ANDROID_TOOLCHAIN_ROOT}/bin/${ANDROID_TOOLCHAIN_MACHINE_NAME}-strip${TOOL_OS_SUFFIX}"   CACHE FILEPATH "strip"        FORCE )
-# Use gcc-ar if we have it for better LTO support.
-set( CMAKE_AR           "${ANDROID_TOOLCHAIN_ROOT}/bin/${ANDROID_TOOLCHAIN_MACHINE_NAME}-gcc-ar${TOOL_OS_SUFFIX}"  CACHE FILEPATH "archive"      FORCE )
-set( CMAKE_LINKER       "${ANDROID_TOOLCHAIN_ROOT}/bin/${ANDROID_TOOLCHAIN_MACHINE_NAME}-ld${TOOL_OS_SUFFIX}"      CACHE FILEPATH "linker"       FORCE )
-set( CMAKE_NM           "${ANDROID_TOOLCHAIN_ROOT}/bin/${ANDROID_TOOLCHAIN_MACHINE_NAME}-nm${TOOL_OS_SUFFIX}"      CACHE FILEPATH "nm"           FORCE )
-set( CMAKE_OBJCOPY      "${ANDROID_TOOLCHAIN_ROOT}/bin/${ANDROID_TOOLCHAIN_MACHINE_NAME}-objcopy${TOOL_OS_SUFFIX}" CACHE FILEPATH "objcopy"      FORCE )
-set( CMAKE_OBJDUMP      "${ANDROID_TOOLCHAIN_ROOT}/bin/${ANDROID_TOOLCHAIN_MACHINE_NAME}-objdump${TOOL_OS_SUFFIX}" CACHE FILEPATH "objdump"      FORCE )
-set( CMAKE_RANLIB       "${ANDROID_TOOLCHAIN_ROOT}/bin/${ANDROID_TOOLCHAIN_MACHINE_NAME}-ranlib${TOOL_OS_SUFFIX}"  CACHE FILEPATH "ranlib"       FORCE )
-
-set( _CMAKE_TOOLCHAIN_PREFIX "${ANDROID_TOOLCHAIN_MACHINE_NAME}-" )
-
-include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
-
-add_definitions( -DANDROID -D__ANDROID__ )
+# where is the target environment
+set( CMAKE_FIND_ROOT_PATH "${ANDROID_TOOLCHAIN_ROOT}/bin" "${ANDROID_TOOLCHAIN_ROOT}/${ANDROID_GCC_MACHINE_NAME}" "${ANDROID_SYSROOT}" "${CMAKE_INSTALL_PREFIX}" "${CMAKE_INSTALL_PREFIX}/share" )
 
 
 # Implementation note: These "basic toolchain flags" have to be added to the
-# compiler flags but also to the linker flags (at least in the 'first pass',
-# before CROSS_COMPILING is set) in order for the "Check for working CXX
-# compiler" test to succeed.
+# compiler flags but also to the linker flags in order for the "Check for
+# working CXX compiler" test to succeed.
 # link_libraries() is (ab)used (see the related note in build_options.cmake) in
 # order to avoid messing with/polluting the cache (this has a tendency to append
 # the same flags on every configure run) with the CMAKE_*_*_FLAGS variables.
@@ -245,27 +197,57 @@ add_definitions( -DANDROID -D__ANDROID__ )
 # nowhere). So, to avoid duplication, 'some' transformation has to be done on
 # the options in order to satisfy both functions.
 #                                             (01.06.2016.) (Domagoj Saric)
-if ( NOT CROSS_COMPILING )
-  link_libraries( ${ANDROID_BASIC_TOOLCHAIN_FLAGS} )
-endif()
 set( ANDROID_BASIC_TOOLCHAIN_FLAGS "-target ${ANDROID_LLVM_TRIPLE}" "-gcc-toolchain ${ANDROID_TOOLCHAIN_ROOT}" "--sysroot=${ANDROID_SYSROOT}" )
-set( ANDROID_C_FLAGS "${ANDROID_BASIC_TOOLCHAIN_FLAGS}" )
 foreach( a_flag ${ANDROID_BASIC_TOOLCHAIN_FLAGS} )
   string( REPLACE " " ";" a_flag "${a_flag}" )
   add_compile_options( ${a_flag} )
 endforeach()
+link_libraries( ${ANDROID_BASIC_TOOLCHAIN_FLAGS} )
+link_libraries( "-Wl,--no-undefined" "-Wl,-z,relro" "-Wl,-z,now" "-Wl,-z,nocopyreloc" )
+link_libraries( $<$<CONFIG:RELEASE>:-Wl,--gc-sections> )
+link_libraries( $<$<CONFIG:RELEASE>:-Wl,--icf=all>     ) # http://research.google.com/pubs/pub36912.html Safe ICF: Pointer Safe and Unwinding Aware Identical Code Folding in Gold
+#-fuse-ld=gold ...mrmlj...does not work with Android NDK r11 (but should be the default)
 
 
-link_libraries( c++_static )
-if( ARMEABI_V7A )
-  # this is *required* to use the following linker flags that routes around
-  # a CPU bug in some Cortex-A8 implementations:
-  link_libraries( "-Wl,--fix-cortex-a8" )
-endif()
+include_directories( SYSTEM ${ANDROID_NDK}/sources/android/support/include               )
+include_directories( SYSTEM "${ANDROID_SYSROOT}/usr/include" ${ANDROID_STL_INCLUDE_DIRS} )
+link_directories   ( "${ANDROID_SYSROOT}/usr/lib"                                        )
 
+set( _CMAKE_TOOLCHAIN_PREFIX "${ANDROID_GCC_MACHINE_NAME}-" )
+set( CMAKE_C_COMPILER   "${ANDROID_CLANG_TOOLCHAIN_ROOT}/bin/clang${TOOL_OS_SUFFIX}"                       )
+set( CMAKE_CXX_COMPILER "${ANDROID_CLANG_TOOLCHAIN_ROOT}/bin/clang++${TOOL_OS_SUFFIX}"                     )
+set( CMAKE_ASM_COMPILER "${ANDROID_TOOLCHAIN_ROOT}/bin/${_CMAKE_TOOLCHAIN_PREFIX}gcc${TOOL_OS_SUFFIX}"     )
+set( CMAKE_STRIP        "${ANDROID_TOOLCHAIN_ROOT}/bin/${_CMAKE_TOOLCHAIN_PREFIX}strip${TOOL_OS_SUFFIX}"   )
+set( CMAKE_AR           "${ANDROID_TOOLCHAIN_ROOT}/bin/${_CMAKE_TOOLCHAIN_PREFIX}gcc-ar${TOOL_OS_SUFFIX}"  )
+set( CMAKE_LINKER       "${ANDROID_TOOLCHAIN_ROOT}/bin/${_CMAKE_TOOLCHAIN_PREFIX}ld${TOOL_OS_SUFFIX}"      )
+set( CMAKE_NM           "${ANDROID_TOOLCHAIN_ROOT}/bin/${_CMAKE_TOOLCHAIN_PREFIX}nm${TOOL_OS_SUFFIX}"      )
+set( CMAKE_OBJCOPY      "${ANDROID_TOOLCHAIN_ROOT}/bin/${_CMAKE_TOOLCHAIN_PREFIX}objcopy${TOOL_OS_SUFFIX}" )
+set( CMAKE_OBJDUMP      "${ANDROID_TOOLCHAIN_ROOT}/bin/${_CMAKE_TOOLCHAIN_PREFIX}objdump${TOOL_OS_SUFFIX}" )
+set( CMAKE_RANLIB       "${ANDROID_TOOLCHAIN_ROOT}/bin/${_CMAKE_TOOLCHAIN_PREFIX}ranlib${TOOL_OS_SUFFIX}"  )
 
-# where is the target environment
-set( CMAKE_FIND_ROOT_PATH "${ANDROID_TOOLCHAIN_ROOT}/bin" "${ANDROID_TOOLCHAIN_ROOT}/${ANDROID_TOOLCHAIN_MACHINE_NAME}" "${ANDROID_SYSROOT}" "${CMAKE_INSTALL_PREFIX}" "${CMAKE_INSTALL_PREFIX}/share" )
+include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
+
+add_definitions( -DANDROID -D__ANDROID__ )
+
+################################################################################
+# TNUN_setup_target_for_arch()
+################################################################################
+
+function( TNUN_setup_target_for_arch target base_target_name arch )
+  include( "${TNUN_arch_include_dir}/${arch}.arch.cmake" )
+
+  # Standard Android directory layout for per-ABI libraries:
+  # https://developer.android.com/ndk/guides/abis.html#sa
+  set( LIBRARY_OUTPUT_PATH "${TNUN_binary_dir}/lib/${ANDROID_NDK_ABI_NAME}" )
+  set_property( TARGET ${target} PROPERTY ARCHIVE_OUTPUT_DIRECTORY "${LIBRARY_OUTPUT_PATH}" )
+  set_property( TARGET ${target} PROPERTY LIBRARY_OUTPUT_DIRECTORY "${LIBRARY_OUTPUT_PATH}" )
+  set_property( TARGET ${target} PROPERTY OUTPUT_NAME              "${base_target_name}_${TNUN_arch_suffix}_${TNUN_os_suffix}" )
+
+  set( runtime_libs_dir "${ANDROID_LLVM_ROOT}/libs/${ANDROID_NDK_ABI_NAME}" )
+  link_directories      ( "${runtime_libs_dir}" ) #...mrmlj...no target_link_directories http://stackoverflow.com/questions/25164041/is-there-a-link-directories-or-equivilent-property-in-cmake
+  target_link_libraries ( ${target} "${runtime_libs_dir}/libc++.a" )
+  target_compile_options( ${target} PRIVATE ${TNUN_arch_compiler_options} )
+endfunction()
 
 
 # macro to find packages on the host OS
@@ -310,3 +292,8 @@ macro( find_host_program )
  set( CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY )
  set( CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY )
 endmacro()
+
+#...mrmlj...ugh...
+if ( TNUN_internal_workaround_unset_abi )
+  unset( TNUN_ABI )
+endif()
