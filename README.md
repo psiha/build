@@ -33,7 +33,7 @@ Reusable components for cross-platform project builds.
         * Windows - Visual Studio (2015 Update 2)
         * OS X    - Xcode ((latest/7.3)
         * iOS     - toolchains/ios.readme.txt
-        * Android - ...todo...
+        * Android - toolchains/android/readme.txt
 
 
 ## Standard release procedure
