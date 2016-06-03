@@ -21,6 +21,7 @@ set( CMAKE_OSX_ARCHITECTURES           "$(ARCHS_STANDARD_32_64_BIT)" )
 set( CMAKE_XCODE_ATTRIBUTE_VALID_ARCHS "$(ARCHS_STANDARD_32_64_BIT)" )
 set( CMAKE_OSX_SYSROOT                 "macosx"                      ) #"Latest Mac OS X"
 set( CMAKE_OSX_DEPLOYMENT_TARGET       "10.7"                        )
+set( CPACK_SYSTEM_NAME                 "OSX"                         )
 
 set( OSX true )
 
@@ -37,3 +38,14 @@ elseif ( LE_TARGET_ARCHITECTURE STREQUAL sse4.1 )
     set( XCODE_ATTRIBUTE_CFLAGS_i386   "-msse4.1 -march=core2 -mtune=core2"  )
     set( XCODE_ATTRIBUTE_CFLAGS_x86_64 "-msse4.1 -march=core2 -mtune=corei7" )
 endif()
+
+
+################################################################################
+# TNUN_setup_target_for_arch()
+################################################################################
+
+function( TNUN_setup_target_for_arch target base_target_name arch )
+  set_property( TARGET ${target} PROPERTY ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${PROJECT_BINARY_DIR}/lib" )
+  set_property( TARGET ${target} PROPERTY LIBRARY_OUTPUT_DIRECTORY_RELEASE "${PROJECT_BINARY_DIR}/lib" )
+  set_property( TARGET ${target} PROPERTY OUTPUT_NAME                       "${base_target_name}_${TNUN_os_suffix}" )
+endfunction()

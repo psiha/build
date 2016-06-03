@@ -6,4 +6,5 @@
 #
 ################################################################################
 
-set( TNUN_os_suffix Windows )
+set( TNUN_os_suffix    Windows           )
+set( CPACK_SYSTEM_NAME ${TNUN_os_suffix} )

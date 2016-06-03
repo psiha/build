@@ -22,10 +22,27 @@ cmake_minimum_required( VERSION 3.1 )
 ################################################################################
 
 function( TNUN_add_abi_subproject project_name abi )
+
   if ( TNUN_subproject_build )
     return()
   endif()
   
+  if ( iOS ) #...mrmlj...cleanup this 'special pleading'...
+    install(
+      DIRECTORY      "${PROJECT_BINARY_DIR}/Release/"
+      DESTINATION    "lib"
+      COMPONENT      Libraries
+      CONFIGURATIONS ${install_configs}
+    )
+  else()
+    install(
+      DIRECTORY      "${PROJECT_BINARY_DIR}/lib"
+      DESTINATION    "."
+      COMPONENT      Libraries
+      CONFIGURATIONS ${install_configs}
+    )
+  endif()
+
   if ( abi STREQUAL TNUN_ABI )
     return()
   endif()
@@ -93,11 +110,12 @@ function( TNUN_add_abi_subproject project_name abi )
     include_external_msproject( ${project_name}_${abi} "${possible_vs_subproject}" PLATFORM Win32 )
   else()
     add_custom_target( ${project_name}_${abi} ALL
-        COMMAND ${build_command}
-        COMMENT "Building ${project_name} for ${abi}..."
-        VERBATIM
+      COMMAND ${build_command}
+      COMMENT "Building ${project_name} for ${abi}..."
+      VERBATIM
     )
   endif()
+
 endfunction()
 
 

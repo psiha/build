@@ -21,6 +21,7 @@
 set( CMAKE_CONFIGURATION_TYPES Release CACHE STRING "Supported configuartion types" FORCE )
 set( CMAKE_BUILD_TYPE          Release CACHE STRING "Target configuration"          FORCE )
 
+
 include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
 include( "${CMAKE_CURRENT_LIST_DIR}/../utilities.cmake" )
 
@@ -84,8 +85,9 @@ endif ( NOT ANDROID_NDK )
 
 
 # Standard settings
-set( CMAKE_SYSTEM_NAME    Android )
-set( CMAKE_SYSTEM_VERSION 2.6     )
+set( CMAKE_SYSTEM_NAME    Android              )
+set( CPACK_SYSTEM_NAME    ${CMAKE_SYSTEM_NAME} )
+set( CMAKE_SYSTEM_VERSION 2.6                  )
 
 set( ANDROID true )
 set( UNIX    true )

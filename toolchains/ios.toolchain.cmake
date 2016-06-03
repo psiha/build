@@ -21,9 +21,10 @@
 include( "${CMAKE_CURRENT_LIST_DIR}/apple.cmake" )
 
 # Standard settings
-set( CMAKE_SYSTEM_NAME    Darwin )
-set( CMAKE_SYSTEM_VERSION 6      )
-set( CMAKE_SYSTEM_PROCESSOR arm  )
+set( CMAKE_SYSTEM_NAME      iOS                  )
+set( CPACK_SYSTEM_NAME      ${CMAKE_SYSTEM_NAME} )
+set( CMAKE_SYSTEM_VERSION   6                    )
+set( CMAKE_SYSTEM_PROCESSOR arm                  )
 set( APPLE true )
 set( iOS   true )
 set( UNIX  true )
@@ -76,6 +77,21 @@ function( TNUN_ios_add_universal_build target )
         VERBATIM
     )
 endfunction()
+
+
+################################################################################
+# TNUN_setup_target_for_arch()
+################################################################################
+
+function( TNUN_setup_target_for_arch target base_target_name arch )
+  #...mrmlj...doesn't play well w/ th universal_build script...
+  #set_property( TARGET ${target} PROPERTY XCODE_ATTRIBUTE_OBJROOT "${PROJECT_BINARY_DIR}"     )
+  #set_property( TARGET ${target} PROPERTY XCODE_ATTRIBUTE_SYMROOT "${PROJECT_BINARY_DIR}/lib" )
+  #set_property( TARGET ${target} PROPERTY ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${PROJECT_BINARY_DIR}/lib" )
+  #set_property( TARGET ${target} PROPERTY LIBRARY_OUTPUT_DIRECTORY_RELEASE "${PROJECT_BINARY_DIR}/lib" )
+  set_property( TARGET ${target} PROPERTY OUTPUT_NAME                      "${base_target_name}_${TNUN_os_suffix}" )
+endfunction()
+
 
 # set_xcode_property( TARGET XCODE_PROPERTY XCODE_VALUE )
 #  A convenience macro for setting xcode specific properties on targets

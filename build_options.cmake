@@ -19,6 +19,18 @@ else()
 endif()
 
 
+# Implementation note:
+# A workaround for the fact that the ios.universal_build.sh script uses
+# 'intermediate' configuration types (*-iphoneos and *-simulator) one of which
+# ends up being passed to CPack.
+#                                             (15.03.2016.) (Domagoj Saric)
+if ( iOS )
+    set( install_configs "" )
+else()
+    set( install_configs Release )
+endif()
+
+
 ################################################################################
 #
 # add_compile_options()

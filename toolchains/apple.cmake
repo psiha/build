@@ -25,20 +25,13 @@ add_compile_options( -fconstant-cfstrings -fobjc-call-cxx-cdtors )
 
 link_libraries( $<$<CONFIG:RELEASE>:-dead_strip> )
 
-set( TNUN_ABI default )
+set( TNUN_ABI   default    )
+set( TNUN_ABIs ${TNUN_ABI} )
 
-#set( CMAKE_XCODE_ATTRIBUTE_OBJROOT          "${PROJECT_BINARY_DIR}" )
-#set( CMAKE_XCODE_ATTRIBUTE_BUILD_DIR        "${PROJECT_BINARY_DIR}" )
-#set( CMAKE_XCODE_ATTRIBUTE_BUILD_ROOT       "${PROJECT_BINARY_DIR}" )
-#set( CMAKE_XCODE_ATTRIBUTE_PROJECT_TEMP_DIR "${PROJECT_BINARY_DIR}" )
-
-################################################################################
-# TNUN_setup_target_for_arch()
-################################################################################
-
-function( TNUN_setup_target_for_arch target base_target_name arch )
-  #...mrmlj...
-  #set_property( TARGET ${target} PROPERTY XCODE_ATTRIBUTE_OBJROOT "${PROJECT_BINARY_DIR}/build" )
-  #set_property( TARGET ${target} PROPERTY XCODE_ATTRIBUTE_SYMROOT "${PROJECT_BINARY_DIR}/lib"   )
-  set_property( TARGET ${target} PROPERTY OUTPUT_NAME             "${base_target_name}_${TNUN_os_suffix}" )
-endfunction()
+#...mrmlj...reinvestigate this...
+set( CMAKE_XCODE_ATTRIBUTE_OBJROOT          "${PROJECT_BINARY_DIR}" )
+set( CMAKE_XCODE_ATTRIBUTE_BUILD_DIR        "${PROJECT_BINARY_DIR}" )
+set( CMAKE_XCODE_ATTRIBUTE_BUILD_ROOT       "${PROJECT_BINARY_DIR}" )
+set( CMAKE_XCODE_ATTRIBUTE_PROJECT_TEMP_DIR "${PROJECT_BINARY_DIR}" )
+set( CMAKE_XCODE_ATTRIBUTE_SYMROOT          "${PROJECT_BINARY_DIR}/lib" )
+set( CMAKE_XCODE_ATTRIBUTE_SYMROOT_RELEASE  "${PROJECT_BINARY_DIR}/lib" )
