@@ -21,10 +21,10 @@
 include( "${CMAKE_CURRENT_LIST_DIR}/apple.cmake" )
 
 # Standard settings
-set( CMAKE_SYSTEM_NAME      iOS                  )
-set( CPACK_SYSTEM_NAME      ${CMAKE_SYSTEM_NAME} )
-set( CMAKE_SYSTEM_VERSION   6                    )
-set( CMAKE_SYSTEM_PROCESSOR arm                  )
+set( CMAKE_SYSTEM_NAME      Darwin )
+set( CPACK_SYSTEM_NAME      iOS    )
+set( CMAKE_SYSTEM_VERSION   6      )
+set( CMAKE_SYSTEM_PROCESSOR arm    )
 set( APPLE true )
 set( iOS   true )
 set( UNIX  true )
