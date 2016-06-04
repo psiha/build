@@ -19,7 +19,7 @@ set( TNUN_compiler_rtti_on            -frtti                                )
 set( TNUN_compiler_rtti_off           -fno-rtti                             )
 set( TNUN_compiler_exceptions_on      -fexceptions                          )
 set( TNUN_compiler_exceptions_off     -fno-exceptions                       )
-set( TNUN_compiler_optimize_for_speed -O3 -funroll-loops                    )
+set( TNUN_compiler_optimize_for_speed -O3                                   )
 set( TNUN_compiler_optimize_for_size  -Os                                   )
 
 set( TNUN_compiler_release_flags -DNDEBUG -fomit-frame-pointer -ffunction-sections -fdata-sections -fmerge-all-constants -fno-stack-protector )
