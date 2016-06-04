@@ -17,6 +17,10 @@ cmake_minimum_required( VERSION 3.1 )
 # (i.e. building the project with 'whole program' optimisations w/o leaving the
 # IR/'bitcode' in the final libraries).
 #
+# http://buffered.io/posts/the-magic-of-unity-builds
+# https://en.wikipedia.org/wiki/Single_Compilation_Unit
+# http://stackoverflow.com/questions/543697/include-all-cpp-files-into-a-single-compilation-unit
+# https://engineering-game-dev.com/2009/12/15/the-evils-of-unity-builds
 # http://cheind.wordpress.com/2009/12/10/reducing-compilation-time-unity-builds
 ################################################################################
 
