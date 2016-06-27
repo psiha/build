@@ -23,6 +23,16 @@ set( CMAKE_OSX_SYSROOT                 "macosx"                      ) #"Latest 
 set( CMAKE_OSX_DEPLOYMENT_TARGET       "10.7"                        )
 set( CPACK_SYSTEM_NAME                 "OSX"                         )
 
+# Implementation note:
+# CMake (3.5.2) 'somehow' adds ${CMAKE_OSX_ARCHITECTURES} and
+# ${CMAKE_OSX_SYSROOT} to the compiler options even if a generator other than
+# Xcode (e.g. Ninja) is used (and this breaks the build of course).
+#                                         (27.06.2016.) (Domagoj Saric)
+if ( NOT ${CMAKE_GENERATOR} MATCHES "Xcode" )
+  unset( CMAKE_OSX_ARCHITECTURES )
+  unset( CMAKE_OSX_SYSROOT       )
+endif ()
+
 set( OSX true )
 
 set( TNUN_os_suffix OSX )
