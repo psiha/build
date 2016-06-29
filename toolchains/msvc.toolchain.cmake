@@ -14,20 +14,21 @@ include( "${CMAKE_CURRENT_LIST_DIR}/windows.cmake" )
 # supports this and it plays better in certain CMake related special/edge-cases
 # (e.g. generator expressions).
 #                                             (01.06.2016.) (Domagoj Saric)
-set( TNUN_compiler_debug_symbols      -Zi                                         )
-set( TNUN_linker_debug_symbols        -DEBUG                                      )
-set( TNUN_compiler_LTO                -GL                                         )
-set( TNUN_linker_LTO                  -LTCG                                       )
-set( TNUN_compiler_fastmath           -fp:except- -fp:fast -Qfast_transcendentals )
-set( TNUN_compiler_rtti_on            -GR                                         )
-set( TNUN_compiler_rtti_off           -GR-                                        )
-set( TNUN_compiler_exceptions_on      -EHsc                                       )
-set( TNUN_compiler_exceptions_off     -wd4577                                     )
-set( TNUN_compiler_optimize_for_speed -Ox -Ot -Qpar -Qpar-report:1 -Qvec-report:2 ) # https://msdn.microsoft.com/en-us/library/jj658585.aspx Vectorizer and Parallelizer Messages
+set( TNUN_compiler_debug_symbols         -Zi                                         )
+set( TNUN_linker_debug_symbols           -DEBUG                                      )
+set( TNUN_compiler_LTO                   -GL                                         )
+set( TNUN_linker_LTO                     -LTCG                                       )
+set( TNUN_compiler_fastmath              -fp:except- -fp:fast -Qfast_transcendentals )
+set( TNUN_compiler_rtti_on               -GR                                         )
+set( TNUN_compiler_rtti_off              -GR-                                        )
+set( TNUN_compiler_exceptions_on         -EHsc                                       )
+set( TNUN_compiler_exceptions_off        -wd4577                                     )
+set( TNUN_compiler_optimize_for_speed    -Ox -Ot -Qpar -Qpar-report:1 -Qvec-report:2 ) # https://msdn.microsoft.com/en-us/library/jj658585.aspx Vectorizer and Parallelizer Messages
+set( TNUN_compiler_runtime_sanity_checks -GS -sdl -guard:cf -fp:strict -RTC1 -RTCc -D_ALLOW_RTCc_IN_STL ) # https://www.reddit.com/r/cpp/comments/46mhne/rtcc_rejects_conformant_code_with_visual_c_2015
 
 set( TNUN_compiler_release_flags -DNDEBUG -Bt -Ox -Ob2 -Oy -GF -Gw -Gm- -GS- -Gy )
 
-add_compile_options( -MP -Oi -W4 -Zc:threadSafeInit- -wd4324 ) # w4324 = 'structure was padded due to alignment specifier'
+add_compile_options( /std:c++latest -MP -Oi -W4 -Zc:threadSafeInit- -wd4324 ) # w4324 = 'structure was padded due to alignment specifier'
 add_definitions(
   -D_CRT_SECURE_NO_WARNINGS
   -D_SCL_SECURE_NO_WARNINGS
