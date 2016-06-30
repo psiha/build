@@ -23,6 +23,13 @@ include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
 
 add_compile_options( -fconstant-cfstrings -fobjc-call-cxx-cdtors )
 
+# Implementation note: Unfortunately Apple Clang does not seem to support
+# sanitizer options other than the old/deprecated
+# sanitize-undefined-trap-on-error.
+#                                             (30.06.2016.) (Domagoj Saric)
+# http://stackoverflow.com/questions/20678801/clang-mac-os-x-maveric-not-supporting-fsanitize-undefined
+set( TNUN_compiler_runtime_sanity_checks -fsanitize-undefined-trap-on-error )
+
 link_libraries( $<$<CONFIG:RELEASE>:-dead_strip> )
 
 set( TNUN_ABI   default    )
