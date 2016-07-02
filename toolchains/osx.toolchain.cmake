@@ -41,13 +41,14 @@ set( TNUN_cpu_archs default )
 
 add_compile_options( -mmmx -mfpmath=sse -mcx16 )
 
-if ( LE_TARGET_ARCHITECTURE STREQUAL sse3 )
-    set( XCODE_ATTRIBUTE_CFLAGS_i386   "-msse3  -march=prescott -mtune=core2"  )
-    set( XCODE_ATTRIBUTE_CFLAGS_x86_64 "-mssse3 -march=core2    -mtune=corei7" )
-elseif ( LE_TARGET_ARCHITECTURE STREQUAL sse4.1 )
-    set( XCODE_ATTRIBUTE_CFLAGS_i386   "-msse4.1 -march=core2 -mtune=core2"  )
-    set( XCODE_ATTRIBUTE_CFLAGS_x86_64 "-msse4.1 -march=core2 -mtune=corei7" )
-endif()
+#...mrmlj...todo...
+#if ( <arch> STREQUAL sse3 )
+#    set( XCODE_ATTRIBUTE_CFLAGS_i386   "-msse3  -march=prescott -mtune=core2"  )
+#    set( XCODE_ATTRIBUTE_CFLAGS_x86_64 "-mssse3 -march=core2    -mtune=corei7" )
+#elseif ( <arch> STREQUAL sse4.1 )
+#    set( XCODE_ATTRIBUTE_CFLAGS_i386   "-msse4.1 -march=core2 -mtune=core2"  )
+#    set( XCODE_ATTRIBUTE_CFLAGS_x86_64 "-msse4.1 -march=core2 -mtune=corei7" )
+#endif()
 
 
 ################################################################################
