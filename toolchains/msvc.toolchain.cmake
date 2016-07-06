@@ -28,7 +28,9 @@ set( TNUN_compiler_runtime_sanity_checks -GS -sdl -guard:cf -fp:strict -RTC1 -RT
 
 set( TNUN_compiler_release_flags -DNDEBUG -Bt -Ox -Ob2 -Oy -GF -Gw -Gm- -GS- -Gy )
 
-add_compile_options( /std:c++latest -MP -Oi -W4 -Zc:threadSafeInit- -wd4324 ) # w4324 = 'structure was padded due to alignment specifier'
+# w4373: '...': virtual function overrides '...', previous versions of the compiler did not override when parameters only differed by const/volatile qualifiers
+# w4324: 'structure was padded due to alignment specifier'
+add_compile_options( /std:c++latest -MP -Oi -W4 -Zc:threadSafeInit- -wd4324 -wd4373 )
 add_definitions(
   -D_CRT_SECURE_NO_WARNINGS
   -D_SCL_SECURE_NO_WARNINGS
@@ -71,7 +73,7 @@ function( TNUN_setup_target_for_arch target base_target_name arch )
   set_property( TARGET ${target} PROPERTY LIBRARY_OUTPUT_DIRECTORY         "${LIBRARY_OUTPUT_PATH}" )
   set_property( TARGET ${target} PROPERTY ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${LIBRARY_OUTPUT_PATH}" )
   set_property( TARGET ${target} PROPERTY LIBRARY_OUTPUT_DIRECTORY_RELEASE "${LIBRARY_OUTPUT_PATH}" )
-  set_property( TARGET ${target} PROPERTY OUTPUT_NAME              "${base_target_name}_${TNUN_arch_suffix}_${TNUN_os_suffix}" )
+  set_property( TARGET ${target} PROPERTY OUTPUT_NAME                      "${base_target_name}_${TNUN_arch_suffix}_${TNUN_os_suffix}" )
 
   target_compile_options( ${target} PRIVATE ${TNUN_arch_compiler_options} )
 endfunction()
