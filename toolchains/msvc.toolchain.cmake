@@ -23,7 +23,8 @@ set( TNUN_compiler_rtti_on               -GR                                    
 set( TNUN_compiler_rtti_off              -GR-                                        )
 set( TNUN_compiler_exceptions_on         -EHsc                                       )
 set( TNUN_compiler_exceptions_off        -wd4577                                     )
-set( TNUN_compiler_optimize_for_speed    -Ox -Ot -Qpar -Qpar-report:1 -Qvec-report:2 ) # https://msdn.microsoft.com/en-us/library/jj658585.aspx Vectorizer and Parallelizer Messages
+set( TNUN_compiler_report_optimization   -Qpar-report:1 -Qvec-report:2               )
+set( TNUN_compiler_optimize_for_speed    -Ox -Ot -Qpar                               ) # https://msdn.microsoft.com/en-us/library/jj658585.aspx Vectorizer and Parallelizer Messages
 set( TNUN_compiler_runtime_sanity_checks -GS -sdl -guard:cf -fp:strict -RTC1 -RTCc -D_ALLOW_RTCc_IN_STL ) # https://www.reddit.com/r/cpp/comments/46mhne/rtcc_rejects_conformant_code_with_visual_c_2015
 
 set( TNUN_compiler_release_flags -DNDEBUG -Bt -Ox -Ob2 -Oy -GF -Gw -Gm- -GS- -Gy )

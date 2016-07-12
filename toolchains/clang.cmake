@@ -11,7 +11,7 @@
 include( "${CMAKE_CURRENT_LIST_DIR}/gcc_compatibles.cmake" )
 
 list( APPEND TNUN_compiler_optimize_for_speed -fvectorize -fslp-vectorize -fslp-vectorize-aggressive )
-list( APPEND TNUN_compiler_optimize_for_speed -Rpass=loop-.* ) #-Rpass-missed=loop-vectorize -Rpass-analysis=loop-vectorize -mllvm -bb-vectorize-aligned-only
+list( APPEND TNUN_compiler_report_optimization -Rpass=loop-.* )
 
 # http://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
 # http://clang.llvm.org/docs/UsersManual.html#controlling-code-generation
