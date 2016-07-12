@@ -30,7 +30,7 @@ set( TNUN_compiler_release_flags -DNDEBUG -Bt -Ox -Ob2 -Oy -GF -Gw -Gm- -GS- -Gy
 
 # w4373: '...': virtual function overrides '...', previous versions of the compiler did not override when parameters only differed by const/volatile qualifiers
 # w4324: 'structure was padded due to alignment specifier'
-add_compile_options( /std:c++latest -MP -Oi -W4 -Zc:threadSafeInit- -wd4324 -wd4373 )
+add_compile_options( /std:c++latest -MP -Oi -W4 -Zc:threadSafeInit- -wd4324 -wd4373 -wd4100 -wd4456 -wd4067 -wd4995 -wd4635 -wd4800 -wd4101 -wd4756 -wd4068 -wd4056 -wd4996 -wd4503)
 add_definitions(
   -D_CRT_SECURE_NO_WARNINGS
   -D_SCL_SECURE_NO_WARNINGS
