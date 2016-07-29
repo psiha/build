@@ -19,9 +19,13 @@ set( CMAKE_XCODE_ATTRIBUTE_GCC_CXX_LANGUAGE_STANDARD   gnu++14 )
 set( CMAKE_XCODE_ATTRIBUTE_GCC_C++_LANGUAGE_STANDARD   gnu++14 )
 set( CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD gnu++14 )
 
-include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
-
-add_compile_options( -fconstant-cfstrings -fobjc-call-cxx-cdtors )
+if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" )
+    include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
+    add_compile_options( -fconstant-cfstrings -fobjc-call-cxx-cdtors )
+else()
+    include( "${CMAKE_CURRENT_LIST_DIR}/gcc_compatibles.cmake" )
+    add_compile_options( -mconstant-cfstrings )
+endif()
 
 # Implementation note: Unfortunately Apple Clang does not seem to support
 # sanitizer options other than the old/deprecated
