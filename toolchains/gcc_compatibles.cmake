@@ -29,7 +29,7 @@ add_compile_options( -fstrict-aliasing -fstrict-enums -fvisibility=hidden -fvisi
 # "Unknown language" error with CMake 3.5.2 if COMPILE_LANGUAGE:C is used.
 # + 'COMPILE_LANGUAGE' isn't supported by VS generators:
 # https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#logical-expressions
-add_compile_options( $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++1z> )
+add_compile_options( $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++14> )
 add_compile_options( $<$<NOT:$<COMPILE_LANGUAGE:CXX>>:-std=gnu11> )
 set( CMAKE_C_STANDARD   11 )
 set( CMAKE_CXX_STANDARD 14 )
