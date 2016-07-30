@@ -20,6 +20,8 @@
 
 include( "${CMAKE_CURRENT_LIST_DIR}/apple.cmake" )
 
+add_compile_options( $<$<COMPILE_LANGUAGE:CXX>:-x objective-c++> )
+
 # Standard settings
 set( CMAKE_SYSTEM_NAME      Darwin )
 set( CPACK_SYSTEM_NAME      iOS    )

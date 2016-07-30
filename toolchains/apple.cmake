@@ -21,18 +21,19 @@ set( CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD gnu++14 )
 
 if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" )
     include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
+
+    # Implementation note: Unfortunately Apple Clang does not seem to support
+    # sanitizer options other than the old/deprecated
+    # sanitize-undefined-trap-on-error.
+    #                                             (30.06.2016.) (Domagoj Saric)
+    # http://stackoverflow.com/questions/20678801/clang-mac-os-x-maveric-not-supporting-fsanitize-undefined
+    set( TNUN_compiler_runtime_sanity_checks -fsanitize-undefined-trap-on-error )
+
     add_compile_options( -fconstant-cfstrings -fobjc-call-cxx-cdtors )
 else()
     include( "${CMAKE_CURRENT_LIST_DIR}/gcc_compatibles.cmake" )
     add_compile_options( -mconstant-cfstrings )
 endif()
-
-# Implementation note: Unfortunately Apple Clang does not seem to support
-# sanitizer options other than the old/deprecated
-# sanitize-undefined-trap-on-error.
-#                                             (30.06.2016.) (Domagoj Saric)
-# http://stackoverflow.com/questions/20678801/clang-mac-os-x-maveric-not-supporting-fsanitize-undefined
-set( TNUN_compiler_runtime_sanity_checks -fsanitize-undefined-trap-on-error )
 
 link_libraries( $<$<CONFIG:RELEASE>:-dead_strip> )
 

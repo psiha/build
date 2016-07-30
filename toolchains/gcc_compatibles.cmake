@@ -9,9 +9,10 @@
 # https://cmake.org/Bug/view.php?id=15939
 # http://stackoverflow.com/questions/31355692/cmake-support-for-gccs-link-time-optimization-lto
 set( CMAKE_INTERPROCEDURAL_OPTIMIZATION true )
-set( CMAKE_VISIBILITY_INLINES_HIDDEN    true )
+#set( CMAKE_VISIBILITY_INLINES_HIDDEN    true )
 
 set( TNUN_compiler_debug_symbols       -g                                    )
+set( TNUN_compiler_debug_flags         -O0                                   )
 set( TNUN_compiler_LTO                 -flto                                 )
 set( TNUN_linker_LTO                   -flto                                 )
 set( TNUN_compiler_fastmath            -ffast-math -ffp-contract=fast -Ofast )
@@ -22,9 +23,16 @@ set( TNUN_compiler_exceptions_off      -fno-exceptions                       )
 set( TNUN_compiler_optimize_for_speed  -O3                                   )
 set( TNUN_compiler_optimize_for_size   -Os                                   )
 set( TNUN_compiler_report_optimization -ftree-vectorizer-verbose=6           )
-set( TNUN_compiler_release_flags       -DNDEBUG -fomit-frame-pointer -ffunction-sections -fdata-sections -fmerge-all-constants -fno-stack-protector )
+set( TNUN_compiler_release_flags       -DNDEBUG -fomit-frame-pointer -ffunction-sections -fmerge-all-constants -fno-stack-protector )
+if( ${CMAKE_SYSTEM_NAME} MATCHES "Linux" )
+    set( TNUN_linker_release_flags         -Wl,--gc-sections                     )
+endif()
+set( TNUN_default_warnings             -Wall -Wextra -Wstrict-aliasing       )
+set( TNUN_warnings_as_errors           -Werror                               )
+set( TNUN_disabled_warnings            -Wno-unknown-pragmas -Wno-unused-parameter -Wno-ignored-qualifiers -Wno-sign-conversion -Wno-clobbered -Wno-format-zero-length -Wno-error=deprecated-declarations     )
+set( TNUN_native_optimization          -march=native -mtune=native           )
 
-add_compile_options( -fstrict-aliasing -fstrict-enums -fvisibility=hidden -fvisibility-inlines-hidden -fno-threadsafe-statics -Wall -Wstrict-aliasing -Wno-multichar -Wno-unknown-pragmas -Wno-unused-local-typedefs )
+add_compile_options( -fstrict-aliasing -fstrict-enums -fvisibility=hidden -fvisibility-inlines-hidden -fPIC )
 
 # "Unknown language" error with CMake 3.5.2 if COMPILE_LANGUAGE:C is used.
 # + 'COMPILE_LANGUAGE' isn't supported by VS generators:
