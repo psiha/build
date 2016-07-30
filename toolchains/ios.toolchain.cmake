@@ -19,6 +19,7 @@
 
 
 include( "${CMAKE_CURRENT_LIST_DIR}/apple.cmake" )
+unset( TNUN_native_optimization ) # This makes no sense when cross-compiling.
 
 add_compile_options( $<$<COMPILE_LANGUAGE:CXX>:-x objective-c++> )
 

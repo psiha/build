@@ -76,6 +76,11 @@ else()
     add_compile_options( ${TNUN_compiler_rtti_off} )
 endif()
 
+option( TNUN_NATIVE_CPU_OPTIMIZATION "Perform optimizations specific to host CPU" true )
+if( ${TNUN_NATIVE_CPU_OPTIMIZATION} )
+    TNUN_add_compile_options( Release ${TNUN_native_optimization} )
+endif()
+
 ################################################################################
 #
 # add_link_options()
