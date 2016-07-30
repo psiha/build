@@ -32,7 +32,7 @@ set( TNUN_warnings_as_errors           -Werror                               )
 set( TNUN_disabled_warnings            -Wno-unknown-pragmas -Wno-unused-parameter -Wno-ignored-qualifiers -Wno-sign-conversion -Wno-clobbered -Wno-format-zero-length -Wno-error=deprecated-declarations     )
 set( TNUN_native_optimization          -march=native -mtune=native           )
 
-add_compile_options( -fstrict-aliasing -fstrict-enums -fvisibility=hidden -fvisibility-inlines-hidden -fPIC )
+add_compile_options( -fstrict-aliasing $<$<COMPILE_LANGUAGE:CXX>:-fstrict-enums> -fvisibility=hidden $<$<COMPILE_LANGUAGE:CXX>:-fvisibility-inlines-hidden> -fPIC )
 
 # "Unknown language" error with CMake 3.5.2 if COMPILE_LANGUAGE:C is used.
 # + 'COMPILE_LANGUAGE' isn't supported by VS generators:
