@@ -17,10 +17,11 @@ include( "${CMAKE_CURRENT_LIST_DIR}/apple.cmake" )
 cmake_policy( SET CMP0042 OLD )
 set( CMAKE_MACOSX_RPATH 0 ) # even with the policy set CMake 3.5.2 still issues the warning?
 
-set( CMAKE_OSX_ARCHITECTURES           "$(ARCHS_STANDARD_32_64_BIT)" )
+set( CMAKE_OSX_ARCHITECTURES           "$(ARCHS_STANDARD)" )
 set( CMAKE_XCODE_ATTRIBUTE_VALID_ARCHS "$(ARCHS_STANDARD_32_64_BIT)" )
-set( CMAKE_OSX_SYSROOT                 "macosx"                      ) #"Latest Mac OS X"
-set( CMAKE_OSX_DEPLOYMENT_TARGET       "10.11"                       )
+if( ${CMAKE_GENERATOR} MATCHES "Xcode" )
+    set( CMAKE_OSX_DEPLOYMENT_TARGET "10.11"                       )
+endif()
 set( CPACK_SYSTEM_NAME                 "OSX"                         )
 
 # Implementation note:
