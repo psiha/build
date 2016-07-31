@@ -64,6 +64,21 @@ endif()
 set( TNUN_arch_include_dir "${CMAKE_CURRENT_LIST_DIR}/windows" )
 include( "${TNUN_arch_include_dir}/${TNUN_ABI}.abi.cmake" )
 
+# Detect Visual Studio Version
+if( ${CMAKE_GENERATOR} MATCHES "Visual Studio" )
+    if(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 20 AND ${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 19)
+        message(STATUS "Detected Visual Studio 2015 (MSVC ${CMAKE_CXX_COMPILER_VERSION})")
+        set(VS_VERSION "VS2015")
+    elseif(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 19 AND ${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 18)
+        message(STATUS "Detected Visual Studio 2013 (MSVC ${CMAKE_CXX_COMPILER_VERSION})")
+        set(VS_VERSION "VS2013")
+    elseif(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 18 AND ${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 17)
+        message(STATUS "Detected Visual Studio 2012 (MSVC ${CMAKE_CXX_COMPILER_VERSION})")
+        set(VS_VERSION "VS2012")
+    else()
+        message(FATAL_ERROR "Unkown MSVC version")
+    endif()
+endif()
 
 ################################################################################
 # TNUN_setup_target_for_arch()
