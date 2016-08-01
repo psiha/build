@@ -54,7 +54,7 @@ function( TNUN_add_compile_options configuration )
     endforeach()
 endfunction()
 
-TNUN_add_compile_options( Debug ${TNUN_compiler_debug_flags} ${TNUN_compiler_debug_symbols} ${TNUN_compiler_runtime_sanity_checks} )
+TNUN_add_compile_options( Debug ${TNUN_compiler_debug_flags} ${TNUN_compiler_debug_symbols} )
 TNUN_add_compile_options( Release ${TNUN_compiler_release_flags} )
 
 option( TNUN_DEBUG_SYMBOLS_IN_RELEASE "Generate debug symbols for easier debugging of release builds" false )
