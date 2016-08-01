@@ -17,7 +17,7 @@ set( TNUN_os_suffix Linux )
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
 else()
-    include( "${CMAKE_CURRENT_LIST_DIR}/gcc_compatibles.cmake" )
+    include( "${CMAKE_CURRENT_LIST_DIR}/gcc.cmake" )
 endif()
 
 option( TNUN_STATIC_LIBC "Link all binaries statically with libc and libc++" false )
