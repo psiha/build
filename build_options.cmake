@@ -65,7 +65,7 @@ if ( ${TNUN_DEBUG_SYMBOLS_IN_RELEASE} )
 endif()
 
 option( TNUN_ALLOW_EXCEPTIONS "Allow exception support in C++ code" true )
-option( TNUN_ALLOW_RTTI "Allow Runtime Type Information in C++ code" true )
+option( TNUN_ALLOW_RTTI "Allow Runtime Type Information in C++ code" false )
 
 if( ${CMAKE_GENERATOR} MATCHES "Visual Studio" )
     if( ${TNUN_ALLOW_EXCEPTIONS} )
