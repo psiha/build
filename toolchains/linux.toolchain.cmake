@@ -1,6 +1,6 @@
 ################################################################################
 #
-# T:N.U.N. Apple OS X CMake tool chain file.
+# T:N.U.N. Linux CMake tool chain file.
 #
 # Copyright (c) 2016. Domagoj Saric. All rights reserved.
 #
@@ -45,6 +45,8 @@ endif()
 
 set( TNUN_arch_include_dir "${CMAKE_CURRENT_LIST_DIR}/linux" )
 include( "${TNUN_arch_include_dir}/${TNUN_ABI}.abi.cmake" )
+
+link_libraries( $<$<CONFIG:RELEASE>:-Wl,--gc-sections> )
 
 ################################################################################
 # TNUN_setup_target_for_arch()
