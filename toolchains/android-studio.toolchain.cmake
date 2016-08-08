@@ -46,6 +46,8 @@ elseif( ANDROID_ABI STREQUAL "x86_64" )
     include( "${TNUN_arch_include_dir}/x86_64.arch.cmake" )
 endif()
 
+set( TNUN_ABI ${ANDROID_ABI} )
+
 # Some settings from android.toolchain.cmake which are better than in default toolchain shipped with
 # Android Studio.
 
