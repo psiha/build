@@ -93,9 +93,11 @@ else()
     endif()
 endif()
 
-option( TNUN_NATIVE_CPU_OPTIMIZATION "Perform optimizations specific to host CPU" true )
-if( ${TNUN_NATIVE_CPU_OPTIMIZATION} )
-    TNUN_add_compile_options( Release ${TNUN_native_optimization} )
+if( NOT ANDROID AND NOT iOS )
+    option( TNUN_NATIVE_CPU_OPTIMIZATION "Perform optimizations specific to host CPU" true )
+    if( ${TNUN_NATIVE_CPU_OPTIMIZATION} )
+        TNUN_add_compile_options( Release ${TNUN_native_optimization} )
+    endif()
 endif()
 
 ################################################################################
