@@ -49,6 +49,11 @@ endif()
 # Some settings from android.toolchain.cmake which are better than in default toolchain shipped with
 # Android Studio.
 
+# apparently gold is not supported on mips
+if( NOT ( ANDROID_ABI STREQUAL "mips" OR ANDROID_ABI STREQUAL "mips64" ) )
+    link_libraries( -fuse-ld=gold )
+endif()
+
 link_libraries( $<$<CONFIG:RELEASE>:-Wl,--gc-sections> )
 link_libraries( $<$<CONFIG:RELEASE>:-Wl,--icf=all>     ) # http://research.google.com/pubs/pub36912.html Safe ICF: Pointer Safe and Unwinding Aware Identical Code Folding in Gold
 
