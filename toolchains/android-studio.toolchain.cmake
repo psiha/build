@@ -12,6 +12,10 @@ set( CPACK_SYSTEM_NAME "Android" )
 
 set( ANDROID true )
 
+if( APPLE )
+    unset( APPLE )
+endif()
+
 add_definitions( -D__ANDROID__ )
 
 set( TNUN_os_suffix Android )
