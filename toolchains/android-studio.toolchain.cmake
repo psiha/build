@@ -50,10 +50,10 @@ set( TNUN_ABI ${ANDROID_ABI} )
 # apparently gold is not supported on mips
 if( NOT ( ANDROID_ABI STREQUAL "mips" OR ANDROID_ABI STREQUAL "mips64" ) )
     link_libraries( -fuse-ld=gold )
+    link_libraries( $<$<CONFIG:RELEASE>:-Wl,--icf=all>     ) # http://research.google.com/pubs/pub36912.html Safe ICF: Pointer Safe and Unwinding Aware Identical Code Folding in Gold
 endif()
 
 link_libraries( $<$<CONFIG:RELEASE>:-Wl,--gc-sections> )
-link_libraries( $<$<CONFIG:RELEASE>:-Wl,--icf=all>     ) # http://research.google.com/pubs/pub36912.html Safe ICF: Pointer Safe and Unwinding Aware Identical Code Folding in Gold
 
 ################################################################################
 # TNUN_setup_target_for_arch()
