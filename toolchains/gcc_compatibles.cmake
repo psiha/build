@@ -12,7 +12,7 @@ set( CMAKE_INTERPROCEDURAL_OPTIMIZATION true )
 #set( CMAKE_VISIBILITY_INLINES_HIDDEN    true )
 
 set( TNUN_compiler_debug_symbols       -g                                    )
-set( TNUN_compiler_debug_flags         -O0                                   )
+set( TNUN_compiler_debug_flags         -O0 -DDEBUG                           )
 set( TNUN_compiler_LTO                 -flto                                 )
 set( TNUN_linker_LTO                   -flto                                 )
 set( TNUN_compiler_fastmath            -ffast-math -ffp-contract=fast -Ofast )
