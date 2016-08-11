@@ -22,6 +22,13 @@ set( TNUN_os_suffix Android )
 
 if("${ANDROID_TOOLCHAIN}" STREQUAL "clang")
     include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
+
+    # Implementation note:
+    # This currently breaks with linker errors "undefined reference to '__asan_report_load1', etc.
+    # For now, just disable sanitization on Android. I will investigate this later.
+    #                                        ( 11.08.2016. Nenad Miksa )
+    unset( TNUN_compiler_runtime_sanity_checks )
+    unset( TNUN_linker_runtime_sanity_checks )
 else()
     include( "${CMAKE_CURRENT_LIST_DIR}/gcc.cmake" )
 endif()
