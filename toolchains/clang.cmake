@@ -18,6 +18,11 @@ list( APPEND TNUN_disabled_warnings -Wno-unknown-warning-option "-Wno-error=#war
 # http://clang.llvm.org/docs/UsersManual.html#controlling-code-generation
 set( TNUN_compiler_runtime_sanity_checks -fsanitize=undefined -fsanitize=integer -fsanitize=address -fno-omit-frame-pointer )
 
+# Implementation note:
+# When clang is used behind ccache, it throws a lot of "unused-argument" warnings.
+# I'm not sure why that happens (it also happens on clang for Android, both from ndk-build and cmake android build).
+# This causes lots of noisy compiler output which make it very difficult to see actual warnings/errors reported by compiler.
+#                                           ( 11.08.2016. Nenad Miksa )
 if( "${CMAKE_CXX_COMPILER}" MATCHES ".*ccache" )
     add_compile_options( -Qunused-arguments )
 endif()
