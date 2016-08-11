@@ -22,12 +22,12 @@ set( TNUN_compiler_runtime_sanity_checks -fsanitize=undefined -fsanitize=integer
 # Leak sanitizer is available only on Clang on Linux x64.
 # http://clang.llvm.org/docs/LeakSanitizer.html
 if( ${CMAKE_SYSTEM_NAME} MATCHES "Linux" AND TNUN_ABI STREQUAL "x64" )
-    list( APPEND TNUN_compiler_runtime_sanity_checks -fsanitize=leak )
+    # list( APPEND TNUN_compiler_runtime_sanity_checks -fsanitize=leak )
     # Implementation note:
     # CMake uses system linker instead of clang wrapper. System linker is not aware of compiler sanitization flags
     # so we need to link with sanitization libraries manually.
     #                                            ( 11.08.2016. Nenad Miksa )
-    set( TNUN_linker_runtime_sanity_checks asan ubsan lsan )
+    set( TNUN_linker_runtime_sanity_checks asan ubsan ) # lsan )
 elseif( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
     # On Mac OSX, CMake uses Clang wrapper around linker, so compiler flags should be added to linker.
     set( TNUN_linker_runtime_sanity_checks -fsanitize=address -fsanitize=undefined )
