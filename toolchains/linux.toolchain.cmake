@@ -14,6 +14,18 @@ set( LINUX true )
 
 set( TNUN_os_suffix Linux )
 
+if( NOT DEFINED TNUN_ABI )
+    if ( ${CMAKE_SIZEOF_VOID_P} EQUAL 8 )
+        set( TNUN_ABI_DEFAULT x64 )
+    else()
+        set( TNUN_ABI_DEFAULT x86 )
+    endif()
+
+    set(TNUN_ABI ${TNUN_ABI_DEFAULT} CACHE STRING "Build architecture / ABI")
+    set_property(CACHE TNUN_ABI PROPERTY STRINGS "x64" "x86")
+
+endif()
+
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
 else()
@@ -30,18 +42,6 @@ add_definitions(
     -D__STDC_FORMAT_MACROS
     -D_GLIBCXX_USE_CXX11_ABI=0
 )
-
-if( NOT DEFINED TNUN_ABI )
-    if ( ${CMAKE_SIZEOF_VOID_P} EQUAL 8 )
-        set( TNUN_ABI_DEFAULT x64 )
-    else()
-        set( TNUN_ABI_DEFAULT x86 )
-    endif()
-
-    set(TNUN_ABI ${TNUN_ABI_DEFAULT} CACHE STRING "Build architecture / ABI")
-    set_property(CACHE TNUN_ABI PROPERTY STRINGS "x64" "x86")
-
-endif()
 
 set( TNUN_arch_include_dir "${CMAKE_CURRENT_LIST_DIR}/linux" )
 include( "${TNUN_arch_include_dir}/${TNUN_ABI}.abi.cmake" )

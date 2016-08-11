@@ -44,7 +44,7 @@ set( TNUN_ABI x64 )
 
 add_compile_options( -mmmx -mfpmath=sse -mcx16 )
 
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     set( USING_CLANG true )
     set( MACOSX_CPP_LIBRARY_DEFAULT "libc++" )
 else()
