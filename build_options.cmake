@@ -62,7 +62,6 @@ TNUN_add_compile_options( Release ${TNUN_compiler_release_flags} )
 option( TNUN_DEBUG_SYMBOLS_IN_RELEASE "Generate debug symbols for easier debugging of release builds" false )
 if ( ${TNUN_DEBUG_SYMBOLS_IN_RELEASE} )
     TNUN_add_compile_options( Release ${TNUN_compiler_debug_symbols} )
-    TNUN_add_link_options   ( Release ${TNUN_linker_debug_symbols} )
 endif()
 
 option( TNUN_ALLOW_EXCEPTIONS "Allow exception support in C++ code" true )
@@ -121,3 +120,7 @@ endfunction()
 
 TNUN_add_link_options( Debug ${TNUN_linker_debug_flags} )
 TNUN_add_link_options( Release ${TNUN_linker_release_flags} )
+
+if ( ${TNUN_DEBUG_SYMBOLS_IN_RELEASE} )
+    TNUN_add_link_options   ( Release ${TNUN_linker_debug_symbols} )
+endif()
