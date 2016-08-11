@@ -16,8 +16,8 @@ list( APPEND TNUN_disabled_warnings -Wno-unknown-warning-option "-Wno-error=#war
 
 # http://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
 # http://clang.llvm.org/docs/UsersManual.html#controlling-code-generation
-set( TNUN_compiler_runtime_sanity_checks -fsanitize=undefined -fsanitize=integer -fsanitize=address -fno-omit-frame-pointer )
-set( TNUN_linker_runtime_sanity_checks -Wl,-fsanitize=address ubsan )
+set( TNUN_compiler_runtime_sanity_checks -fsanitize=undefined -fsanitize=integer -fsanitize=address -fno-omit-frame-pointer -fsanitize=leak )
+set( TNUN_linker_runtime_sanity_checks asan ubsan lsan )
 
 # Implementation note:
 # When clang is used behind ccache, it throws a lot of "unused-argument" warnings.
