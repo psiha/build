@@ -15,8 +15,15 @@ list( APPEND TNUN_compiler_report_optimization -Rpass=loop-.* )
 list( APPEND TNUN_disabled_warnings -Wno-unknown-warning-option "-Wno-error=#warnings" -Wno-attributes $<$<COMPILE_LANGUAGE:CXX>:-Wno-overloaded-virtual> )
 
 # http://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
+# http://clang.llvm.org/docs/AddressSanitizer.html
+# http://clang.llvm.org/docs/LeakSanitizer.html
 # http://clang.llvm.org/docs/UsersManual.html#controlling-code-generation
 set( TNUN_compiler_runtime_sanity_checks -fsanitize=undefined -fsanitize=integer -fsanitize=address -fno-omit-frame-pointer -fsanitize=leak )
+
+# Implementation note:
+# CMake uses system linker instead of clang wrapper. System linker is not aware of compiler sanitization flags
+# so we need to link with sanitization libraries manually.
+#                                            ( 11.08.2016. Nenad Miksa )
 set( TNUN_linker_runtime_sanity_checks asan ubsan lsan )
 
 # Implementation note:
