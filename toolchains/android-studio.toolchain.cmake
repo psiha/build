@@ -20,6 +20,8 @@ add_definitions( -D__ANDROID__ )
 
 set( TNUN_os_suffix Android )
 
+set( CMAKE_CROSSCOMPILING true )
+
 if("${ANDROID_TOOLCHAIN}" STREQUAL "clang")
     include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
 
