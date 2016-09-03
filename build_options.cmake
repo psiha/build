@@ -64,41 +64,6 @@ if ( ${TNUN_DEBUG_SYMBOLS_IN_RELEASE} )
     TNUN_add_compile_options( Release ${TNUN_compiler_debug_symbols} )
 endif()
 
-option( TNUN_ALLOW_EXCEPTIONS "Allow exception support in C++ code" true )
-option( TNUN_ALLOW_RTTI "Allow Runtime Type Information in C++ code" false )
-
-if( ${CMAKE_GENERATOR} MATCHES "Visual Studio" )
-    if( ${TNUN_ALLOW_EXCEPTIONS} )
-        add_compile_options( ${TNUN_compiler_exceptions_on} )
-    else()
-        add_compile_options( ${TNUN_compiler_exceptions_off} )
-    endif()
-
-    if( ${TNUN_ALLOW_RTTI} )
-        add_compile_options( ${TNUN_compiler_rtti_on} )
-    else()
-        add_compile_options( ${TNUN_compiler_rtti_off} )
-    endif()
-else()
-    if( ${TNUN_ALLOW_EXCEPTIONS} )
-        add_compile_options( $<$<COMPILE_LANGUAGE:CXX>:${TNUN_compiler_exceptions_on}> )
-    else()
-        add_compile_options( $<$<COMPILE_LANGUAGE:CXX>:${TNUN_compiler_exceptions_off}> )
-    endif()
-
-    if( ${TNUN_ALLOW_RTTI} )
-        add_compile_options( $<$<COMPILE_LANGUAGE:CXX>:${TNUN_compiler_rtti_on}> )
-    else()
-        add_compile_options( $<$<COMPILE_LANGUAGE:CXX>:${TNUN_compiler_rtti_off}> )
-    endif()
-endif()
-
-if( NOT ANDROID AND NOT iOS )
-    option( TNUN_NATIVE_CPU_OPTIMIZATION "Perform optimizations specific to host CPU" true )
-    if( ${TNUN_NATIVE_CPU_OPTIMIZATION} )
-        TNUN_add_compile_options( Release ${TNUN_native_optimization} )
-    endif()
-endif()
 
 ################################################################################
 #
