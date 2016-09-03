@@ -26,7 +26,6 @@ set( TNUN_compiler_report_optimization -ftree-vectorizer-verbose=6           )
 set( TNUN_compiler_release_flags       -DNDEBUG -fomit-frame-pointer -ffunction-sections -fmerge-all-constants -fno-stack-protector )
 set( TNUN_default_warnings             -Wall -Wextra -Wstrict-aliasing       )
 set( TNUN_warnings_as_errors           -Werror                               )
-set( TNUN_disabled_warnings            -Wno-unknown-pragmas -Wno-unused-parameter -Wno-ignored-qualifiers -Wno-sign-conversion -Wno-clobbered -Wno-format-zero-length -Wno-error=deprecated-declarations     )
 set( TNUN_native_optimization          -march=native -mtune=native           )
 
 add_compile_options( -fstrict-aliasing $<$<COMPILE_LANGUAGE:CXX>:-fstrict-enums> -fvisibility=hidden $<$<COMPILE_LANGUAGE:CXX>:-fvisibility-inlines-hidden> -fPIC )

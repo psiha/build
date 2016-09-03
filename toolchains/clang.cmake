@@ -12,7 +12,6 @@ include( "${CMAKE_CURRENT_LIST_DIR}/gcc_compatibles.cmake" )
 
 list( APPEND TNUN_compiler_optimize_for_speed -fvectorize -fslp-vectorize -fslp-vectorize-aggressive )
 list( APPEND TNUN_compiler_report_optimization -Rpass=loop-.* )
-list( APPEND TNUN_disabled_warnings -Wno-unknown-warning-option "-Wno-error=#warnings" -Wno-attributes $<$<COMPILE_LANGUAGE:CXX>:-Wno-overloaded-virtual> )
 
 # http://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
 # http://clang.llvm.org/docs/AddressSanitizer.html
