@@ -9,7 +9,7 @@
 # https://cmake.org/Bug/view.php?id=15939
 # http://stackoverflow.com/questions/31355692/cmake-support-for-gccs-link-time-optimization-lto
 set( CMAKE_INTERPROCEDURAL_OPTIMIZATION true )
-#set( CMAKE_VISIBILITY_INLINES_HIDDEN    true )
+set( CMAKE_VISIBILITY_INLINES_HIDDEN    true )
 
 set( TNUN_compiler_debug_symbols       -g                                    )
 set( TNUN_compiler_debug_flags         -O0 -DDEBUG                           )
@@ -33,7 +33,7 @@ add_compile_options( -fstrict-aliasing $<$<COMPILE_LANGUAGE:CXX>:-fstrict-enums>
 # "Unknown language" error with CMake 3.5.2 if COMPILE_LANGUAGE:C is used.
 # + 'COMPILE_LANGUAGE' isn't supported by VS generators:
 # https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#logical-expressions
-add_compile_options( $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++14> )
+add_compile_options( $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++1z> )
 add_compile_options( $<$<NOT:$<COMPILE_LANGUAGE:CXX>>:-std=gnu11> )
 set( CMAKE_C_STANDARD   11 )
 set( CMAKE_CXX_STANDARD 14 )

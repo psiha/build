@@ -29,7 +29,7 @@ set( TNUN_compiler_report_optimization   -Qpar-report:1 -Qvec-report:2          
 set( TNUN_compiler_optimize_for_speed    -Ox -Ot -Qpar                               ) # https://msdn.microsoft.com/en-us/library/jj658585.aspx Vectorizer and Parallelizer Messages
 set( TNUN_compiler_runtime_sanity_checks -GS -sdl -guard:cf -fp:strict -RTC1 -RTCc -D_ALLOW_RTCc_IN_STL ) # https://www.reddit.com/r/cpp/comments/46mhne/rtcc_rejects_conformant_code_with_visual_c_2015
 set( TNUN_warnings_as_errors             -WX )
-set( TNUN_default_warnings               -W3 )
+set( TNUN_default_warnings               -W4 )
 
 
 # w4373: '...': virtual function overrides '...', previous versions of the compiler did not override when parameters only differed by const/volatile qualifiers
@@ -40,10 +40,6 @@ add_definitions(
   -D_SCL_SECURE_NO_WARNINGS
   -D_SBCS
   -D_WIN32_WINNT=0x0601 # Win7
-  -DNO_STRICT
-  -DNOMINMAX
-  -DWIN32_LEAN_AND_MEAN
-  -D_USE_MATH_DEFINES
 )
 
 set( TNUN_ABIs
@@ -59,25 +55,8 @@ if( NOT DEFINED TNUN_ABI )
   endif()
 endif()
 
-
 set( TNUN_arch_include_dir "${CMAKE_CURRENT_LIST_DIR}/windows" )
 include( "${TNUN_arch_include_dir}/${TNUN_ABI}.abi.cmake" )
-
-# Detect Visual Studio Version
-if( ${CMAKE_GENERATOR} MATCHES "Visual Studio" )
-    if(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 20 AND ${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 19)
-        message(STATUS "Detected Visual Studio 2015 (MSVC ${CMAKE_CXX_COMPILER_VERSION})")
-        set(VS_VERSION "VS2015")
-    elseif(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 19 AND ${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 18)
-        message(STATUS "Detected Visual Studio 2013 (MSVC ${CMAKE_CXX_COMPILER_VERSION})")
-        set(VS_VERSION "VS2013")
-    elseif(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 18 AND ${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 17)
-        message(STATUS "Detected Visual Studio 2012 (MSVC ${CMAKE_CXX_COMPILER_VERSION})")
-        set(VS_VERSION "VS2012")
-    else()
-        message(FATAL_ERROR "Unkown MSVC version")
-    endif()
-endif()
 
 ################################################################################
 # TNUN_setup_target_for_arch()

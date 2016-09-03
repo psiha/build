@@ -19,9 +19,7 @@ set( CMAKE_MACOSX_RPATH 0 ) # even with the policy set CMake 3.5.2 still issues 
 
 set( CMAKE_OSX_ARCHITECTURES           "$(ARCHS_STANDARD)" )
 set( CMAKE_XCODE_ATTRIBUTE_VALID_ARCHS "$(ARCHS_STANDARD_32_64_BIT)" )
-if( ${CMAKE_GENERATOR} MATCHES "Xcode" )
-    set( CMAKE_OSX_DEPLOYMENT_TARGET "10.11"                       )
-endif()
+set( CMAKE_OSX_DEPLOYMENT_TARGET       "10.7"                        )
 set( CPACK_SYSTEM_NAME                 "OSX"                         )
 
 # Implementation note:
