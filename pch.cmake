@@ -11,6 +11,16 @@
 # GCC: The precompiled header is always automatically included from
 # every header file.
 #
+# Notes:
+#   ##   All dependencies of target must be defined at the point where
+#        PCH is being added - this is required to correctly collect compile
+#        options exported from dependencies.
+#   ##   Unwrapping of generator expression is supported as long as there
+#        are no multiple compile flags in single generator expression, i.e.
+#        $<$<COFIG:DEBUG>:-flag> is supported, but $<$<COFIG:DEBUG>:-flag1 -flag2>
+#        is not.
+
+#
 # Copyright (C) 2009-2013 Lars Christensen <larsch@belunktum.dk>
 # Copyright (C) 2013-2016 Nenad Mikša <nenad.miksa@microblink.com>
 #
