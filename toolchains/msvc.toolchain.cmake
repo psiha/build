@@ -34,7 +34,8 @@ set( TNUN_default_warnings               -W4 )
 
 # w4373: '...': virtual function overrides '...', previous versions of the compiler did not override when parameters only differed by const/volatile qualifiers
 # w4324: 'structure was padded due to alignment specifier'
-add_compile_options( /std:c++latest -MP -Oi -Zc:threadSafeInit- )
+# In VS 2015 u3, /std:c++latest causes error C2039: 'ptr_fun': is not a member of 'std'
+add_compile_options( -MP -Oi -Zc:threadSafeInit- )
 add_definitions(
   -D_CRT_SECURE_NO_WARNINGS
   -D_SCL_SECURE_NO_WARNINGS
