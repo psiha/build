@@ -56,8 +56,10 @@ SDK_VERSION=$(echo ${SDK_NAME} | grep -o '.\{3\}$')
 if [ ${PLATFORM_NAME} = "iphonesimulator" ]
 then
 OTHER_SDK_TO_BUILD=iphoneos${SDK_VERSION}
+ARCHITECTURES="armv7 armv7s arm64"
 else
 OTHER_SDK_TO_BUILD=iphonesimulator${SDK_VERSION}
+ARCHITECTURES="i386 x86_64"
 fi
 
 echo "XCode has selected SDK: ${PLATFORM_NAME} with version: ${SDK_VERSION} (although back-targetting: ${IPHONEOS_DEPLOYMENT_TARGET})"
@@ -89,7 +91,7 @@ export ALREADYINVOKED="true"
 echo "RECURSION: I am the root ... recursing all missing build targets NOW..."
 echo "RECURSION: ...about to invoke: xcodebuild -configuration \"${CONFIGURATION}\" -project \"${PROJECT_NAME}.xcodeproj\" -target \"${TARGET_NAME}\" -sdk \"${OTHER_SDK_TO_BUILD}\" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO" BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\" SYMROOT=\"${SYMROOT}\"
 
-xcodebuild -configuration "${CONFIGURATION}" -project "${PROJECT_NAME}.xcodeproj" -target "${TARGET_NAME}" -sdk "${OTHER_SDK_TO_BUILD}" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" BUILD_ROOT="${BUILD_ROOT}" SYMROOT="${SYMROOT}"
+xcodebuild -configuration "${CONFIGURATION}" -project "${PROJECT_NAME}.xcodeproj" -target "${TARGET_NAME}" -sdk "${OTHER_SDK_TO_BUILD}" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" BUILD_ROOT="${BUILD_ROOT}" SYMROOT="${SYMROOT}" ARCHS="${ARCHITECTURES}"
 
 ACTION="build"
 
@@ -110,8 +112,8 @@ echo "...I will output a universal build to: ${CREATING_UNIVERSAL_DIR}"
 # ... remove the products of previous runs of this script
 #      NB: this directory is ONLY created by this script - it should be safe to delete!
 
-rm -rf "${CREATING_UNIVERSAL_DIR}"
-mkdir "${CREATING_UNIVERSAL_DIR}"
+# rm -rf "${CREATING_UNIVERSAL_DIR}"
+mkdir -p "${CREATING_UNIVERSAL_DIR}"
 
 #
 echo "lipo: for current configuration (${CONFIGURATION}) creating output file: ${CREATING_UNIVERSAL_DIR}/${EXECUTABLE_NAME}"
