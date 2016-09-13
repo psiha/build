@@ -21,8 +21,6 @@
 include( "${CMAKE_CURRENT_LIST_DIR}/apple.cmake" )
 unset( TNUN_native_optimization ) # This makes no sense when cross-compiling.
 
-add_compile_options( $<$<COMPILE_LANGUAGE:CXX>:-x objective-c++> )
-
 # Standard settings
 set( CMAKE_SYSTEM_NAME      Darwin )
 set( CPACK_SYSTEM_NAME      iOS    )
@@ -30,7 +28,18 @@ set( CMAKE_SYSTEM_VERSION   6      )
 set( CMAKE_SYSTEM_PROCESSOR arm    )
 set( APPLE true )
 set( iOS   true )
+# compatibility with build scripts that rely on ios toolchains defining IOS instead of iOS
+# CMake variables are case sensitive (unlike functions, macros and commands: https://cmake.org/cmake/help/latest/manual/cmake-language.7.html#variables
+set( IOS   true )
 set( UNIX  true )
+
+if( NOT ${CMAKE_GENERATOR} MATCHES "Xcode" )
+    message( FATAL_ERROR "iOS toolchain supports only XCode generator" )
+endif()
+
+# Compiler detection is skipped, so we must manually set these variables so code that depend on them can work
+set( CMAKE_CXX_COMPILER_ID "AppleClang" CACHE STRING "C++ compiler id" )
+set( CMAKE_C_COMPILER_ID "AppleClang"  CACHE STRING "C compiler id" )
 
 set( TNUN_os_suffix iOS )
 
