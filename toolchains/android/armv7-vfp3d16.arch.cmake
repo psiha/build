@@ -33,7 +33,7 @@ list( APPEND TNUN_compiler_optimize_for_speed -marm   )
 option( TNUN_ANDROID_ARM7_HARDFLOAT_ABI "Use hardfloat ABI for armv7 binaries" false )
 if( ${TNUN_ANDROID_ARM7_HARDFLOAT_ABI} )
     add_compile_options( -mhard-float -D_NDK_MATH_NO_SOFTFP=1 )
-    link_libraries( -Wl,-lm_hard )
+    link_libraries( -Wl,--no-warn-mismatch -lm_hard )
 endif()
 
 # this is *required* to use the following linker flags that routes around
