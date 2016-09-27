@@ -228,6 +228,7 @@ set( CMAKE_OBJDUMP      "${ANDROID_TOOLCHAIN_ROOT}/bin/${_CMAKE_TOOLCHAIN_PREFIX
 set( CMAKE_RANLIB       "${ANDROID_TOOLCHAIN_ROOT}/bin/${_CMAKE_TOOLCHAIN_PREFIX}ranlib${TOOL_OS_SUFFIX}"  )
 
 include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
+unset( TNUN_native_optimization ) # This makes no sense when cross-compiling.
 
 add_definitions( -DANDROID -D__ANDROID__ )
 

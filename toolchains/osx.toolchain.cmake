@@ -17,9 +17,8 @@ include( "${CMAKE_CURRENT_LIST_DIR}/apple.cmake" )
 cmake_policy( SET CMP0042 OLD )
 set( CMAKE_MACOSX_RPATH 0 ) # even with the policy set CMake 3.5.2 still issues the warning?
 
-set( CMAKE_OSX_ARCHITECTURES           "$(ARCHS_STANDARD_32_64_BIT)" )
+set( CMAKE_OSX_ARCHITECTURES           "$(ARCHS_STANDARD)" )
 set( CMAKE_XCODE_ATTRIBUTE_VALID_ARCHS "$(ARCHS_STANDARD_32_64_BIT)" )
-set( CMAKE_OSX_SYSROOT                 "macosx"                      ) #"Latest Mac OS X"
 set( CMAKE_OSX_DEPLOYMENT_TARGET       "10.7"                        )
 set( CPACK_SYSTEM_NAME                 "OSX"                         )
 
@@ -39,17 +38,12 @@ set( TNUN_os_suffix OSX )
 
 set( TNUN_cpu_archs default )
 
+set( TNUN_ABI x64 )
+
 add_compile_options( -mmmx -mfpmath=sse -mcx16 )
 
-#...mrmlj...todo...
-#if ( <arch> STREQUAL sse3 )
-#    set( XCODE_ATTRIBUTE_CFLAGS_i386   "-msse3  -march=prescott -mtune=core2"  )
-#    set( XCODE_ATTRIBUTE_CFLAGS_x86_64 "-mssse3 -march=core2    -mtune=corei7" )
-#elseif ( <arch> STREQUAL sse4.1 )
-#    set( XCODE_ATTRIBUTE_CFLAGS_i386   "-msse4.1 -march=core2 -mtune=core2"  )
-#    set( XCODE_ATTRIBUTE_CFLAGS_x86_64 "-msse4.1 -march=core2 -mtune=corei7" )
-#endif()
-
+set( TNUN_LIBCPP_LOCATION /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1 )
+include( ${CMAKE_CURRENT_LIST_DIR}/gcc_compatibles_stl.cmake )
 
 ################################################################################
 # TNUN_setup_target_for_arch()
