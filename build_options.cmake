@@ -9,10 +9,14 @@
 # http://www.cmake.org/Wiki/CMake_Cross_Compiling
 # https://cmake.org/cmake/help/latest/manual/cmake-toolchains.7.html
 # http://stackoverflow.com/questions/12802377/in-cmake-how-can-i-find-the-directory-of-an-included-file
-if ( WIN32 )
+if ( WIN32 ) # TODO: add detection of Windows Phone / Windows Universal platform
     include( "${CMAKE_CURRENT_LIST_DIR}/toolchains/msvc.toolchain.cmake" )
 elseif( APPLE AND NOT iOS )
     include( "${CMAKE_CURRENT_LIST_DIR}/toolchains/osx.toolchain.cmake" )
+elseif( ${CMAKE_SYSTEM_NAME} MATCHES "Linux" )
+    include( "${CMAKE_CURRENT_LIST_DIR}/toolchains/linux.toolchain.cmake" )
+elseif( ANDROID_TOOLCHAIN ) # TNUN android.toolchain.cmake does not define this variable, while native Android Studio toolchain does
+    include( "${CMAKE_CURRENT_LIST_DIR}/toolchains/android-studio.toolchain.cmake" )
 else()
     # Android and iOS (crosscompiling platforms) have to specify the toolchain
     # file explicitly.
@@ -51,9 +55,6 @@ function( TNUN_add_compile_options configuration )
         add_compile_options( $<$<CONFIG:${configuration}>:${arg}> )
     endforeach()
 endfunction()
-
-TNUN_add_compile_options( Release ${TNUN_compiler_release_flags} )
-
 
 ################################################################################
 #

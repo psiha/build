@@ -15,6 +15,8 @@ include( "${CMAKE_CURRENT_LIST_DIR}/windows.cmake" )
 # (e.g. generator expressions).
 #                                             (01.06.2016.) (Domagoj Saric)
 set( TNUN_compiler_debug_symbols         -Zi                                         )
+set( TNUN_compiler_debug_flags           -DDEBUG -Od -MDd                            )
+set( TNUN_compiler_release_flags         -DNDEBUG -Bt -Ox -Ob2 -Oy -GF -Gw -Gm- -GS- -Gy -MD )
 set( TNUN_linker_debug_symbols           -DEBUG                                      )
 set( TNUN_compiler_LTO                   -GL                                         )
 set( TNUN_linker_LTO                     -LTCG                                       )
@@ -26,19 +28,19 @@ set( TNUN_compiler_exceptions_off        -wd4577                                
 set( TNUN_compiler_report_optimization   -Qpar-report:1 -Qvec-report:2               )
 set( TNUN_compiler_optimize_for_speed    -Ox -Ot -Qpar                               ) # https://msdn.microsoft.com/en-us/library/jj658585.aspx Vectorizer and Parallelizer Messages
 set( TNUN_compiler_runtime_sanity_checks -GS -sdl -guard:cf -fp:strict -RTC1 -RTCc -D_ALLOW_RTCc_IN_STL ) # https://www.reddit.com/r/cpp/comments/46mhne/rtcc_rejects_conformant_code_with_visual_c_2015
+set( TNUN_warnings_as_errors             -WX )
+set( TNUN_default_warnings               -W4 )
 
-set( TNUN_compiler_release_flags -DNDEBUG -Bt -Ox -Ob2 -Oy -GF -Gw -Gm- -GS- -Gy )
 
 # w4373: '...': virtual function overrides '...', previous versions of the compiler did not override when parameters only differed by const/volatile qualifiers
 # w4324: 'structure was padded due to alignment specifier'
-add_compile_options( /std:c++latest -MP -Oi -W4 -Zc:threadSafeInit- -wd4324 -wd4373 -wd4100 -wd4456 -wd4067 -wd4995 -wd4635 -wd4800 -wd4101 -wd4756 -wd4068 -wd4056 -wd4996 -wd4503)
+add_compile_options( /std:c++latest -MP -Oi -Zc:threadSafeInit- )
 add_definitions(
   -D_CRT_SECURE_NO_WARNINGS
   -D_SCL_SECURE_NO_WARNINGS
   -D_SBCS
   -D_WIN32_WINNT=0x0601 # Win7
 )
-
 
 set( TNUN_ABIs
   Win32
@@ -53,10 +55,8 @@ if( NOT DEFINED TNUN_ABI )
   endif()
 endif()
 
-
 set( TNUN_arch_include_dir "${CMAKE_CURRENT_LIST_DIR}/windows" )
 include( "${TNUN_arch_include_dir}/${TNUN_ABI}.abi.cmake" )
-
 
 ################################################################################
 # TNUN_setup_target_for_arch()

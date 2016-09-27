@@ -12,6 +12,7 @@ set( CMAKE_INTERPROCEDURAL_OPTIMIZATION true )
 set( CMAKE_VISIBILITY_INLINES_HIDDEN    true )
 
 set( TNUN_compiler_debug_symbols       -g                                    )
+set( TNUN_compiler_debug_flags         -O0 -DDEBUG                           )
 set( TNUN_compiler_LTO                 -flto                                 )
 set( TNUN_linker_LTO                   -flto                                 )
 set( TNUN_compiler_fastmath            -ffast-math -ffp-contract=fast -Ofast )
@@ -22,15 +23,29 @@ set( TNUN_compiler_exceptions_off      -fno-exceptions                       )
 set( TNUN_compiler_optimize_for_speed  -O3                                   )
 set( TNUN_compiler_optimize_for_size   -Os                                   )
 set( TNUN_compiler_report_optimization -ftree-vectorizer-verbose=6           )
-set( TNUN_compiler_release_flags       -DNDEBUG -fomit-frame-pointer -ffunction-sections -fdata-sections -fmerge-all-constants -fno-stack-protector )
+set( TNUN_compiler_release_flags       -DNDEBUG -fomit-frame-pointer -ffunction-sections -fmerge-all-constants -fno-stack-protector )
+set( TNUN_default_warnings             -Wall -Wextra -Wstrict-aliasing       )
+set( TNUN_warnings_as_errors           -Werror                               )
+set( TNUN_native_optimization          -march=native -mtune=native           )
 
-add_compile_options( -fstrict-aliasing -fstrict-enums -fvisibility=hidden -fvisibility-inlines-hidden -fno-threadsafe-statics -Wall -Wstrict-aliasing -Wno-multichar -Wno-unknown-pragmas -Wno-unused-local-typedefs )
+add_compile_options( -fstrict-aliasing $<$<COMPILE_LANGUAGE:CXX>:-fstrict-enums> -fvisibility=hidden $<$<COMPILE_LANGUAGE:CXX>:-fvisibility-inlines-hidden> -fPIC )
 
 # "Unknown language" error with CMake 3.5.2 if COMPILE_LANGUAGE:C is used.
 # + 'COMPILE_LANGUAGE' isn't supported by VS generators:
 # https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#logical-expressions
-add_compile_options( $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++1z> )
-add_compile_options( $<$<NOT:$<COMPILE_LANGUAGE:CXX>>:-std=gnu11> )
+
+## Implementation note:
+# set( CMAKE_CXX_STANDARD 14 ) appends '-std=gnu++14' option on all targets after all compile flags have been processed.
+# This means that '-std=gnu++14' is given to compiler *after* '-std=gnu++1z', which basically disables C++1z support.
+# Correct way of enabling C++1z would be by uncommenting line below and commenting out line 'set( CMAKE_CXX_STANDARD 14 )'.
+# However, such decision can cause problems with some 3rd party libraries (Qt for instance) which have their own CMake 
+# packages which enfore usage of this variable.
+#                                                     ( 04.09.2016. Nenad Miksa )
+
+# add_compile_options( $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++1z> )
+# add_compile_options( $<$<NOT:$<COMPILE_LANGUAGE:CXX>>:-std=gnu11> )
+
+
 set( CMAKE_C_STANDARD   11 )
 set( CMAKE_CXX_STANDARD 14 )
 
