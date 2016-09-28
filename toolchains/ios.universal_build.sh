@@ -111,7 +111,7 @@ echo "...I will output a universal build to: ${CREATING_UNIVERSAL_DIR}"
 
 # ... remove the products of previous runs of this script
 #      NB: this directory is ONLY created by this script - it should be safe to delete!
-# Modification: multiple targets are supported by preventing the deletion of the
+# MODIFICATION: multiple targets are supported by preventing the deletion of the
 # build results folder each time script is invoked
 # rm -rf "${CREATING_UNIVERSAL_DIR}"
 mkdir -p "${CREATING_UNIVERSAL_DIR}"
