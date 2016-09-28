@@ -12,11 +12,12 @@ include( "${CMAKE_CURRENT_LIST_DIR}/gcc_compatibles.cmake" )
 
 list( APPEND TNUN_compiler_optimize_for_speed -fvectorize -fslp-vectorize -fslp-vectorize-aggressive )
 list( APPEND TNUN_compiler_report_optimization -Rpass=loop-.* )
+list( APPEND TNUN_compiler_LTO -fwhole-program-vtables )
 
 # http://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
 # http://clang.llvm.org/docs/AddressSanitizer.html
 # http://clang.llvm.org/docs/UsersManual.html#controlling-code-generation
-set( TNUN_linker_runtime_sanity_checks -fsanitize=undefined -fsanitize=integer -fsanitize=address )
+set( TNUN_linker_runtime_sanity_checks -fsanitize=undefined -fsanitize=integer -fsanitize=address ) # AppleClang lag: -fsanitize=thread -fsanitize=memory -fsanitize=dataflow -fsanitize=cfi -fsanitize=safe-stack
 set( TNUN_compiler_runtime_sanity_checks ${TNUN_linker_runtime_sanity_checks} -fno-omit-frame-pointer )
 
 # Leak sanitizer is available only on Clang on Linux x64.
