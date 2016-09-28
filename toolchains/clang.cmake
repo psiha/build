@@ -24,6 +24,7 @@ set( TNUN_compiler_runtime_integer_checks ${TNUN_compiler_runtime_integer_checks
 
 # Leak sanitizer is available only on Clang on Linux x64.
 # http://clang.llvm.org/docs/LeakSanitizer.html
+# Currently it is very very slow (two orders of magnitude slower than Valgrind).
 #if( ${CMAKE_SYSTEM_NAME} MATCHES "Linux" AND TNUN_ABI STREQUAL "x64" )
 #    list( APPEND TNUN_compiler_runtime_sanity_checks -fsanitize=leak )
 #    list( APPEND TNUN_linker_runtime_sanity_checks -fsanitize=leak)
