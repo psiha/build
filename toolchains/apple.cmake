@@ -31,6 +31,13 @@ else()
     add_compile_options( -mconstant-cfstrings )
 endif()
 
+# Xcode (7 & 8) report that function-sections are incompatible embed-bitcode
+set( CMAKE_XCODE_ATTRIBUTE_ENABLE_BITCODE "NO" )
+function( TNUN_enable_bitcode )
+  add_compile_options( -fno-function-sections )
+  set( CMAKE_XCODE_ATTRIBUTE_ENABLE_BITCODE "YES" )
+endfunction()
+
 link_libraries( $<$<CONFIG:RELEASE>:-dead_strip> )
 
 set( TNUN_ABI   default    )
