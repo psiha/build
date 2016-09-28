@@ -71,6 +71,7 @@ endif()
 TNUN_add_compile_options( Debug   ${TNUN_compiler_debug_flags} ${TNUN_compiler_debug_symbols} ${TNUN_compiler_runtime_sanity_checks} )
 TNUN_add_link_options   ( Debug   ${TNUN_linker_runtime_sanity_checks} )
 TNUN_add_compile_options( Release ${TNUN_compiler_release_flags} )
+add_compile_options( ${TNUN_default_warnings} )
 
 
 # Implementation note:
