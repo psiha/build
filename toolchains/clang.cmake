@@ -43,4 +43,4 @@ endif()
 
 add_compile_options( -Wheader-guard -fdiagnostics-color )
 
-set( USING_CLANG true )
+set( CLANG true )

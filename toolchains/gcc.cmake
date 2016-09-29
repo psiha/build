@@ -15,4 +15,4 @@ endif()
 
 add_compile_options( -fdiagnostics-color )
 
-set( USING_GCC true )
+set( GCC true )
