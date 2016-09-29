@@ -14,15 +14,15 @@
 #
 # c.f. http://stackoverflow.com/questions/3520977/build-fat-static-library-device-simulator-using-xcode-and-sdk-4
 #
-# Version 2.7
+# Version 2.8
 #
 # Latest Change:
-# - Supports iPhone 5 / iPod Touch 5 (uses Apple's workaround to lipo bug)
+# - Support iOS 10+
 # 
 # Purpose:
 #   Automatically create a Universal static library for iPhone + iPad + iPhone Simulator from within XCode
 #
-# Author: Adam Martin - http://twitter.com/t_machine_org
+# Author: Adam Martin - http://twitter.com/redglassesapps
 # Based on: original script from Eonil (main changes: Eonil's script WILL NOT WORK in Xcode GUI - it WILL CRASH YOUR COMPUTER)
 #
 
