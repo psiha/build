@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Build by psiha</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Build</h1>
+      <h2 class="project-tagline">A CMake-based cross-platform build system and utilities.</h2>
+      <a href="https://github.com/psiha/build" class="btn">View on GitHub</a>
+      <a href="https://github.com/psiha/build/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/psiha/build/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Introduction</h1>
+
+<p>Reusable (CMake) components for cross-platform project builds:</p>
+
+<ul>
+<li>PCH</li>
+<li>portable compiler and linker option 'abstractions' (e.g. 'fast math', LTCG/LTO, etc.)</li>
+<li>multi arch/toolchain builds in a single (master) build directory</li>
+</ul>
+
+<h2>
+<a id="prerequisites" class="anchor" href="#prerequisites" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Prerequisites</h2>
+
+<p><a href="http://cmake.org">CMake</a> <a href="http://cmake.org/cmake-tutorial">(Tutorial)</a></p>
+
+<p><a href="https://ninja-build.org">Ninja</a></p>
+
+<h2>
+<a id="standardcommon-procedure-for-setting-up-a-project-build-with-cmake" class="anchor" href="#standardcommon-procedure-for-setting-up-a-project-build-with-cmake" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Standard/common procedure for setting up a project build with CMake</h2>
+
+<ul>
+<li>Open CMake.</li>
+<li>Set the source code folder to the "source" folder (the one containing
+the CMakeLists.txt file).</li>
+<li>Set the binary folder according to your preference (this is where
+the platform &amp; IDE specific files will be placed, like Visual Studio
+solution&amp;project files).</li>
+<li>Press "Configure".</li>
+<li>Choose the desired generator (and toolchain file if crosscompiling).</li>
+<li>Press "Configure".</li>
+<li>Press "Generate".</li>
+<li>CMake can (but does not have to) be closed at this point.</li>
+<li>Open the generated native project using the appropriate IDE.</li>
+</ul>
+
+<h2>
+<a id="standard-development-environment" class="anchor" href="#standard-development-environment" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Standard development environment</h2>
+
+<ul>
+<li>
+<p>Supported platforms:</p>
+
+<ul>
+<li>Android</li>
+<li>Linux</li>
+<li>iOS (w/ Xcode8)</li>
+<li>OSX (w/ Xcode8)</li>
+<li>Windows (w/ Visual Studio 2015u3)</li>
+</ul>
+</li>
+<li>
+<p>Supported compilers:</p>
+
+<ul>
+<li>Clang</li>
+<li>GCC</li>
+<li>MSVC</li>
+</ul>
+</li>
+<li>
+<p>Supported/tested build engines/IDEs:</p>
+
+<ul>
+<li>Ninja</li>
+<li>MSBuild</li>
+<li>QtCreator</li>
+<li>Visual Studio</li>
+<li>Xcode</li>
+</ul>
+</li>
+<li>
+<p>Recommended tools:</p>
+
+<ul>
+<li><a href="http://www.doxygen.org">Doxygen</a></li>
+<li><a href="http://www.git-scm.com">Git</a></li>
+<li><a href="https://tortoisegit.org">TortoiseGit</a></li>
+<li>
+<a href="https://notepad-plus-plus.org">Notepad++</a> or <a href="https://sublimetext.com">Sublime Text</a> (for editing CMake scripts)</li>
+</ul>
+</li>
+</ul>
+
+<h2>
+<a id="standard-release-procedure" class="anchor" href="#standard-release-procedure" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Standard release procedure</h2>
+
+<ol>
+<li>Make sure you have a clean source tree of the project and all
+submodules and 3rd party libraries.</li>
+<li>Update the product's "Release notes" documentation section with the
+changes for this version.</li>
+<li>Create an appropriate branch/tag for the released version.</li>
+<li>Build the "Release" build/version of the "PACKAGE" target.</li>
+<li>Test/verify.</li>
+<li>Publish.</li>
+</ol>
+
+<h2>
+<a id="relatedsimilar-endeavours" class="anchor" href="#relatedsimilar-endeavours" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Related/similar endeavours</h2>
+
+<ul>
+<li><a href="http://nickhutchinson.me/cmake-toolkit">http://nickhutchinson.me/cmake-toolkit</a></li>
+</ul>
+
+<h1>
+<a id="sponsored-by" class="anchor" href="#sponsored-by" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Sponsored by:</h1>
+
+<p><img src="https://avatars2.githubusercontent.com/u/9021024?v=3&amp;amp;s=200" alt="microblink"><br>
+<a href="https://github.com/microblink" class="user-mention">@microblink</a></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/psiha/build">Build</a> is maintained by <a href="https://github.com/psiha">psiha</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
