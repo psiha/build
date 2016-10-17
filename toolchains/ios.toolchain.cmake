@@ -74,6 +74,8 @@ set( XCODE_ATTRIBUTE_CFLAGS_armv7s "                -mtune=cortex-a15" ) # http:
 #                                             (13.05.2016.) (Domagoj Saric)
 string( REPLACE "-Rpass=loop-.*" "" TNUN_compiler_optimize_for_speed  "${TNUN_compiler_optimize_for_speed}" )
 
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}" )
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}" )
 
 ################################################################################
 # TNUN_ios_add_universal_build()
