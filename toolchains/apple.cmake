@@ -36,6 +36,7 @@ set( CMAKE_XCODE_ATTRIBUTE_ENABLE_BITCODE "NO" )
 function( TNUN_enable_bitcode )
   add_compile_options( -fno-function-sections )
   set( CMAKE_XCODE_ATTRIBUTE_ENABLE_BITCODE "YES" )
+  set( CMAKE_XCODE_ATTRIBUTE_BITCODE_GENERATION_MODE "bitcode" ) # Without this, Xcode adds -fembed-bitcode-marker compile options instead of -fembed-bitcode
 endfunction()
 
 link_libraries( $<$<CONFIG:RELEASE>:-dead_strip> )
