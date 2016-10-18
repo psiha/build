@@ -12,7 +12,9 @@ include( "${CMAKE_CURRENT_LIST_DIR}/gcc_compatibles.cmake" )
 
 list( APPEND TNUN_compiler_optimize_for_speed -fvectorize -fslp-vectorize -fslp-vectorize-aggressive )
 list( APPEND TNUN_compiler_report_optimization -Rpass=loop-.* )
-list( APPEND TNUN_compiler_LTO -fwhole-program-vtables )
+if( NOT ${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang" ) # Tested with XCode 8
+    list( APPEND TNUN_compiler_LTO -fwhole-program-vtables )
+endif()
 
 # http://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
 # http://clang.llvm.org/docs/AddressSanitizer.html
