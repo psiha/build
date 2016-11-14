@@ -20,7 +20,7 @@ endif()
 # http://clang.llvm.org/docs/AddressSanitizer.html
 # http://clang.llvm.org/docs/UsersManual.html#controlling-code-generation
 if ( NOT iOS )
-  set( TNUN_linker_runtime_sanity_checks -fsanitize=undefined -fsanitize=address -fsanitize=safe-stack ) # AppleClang lag: -fsanitize=thread -fsanitize=memory -fsanitize=dataflow -fsanitize=cfi
+  set( TNUN_linker_runtime_sanity_checks -fsanitize=undefined -fsanitize=address ) # AppleClang lag:  -fsanitize=safe-stack -fsanitize=thread -fsanitize=memory -fsanitize=dataflow -fsanitize=cfi
 endif()
 set( TNUN_compiler_runtime_sanity_checks ${TNUN_linker_runtime_sanity_checks} -fno-omit-frame-pointer )
 set( TNUN_linker_runtime_integer_checks -fsanitize=integer )
