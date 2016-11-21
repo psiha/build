@@ -14,15 +14,13 @@ list( APPEND TNUN_compiler_optimize_for_speed -fvectorize -fslp-vectorize -fslp-
 list( APPEND TNUN_compiler_report_optimization -Rpass=loop-.* )
 if( NOT ${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang" ) # Tested with XCode 8
     list( APPEND TNUN_compiler_LTO -fwhole-program-vtables )
-endif()
 
 # http://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
 # http://clang.llvm.org/docs/AddressSanitizer.html
 # http://clang.llvm.org/docs/UsersManual.html#controlling-code-generation
-if ( NOT iOS )
-  set( TNUN_linker_runtime_sanity_checks -fsanitize=undefined -fsanitize=address ) # AppleClang lag:  -fsanitize=safe-stack -fsanitize=thread -fsanitize=memory -fsanitize=dataflow -fsanitize=cfi
+    set( TNUN_linker_runtime_sanity_checks -fsanitize=undefined -fsanitize=address -fsanitize=safe-stack -fsanitize=thread -fsanitize=memory -fsanitize=dataflow -fsanitize=cfi )
+    set( TNUN_compiler_runtime_sanity_checks ${TNUN_linker_runtime_sanity_checks} -fno-omit-frame-pointer )
 endif()
-set( TNUN_compiler_runtime_sanity_checks ${TNUN_linker_runtime_sanity_checks} -fno-omit-frame-pointer )
 set( TNUN_linker_runtime_integer_checks -fsanitize=integer )
 set( TNUN_compiler_runtime_integer_checks ${TNUN_compiler_runtime_integer_checks} )
 
