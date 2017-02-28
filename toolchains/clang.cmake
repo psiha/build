@@ -12,7 +12,7 @@ include( "${CMAKE_CURRENT_LIST_DIR}/gcc_compatibles.cmake" )
 
 list( APPEND TNUN_compiler_optimize_for_speed -fvectorize -fslp-vectorize -fslp-vectorize-aggressive )
 list( APPEND TNUN_compiler_report_optimization -Rpass=loop-.* )
-if( NOT ${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang" ) # Tested with XCode 8
+if( NOT ${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang" AND NOT ANDROID ) # Tested with XCode 8 and Android NDK r13b
     list( APPEND TNUN_compiler_LTO -fwhole-program-vtables )
 
 # http://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
