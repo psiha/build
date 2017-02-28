@@ -27,6 +27,7 @@ set( TNUN_compiler_exceptions_on          -EHsc                                 
 set( TNUN_compiler_exceptions_off         -wd4577                                             )
 set( TNUN_compiler_report_optimization    -Qpar-report:1 -Qvec-report:2                       ) # https://msdn.microsoft.com/en-us/library/jj658585.aspx Vectorizer and Parallelizer Messages
 set( TNUN_compiler_optimize_for_speed     -Ox -Ot -Qpar                                       )
+set( TNUN_compiler_optimize_for_size      -Ox -Os                                             )
 set( TNUN_compiler_runtime_sanity_checks  -GS -sdl -guard:cf -fp:strict -RTC1                 )
 set( TNUN_warnings_as_errors              -WX                                                 )
 set( TNUN_default_warnings                -W4                                                 )
