@@ -62,7 +62,7 @@ set( TNUN_ABI ${ANDROID_ABI} )
 if( NOT ( ANDROID_ABI STREQUAL "mips" OR ANDROID_ABI STREQUAL "mips64" ) )
     # Implementation note: https://github.com/android-ndk/ndk/issues/75
     #                                         (01.03.2017. Domagoj Saric)
-    if ( WIN32 )
+    if ( CMAKE_HOST_WIN32 )
         set( gold_suffix ".exe" )
     endif()
     link_libraries( -fuse-ld=gold${gold_suffix} )
