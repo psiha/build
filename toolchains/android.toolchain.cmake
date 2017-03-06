@@ -208,7 +208,6 @@ link_libraries( ${ANDROID_BASIC_TOOLCHAIN_FLAGS} )
 link_libraries( "-Wl,--no-undefined" "-Wl,-z,relro" "-Wl,-z,now" "-Wl,-z,nocopyreloc" )
 link_libraries( $<$<CONFIG:RELEASE>:-Wl,--gc-sections> )
 link_libraries( $<$<CONFIG:RELEASE>:-Wl,--icf=all>     ) # http://research.google.com/pubs/pub36912.html Safe ICF: Pointer Safe and Unwinding Aware Identical Code Folding in Gold
-#-fuse-ld=gold ...mrmlj...does not work with Android NDK r11 (but should be the default)
 
 
 include_directories( SYSTEM ${ANDROID_NDK}/sources/android/support/include               )
