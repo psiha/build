@@ -33,11 +33,17 @@ endif()
 
 # Xcode (7 & 8) report that function-sections are incompatible embed-bitcode
 set( CMAKE_XCODE_ATTRIBUTE_ENABLE_BITCODE "NO" )
-function( TNUN_enable_bitcode )
-  add_compile_options( -fno-function-sections )
+macro( TNUN_enable_bitcode )
+  # -ffunction-sections is not supported with -fembed-bitcode
+  # Also, on Xcode 8.2:
+  # -fno-function-sections is not supported with -fembed-bitcode
+  # So, we need to ensure this neither of those flag is ever set.
+
+  list( REMOVE_ITEM TNUN_compiler_release_flags -ffunction-sections )
+
   set( CMAKE_XCODE_ATTRIBUTE_ENABLE_BITCODE "YES" )
   set( CMAKE_XCODE_ATTRIBUTE_BITCODE_GENERATION_MODE "bitcode" ) # Without this, Xcode adds -fembed-bitcode-marker compile options instead of -fembed-bitcode
-endfunction()
+endmacro()
 
 link_libraries( $<$<CONFIG:RELEASE>:-dead_strip> )
 

@@ -67,10 +67,11 @@ else()
     # file explicitly.
 endif()
 
-
-TNUN_add_compile_options( Debug   ${TNUN_compiler_debug_flags} ${TNUN_compiler_debug_symbols} )
-TNUN_add_compile_options( Release ${TNUN_compiler_release_flags} )
-add_compile_options( ${TNUN_default_warnings} )
+if( NOT TNUN_DO_NOT_ADD_DEFAULT_BUILD_FLAGS )
+    TNUN_add_compile_options( Debug   ${TNUN_compiler_debug_flags} ${TNUN_compiler_debug_symbols} )
+    TNUN_add_compile_options( Release ${TNUN_compiler_release_flags} )
+    add_compile_options( ${TNUN_default_warnings} )
+endif()
 
 
 # Implementation note:
