@@ -22,6 +22,22 @@ set( TNUN_os_suffix Android )
 
 set( CMAKE_CROSSCOMPILING true )
 
+# Remove unwanted flags from the official toolchain file
+string( REPLACE "-funwind-tables"          ""    ANDROID_COMPILER_FLAGS         "${ANDROID_COMPILER_FLAGS}" )
+string( REPLACE "-funwind-tables"          ""    CMAKE_C_FLAGS                  "${CMAKE_C_FLAGS}  "        )
+string( REPLACE "-funwind-tables"          ""    CMAKE_CXX_FLAGS                "${CMAKE_CXX_FLAGS}"        )
+string( REPLACE "-funwind-tables"          ""    CMAKE_ASM_FLAGS                "${CMAKE_ASM_FLAGS}"        )
+
+string( REPLACE "-fstack-protector-strong" ""    ANDROID_COMPILER_FLAGS         "${ANDROID_COMPILER_FLAGS}" )
+string( REPLACE "-fstack-protector-strong" ""    CMAKE_C_FLAGS                  "${CMAKE_C_FLAGS}  "        )
+string( REPLACE "-fstack-protector-strong" ""    CMAKE_CXX_FLAGS                "${CMAKE_CXX_FLAGS}"        )
+string( REPLACE "-fstack-protector-strong" ""    CMAKE_ASM_FLAGS                "${CMAKE_ASM_FLAGS}"        )
+
+string( REPLACE "-O2"                      "-O3" ANDROID_COMPILER_FLAGS_RELEASE "${ANDROID_COMPILER_FLAGS_RELEASE}" )
+string( REPLACE "-O2"                      "-O3" CMAKE_C_FLAGS_RELEASE          "${CMAKE_C_FLAGS_RELEASE}  "        )
+string( REPLACE "-O2"                      "-O3" CMAKE_CXX_FLAGS_RELEASE        "${CMAKE_CXX_FLAGS_RELEASE}"        )
+string( REPLACE "-O2"                      "-O3" CMAKE_ASM_FLAGS_RELEASE        "${CMAKE_ASM_FLAGS_RELEASE}"        )
+
 if("${ANDROID_TOOLCHAIN}" STREQUAL "clang")
     include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
 
