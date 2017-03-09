@@ -12,15 +12,21 @@ include( "${CMAKE_CURRENT_LIST_DIR}/gcc_compatibles.cmake" )
 
 list( APPEND TNUN_compiler_optimize_for_speed -fvectorize -fslp-vectorize -fslp-vectorize-aggressive )
 list( APPEND TNUN_compiler_report_optimization -Rpass=loop-.* )
-if( NOT ${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang" ) # Tested with XCode 8
+if( NOT ${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang" AND NOT ANDROID ) # Tested with XCode 8 and Android NDK r13b
     list( APPEND TNUN_compiler_LTO -fwhole-program-vtables )
-endif()
 
 # http://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
 # http://clang.llvm.org/docs/AddressSanitizer.html
 # http://clang.llvm.org/docs/UsersManual.html#controlling-code-generation
-set( TNUN_linker_runtime_sanity_checks -fsanitize=undefined -fsanitize=address ) # AppleClang lag: -fsanitize=thread -fsanitize=memory -fsanitize=dataflow -fsanitize=cfi -fsanitize=safe-stack
-set( TNUN_compiler_runtime_sanity_checks ${TNUN_linker_runtime_sanity_checks} -fno-omit-frame-pointer )
+    set( TNUN_linker_runtime_sanity_checks -fsanitize=undefined -fsanitize=address -fsanitize=safe-stack )
+    # -fsanitize=cfi disabled because of error:
+    # clang-3.9: error: invalid argument '-fsanitize=cfi' only allowed with '-flto'
+
+    # -fsanitize=thread -fsanitize=memory disabled because of error:
+    # clang-3.9: error: invalid argument '-fsanitize=address' not allowed with '-fsanitize=thread'
+    # clang-3.9: error: invalid argument '-fsanitize=address' not allowed with '-fsanitize=memory'
+    set( TNUN_compiler_runtime_sanity_checks ${TNUN_linker_runtime_sanity_checks} -fno-omit-frame-pointer )
+endif()
 set( TNUN_linker_runtime_integer_checks -fsanitize=integer )
 set( TNUN_compiler_runtime_integer_checks ${TNUN_compiler_runtime_integer_checks} )
 

@@ -26,9 +26,11 @@ if("${ANDROID_TOOLCHAIN}" STREQUAL "clang")
     include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
 
     # Implementation note:
-    # This currently breaks with linker errors "undefined reference to '__asan_report_load1', etc.
-    # For now, just disable sanitization on Android. I will investigate this later.
-    #                                        ( 11.08.2016. Nenad Miksa )
+    # This currently breaks with linker errors "undefined reference to
+    # '__asan_report_load1', etc.
+    # For now, just disable sanitization on Android. I will investigate this
+    # later.
+    #                                         (11.08.2016. Nenad Miksa)
     unset( TNUN_compiler_runtime_sanity_checks )
     unset( TNUN_linker_runtime_sanity_checks )
 else()
@@ -58,7 +60,12 @@ set( TNUN_ABI ${ANDROID_ABI} )
 
 # apparently gold is not supported on mips
 if( NOT ( ANDROID_ABI STREQUAL "mips" OR ANDROID_ABI STREQUAL "mips64" ) )
-    link_libraries( -fuse-ld=gold )
+    # Implementation note: https://github.com/android-ndk/ndk/issues/75
+    #                                         (01.03.2017. Domagoj Saric)
+    if ( CMAKE_HOST_WIN32 )
+        set( gold_suffix ".exe" )
+    endif()
+    link_libraries( -fuse-ld=gold${gold_suffix} )
     link_libraries( $<$<CONFIG:RELEASE>:-Wl,--icf=all>     ) # http://research.google.com/pubs/pub36912.html Safe ICF: Pointer Safe and Unwinding Aware Identical Code Folding in Gold
 endif()
 

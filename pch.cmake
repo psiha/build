@@ -250,7 +250,25 @@ MACRO(ADD_PRECOMPILED_HEADER _targetName _input)
             # set(${OutputName}_CREATED true PARENT_SCOPE)
         endif()
         add_custom_target(${_targetName}_PCH DEPENDS ${_output} SOURCES ${_input})
-        target_compile_options( ${_targetName} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-include ${GCH_PATH}/${PCH_NAME}.h -Winvalid-pch> )
+
+        ## Implementation note:
+        ## We always build single PCH for target. However, some source files in target can have different compile flags.
+        ## A right thing to do (TM) would be to generate PCH for each group of files with same flags. However, we do not
+        ## do that. So, instead of including PCH globally on whole target, we will include PCH only on those sources that
+        ## do not already have specific flags.
+        ## Also, specific for C source files, we filter-out C sources with regex that matches only C++ files since
+        ## generator expression $<COMPILE_LANGUAGE:CXX> works only for target_compile_options function.
+        ##
+        ##                                                                         Nenad Miksa (28.02.2017.)
+
+        get_target_property( target_sources ${_targetName} SOURCES )
+        foreach( source ${target_sources} )
+            get_source_file_property( old_flags ${source} COMPILE_FLAGS )
+            if( NOT old_flags AND ${source} MATCHES ".*\\.c.+" )
+                set_source_files_properties( "${source}" PROPERTIES COMPILE_FLAGS "-include ${GCH_PATH}/${PCH_NAME}.h -Winvalid-pch" )
+            endif()
+        endforeach()
+#        target_compile_options( ${_targetName} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-include ${GCH_PATH}/${PCH_NAME}.h -Winvalid-pch> )
         ADD_DEPENDENCIES(${_targetName} ${_targetName}_PCH)
     endif()
   ENDIF(CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
