@@ -1,10 +1,10 @@
 ################################################################################
 #
-# T:N.U.N. Android Studio CMake tool chain file. This is to be used together with
-# native android CMake toolchain bundled with Android studio 2.2 and newer.
-# For uses without Android Studio, please use android.toolchain.cmake file.
+# T:N.U.N. Android Studio CMake tool chain file. This is to be used together
+# with the native android CMake toolchain bundled with Android studio 2.2+.
+# For uses without Android Studio, please use the android.toolchain.cmake file.
 #
-# Copyright (c) 2016. Nenad Miksa. All rights reserved.
+# Copyright (c) 2016. Nenad Miksa.
 #
 ################################################################################
 
@@ -54,25 +54,38 @@ else()
 endif()
 
 set( TNUN_arch_include_dir "${CMAKE_CURRENT_LIST_DIR}/android" )
-
+set( TNUN_ABI  ${ANDROID_ABI} )
+set( TNUN_ARCH ${ANDROID_ABI} )
 if( ANDROID_ABI STREQUAL "armeabi-v7a" )
+    set( TNUN_ABI arm-linux-androideabi )
     if ( ANDROID_ARM_NEON )
-        include ( "${TNUN_arch_include_dir}/armv7-neon.arch.cmake" )
+        set( TNUN_ARCH armv7-neon )
     else()
-        include ( "${TNUN_arch_include_dir}/armv7-vfp3d16.arch.cmake" )
+        set( TNUN_ARCH armv7-vfp3d16 )
     endif()
 elseif( ANDROID_ABI STREQUAL "arm64-v8a" )
-    include( "${TNUN_arch_include_dir}/aarch64.arch.cmake" )
-elseif( ANDROID_ABI STREQUAL "x86" )
-    include( "${TNUN_arch_include_dir}/x86.arch.cmake" )
-elseif( ANDROID_ABI STREQUAL "x86_64" )
-    include( "${TNUN_arch_include_dir}/x86_64.arch.cmake" )
+    set( TNUN_ABI  aarch64-linux-android )
+    set( TNUN_ARCH aarch64 )
+elseif( ANDROID_ABI STREQUAL "armeabi" ) # psiha/build does not support armeabi
+    unset( TNUN_ABI  )
+    unset( TNUN_ARCH )
+elseif( ANDROID_ABI STREQUAL "mips" ) # psiha/build has incomplete mips support
+    set( TNUN_ABI mipsel-linux-android )
+    unset( TNUN_ARCH )
+elseif( ANDROID_ABI STREQUAL "mips64" )
+    set( TNUN_ABI mips64el-linux-android )
+    unset( TNUN_ARCH )
 endif()
 
-set( TNUN_ABI ${ANDROID_ABI} )
+if ( TNUN_ARCH )
+    include( "${TNUN_arch_include_dir}/${TNUN_ARCH}.arch.cmake" )
+endif()
+if ( TNUN_ABI )
+    include( "${TNUN_arch_include_dir}/${TNUN_ABI}.abi.cmake" )
+endif()
 
-# Some settings from android.toolchain.cmake which are better than in default toolchain shipped with
-# Android Studio.
+# Some settings from android.toolchain.cmake which are better than in the
+# default toolchain shipped with Android Studio.
 
 # apparently gold is not supported on mips
 if( NOT ( ANDROID_ABI STREQUAL "mips" OR ANDROID_ABI STREQUAL "mips64" ) )
@@ -82,7 +95,7 @@ if( NOT ( ANDROID_ABI STREQUAL "mips" OR ANDROID_ABI STREQUAL "mips64" ) )
         set( gold_suffix ".exe" )
     endif()
     link_libraries( -fuse-ld=gold${gold_suffix} )
-    link_libraries( $<$<CONFIG:RELEASE>:-Wl,--icf=all>     ) # http://research.google.com/pubs/pub36912.html Safe ICF: Pointer Safe and Unwinding Aware Identical Code Folding in Gold
+    link_libraries( $<$<CONFIG:RELEASE>:-Wl,--icf=all> ) # http://research.google.com/pubs/pub36912.html Safe ICF: Pointer Safe and Unwinding Aware Identical Code Folding in Gold
 endif()
 
 link_libraries( $<$<CONFIG:RELEASE>:-Wl,--gc-sections> )
