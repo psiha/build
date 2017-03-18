@@ -15,9 +15,9 @@ list( APPEND TNUN_compiler_report_optimization -Rpass=loop-.* )
 if( NOT ${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang" AND NOT ANDROID ) # Tested with XCode 8 and Android NDK r13b
     list( APPEND TNUN_compiler_LTO -fwhole-program-vtables )
 
-# http://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
-# http://clang.llvm.org/docs/AddressSanitizer.html
-# http://clang.llvm.org/docs/UsersManual.html#controlling-code-generation
+    # http://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
+    # http://clang.llvm.org/docs/AddressSanitizer.html
+    # http://clang.llvm.org/docs/UsersManual.html#controlling-code-generation
     set( TNUN_linker_runtime_sanity_checks -fsanitize=undefined -fsanitize=address -fsanitize=safe-stack )
     # -fsanitize=cfi disabled because of error:
     # clang-3.9: error: invalid argument '-fsanitize=cfi' only allowed with '-flto'
@@ -27,15 +27,15 @@ if( NOT ${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang" AND NOT ANDROID ) # Teste
     # clang-3.9: error: invalid argument '-fsanitize=address' not allowed with '-fsanitize=memory'
     set( TNUN_compiler_runtime_sanity_checks ${TNUN_linker_runtime_sanity_checks} -fno-omit-frame-pointer )
 endif()
-set( TNUN_linker_runtime_integer_checks -fsanitize=integer )
-set( TNUN_compiler_runtime_integer_checks ${TNUN_compiler_runtime_integer_checks} )
+set( TNUN_compiler_runtime_integer_checks -fsanitize=integer )
+set( TNUN_linker_runtime_integer_checks   ${TNUN_compiler_runtime_integer_checks} )
 
 # Leak sanitizer is available only on Clang on Linux x64.
 # http://clang.llvm.org/docs/LeakSanitizer.html
 # Currently it is very very slow (two orders of magnitude slower than Valgrind).
 #if( ${CMAKE_SYSTEM_NAME} MATCHES "Linux" AND TNUN_ABI STREQUAL "x64" )
 #    list( APPEND TNUN_compiler_runtime_sanity_checks -fsanitize=leak )
-#    list( APPEND TNUN_linker_runtime_sanity_checks -fsanitize=leak)
+#    list( APPEND TNUN_linker_runtime_sanity_checks   -fsanitize=leak )
 #endif()
 
 # Implementation note:
