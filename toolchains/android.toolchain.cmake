@@ -130,6 +130,8 @@ set( TNUN_ABIs
   arm-linux-androideabi
   x86_64
   x86
+  mips64el-linux-android
+  mipsel-linux-android
 )
 
 
