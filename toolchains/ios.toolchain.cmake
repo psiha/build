@@ -28,7 +28,7 @@ set( CMAKE_SYSTEM_VERSION   6      )
 set( CMAKE_SYSTEM_PROCESSOR arm    )
 set( APPLE true )
 set( iOS   true )
-# compatibility with build scripts that rely on ios toolchains defining IOS instead of iOS
+# Compatibility with build scripts that rely on iOS toolchains defining IOS instead of iOS
 # CMake variables are case sensitive (unlike functions, macros and commands: https://cmake.org/cmake/help/latest/manual/cmake-language.7.html#variables
 set( IOS   true )
 set( UNIX  true )
@@ -39,7 +39,7 @@ endif()
 
 # Compiler detection is skipped, so we must manually set these variables so code that depend on them can work
 set( CMAKE_CXX_COMPILER_ID "AppleClang" CACHE STRING "C++ compiler id" )
-set( CMAKE_C_COMPILER_ID "AppleClang"  CACHE STRING "C compiler id" )
+set( CMAKE_C_COMPILER_ID   "AppleClang" CACHE STRING "C compiler id"   )
 
 set( TNUN_os_suffix iOS )
 
@@ -63,9 +63,17 @@ set( CMAKE_IOS_DEVELOPER_ROOT        "/Applications/Xcode.app/Contents/Developer
 set( CMAKE_XCODE_ATTRIBUTE_SDKROOT   iphoneos ) # "Latest iOS"
 
 list( APPEND TNUN_compiler_optimize_for_size -mthumb ) #...mrmlj...this will cause (harmless) warnings on ARM64 builds...
-set( XCODE_ATTRIBUTE_CFLAGS_armv7  "-mcpu=cortex-a8 -mtune=cortex-a9"  ) 
-set( XCODE_ATTRIBUTE_CFLAGS_armv7s "                -mtune=cortex-a15" ) # http://www.anandtech.com/show/6292/iphone-5-a6-not-a15-custom-core
-
+#...mrmlj...this no longer appears to work (Xcode 8.2):
+# http://www.cmake.org/pipermail/cmake/2011-October/046737.html
+# http://stackoverflow.com/questions/1211854/xcode-conditional-build-settings-based-on-architecture-device-arm-vs-simulat
+# http://cmake.3232098.n2.nabble.com/Different-settings-for-different-configurations-in-Xcode-td6908021.html
+# http://public.kitware.com/Bug/view.php?id=8915 Missing feature to set Xcode specific build settings
+set( XCODE_ATTRIBUTE_CFLAGS_armv7  "-mcpu=cortex-a8 -mfpu=neon -mtune=cortex-a9"  ) 
+set( XCODE_ATTRIBUTE_CFLAGS_armv7s "                -mfpu=neon -mtune=cortex-a15" ) # http://www.anandtech.com/show/6292/iphone-5-a6-not-a15-custom-core
+set( CMAKE_XCODE_ATTRIBUTE_OTHER_CFLAGS[arch=armv7]          "${XCODE_ATTRIBUTE_CFLAGS_armv7}  $(OTHER_CFLAGS)"         )
+set( CMAKE_XCODE_ATTRIBUTE_OTHER_CFLAGS[arch=armv7s]         "${XCODE_ATTRIBUTE_CFLAGS_armv7s} $(OTHER_CFLAGS)"         )
+set( CMAKE_XCODE_ATTRIBUTE_OTHER_CPLUSPLUSFLAGS[arch=armv7]  "${XCODE_ATTRIBUTE_CFLAGS_armv7}  $(OTHER_CPLUSPLUSFLAGS)" )
+set( CMAKE_XCODE_ATTRIBUTE_OTHER_CPLUSPLUSFLAGS[arch=armv7s] "${XCODE_ATTRIBUTE_CFLAGS_armv7s} $(OTHER_CPLUSPLUSFLAGS)" )
 
 # Implementation note:
 # Disable optimiser pass reports for iOS builds as they get run by the
