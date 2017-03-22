@@ -70,7 +70,7 @@ endif()
 
 set( TNUN_compiler_dev_release_flags ${TNUN_compiler_release_flags} )
 if ( MSVC )
-    string(REPLACE "MD" "MDd" TNUN_compiler_dev_release_flags "${TNUN_compiler_dev_release_flags}")
+    string( REPLACE "MD" "MDd" TNUN_compiler_dev_release_flags "${TNUN_compiler_dev_release_flags}" )
 endif()
 list( APPEND TNUN_compiler_release_flags -DNDEBUG )
 if( NOT TNUN_DO_NOT_ADD_DEFAULT_BUILD_FLAGS )
