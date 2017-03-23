@@ -45,7 +45,12 @@
 # SOFTWARE.
 
 macro(get_dependencies_compile_options target compileOptions compileDefinitions includeDirectories systemIncludeDirectories visited)
-    get_target_property(dependencies ${target} INTERFACE_LINK_LIBRARIES)
+    get_target_property( dependencies ${target} INTERFACE_LINK_LIBRARIES )
+    get_target_property( target_type ${target} TYPE )
+    if( NOT ${target_type} STREQUAL INTERFACE_LIBRARY )
+        get_target_property( private_dependencies ${target} LINK_LIBRARIES )
+        list( APPEND dependencies ${private_dependencies} )
+    endif()
     foreach(dep ${dependencies})
         if(TARGET ${dep} )
             # check if we already processed this dependency
@@ -179,7 +184,8 @@ MACRO(ADD_PRECOMPILED_HEADER _targetName _input)
 
             get_directory_property( _directory_flags INCLUDE_DIRECTORIES )
             get_target_property( _target_include_dirs ${_targetName} INCLUDE_DIRECTORIES )
-            foreach( item ${_directory_flags} ${_target_include_dirs} ${depsIncludeDirectories} )
+            get_target_property( _target_interface_include_dirs ${_targetName} INTERFACE_INCLUDE_DIRECTORIES )
+            foreach( item ${_directory_flags} ${_target_include_dirs} ${_target_interface_include_dirs} ${depsIncludeDirectories} )
                 filter_item( filtered_item ${item} )
                 if( filtered_item )
                     list( APPEND _compiler_FLAGS "-I${filtered_item}" )
@@ -237,6 +243,9 @@ MACRO(ADD_PRECOMPILED_HEADER _targetName _input)
             if( CMAKE_CXX_COMPILER_LAUNCHER )
                 set( COMPILER ${CMAKE_CXX_COMPILER_LAUNCHER} ${COMPILER} )
             endif()
+
+            list( REMOVE_DUPLICATES _compiler_FLAGS )
+
             SEPARATE_ARGUMENTS(_compiler_FLAGS)
 
             ADD_CUSTOM_COMMAND(
