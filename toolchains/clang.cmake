@@ -27,8 +27,10 @@ if( NOT ${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang" AND NOT ANDROID ) # Teste
     # clang-3.9: error: invalid argument '-fsanitize=address' not allowed with '-fsanitize=memory'
     set( TNUN_compiler_runtime_sanity_checks ${TNUN_linker_runtime_sanity_checks} -fno-omit-frame-pointer )
 endif()
-set( TNUN_compiler_runtime_integer_checks -fsanitize=integer )
-set( TNUN_linker_runtime_integer_checks   ${TNUN_compiler_runtime_integer_checks} )
+if( NOT ${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang" ) # Tested with XCode 8.3
+    set( TNUN_compiler_runtime_integer_checks -fsanitize=integer )
+    set( TNUN_linker_runtime_integer_checks   ${TNUN_compiler_runtime_integer_checks} )
+endif()
 
 # Leak sanitizer is available only on Clang on Linux x64.
 # http://clang.llvm.org/docs/LeakSanitizer.html
