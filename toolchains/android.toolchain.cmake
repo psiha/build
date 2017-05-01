@@ -2,7 +2,7 @@
 #
 # T:N.U.N. Android CMake toolchain file.
 #
-# Copyright (c) 2016. Domagoj Saric. All rights reserved.
+# Copyright (c) 2016 - 2017. Domagoj Saric.
 #
 # In large part, a heavily trimmed down version of the OpenCV/taka-no-me
 # version (NDK r11+, Clang only).
@@ -232,6 +232,15 @@ include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
 unset( TNUN_native_optimization ) # This makes no sense when cross-compiling.
 
 add_definitions( -DANDROID -D__ANDROID__ )
+
+
+################################################################################
+# malloc overcommit policy
+# @see the note in android-studio.toolchain.cmake
+################################################################################
+
+set( TNUN_MALLOC_OVERCOMMIT_POLICY Full )
+
 
 ################################################################################
 # TNUN_setup_target_for_arch()

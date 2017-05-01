@@ -100,6 +100,23 @@ endif()
 
 link_libraries( $<$<CONFIG:RELEASE>:-Wl,--gc-sections> )
 
+
+################################################################################
+# malloc overcommit policy
+#
+# Android seems to have the most extreme overcommit policy, i.e. 'allow all
+# memory allocations even if no RAM+swap is available' - IOW: disable/omit all
+# memalloc failure handling there.
+# https://groups.google.com/forum/#!topic/android-porting/l--HZ0urKVk
+# https://bugzilla.mozilla.org/show_bug.cgi?id=600939
+# https://forum.xda-developers.com/showthread.php?t=1621808
+# https://groups.google.com/forum/m/#!topic/android-ndk/JhGRSv9KP6s
+#                                             (01.05.2017. Domagoj Saric)
+################################################################################
+
+set( TNUN_MALLOC_OVERCOMMIT_POLICY Full )
+
+
 ################################################################################
 # TNUN_setup_target_for_arch()
 ################################################################################
