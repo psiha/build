@@ -2,7 +2,7 @@
 #
 # T:N.U.N. Visual Studio/MSVC CMake tool chain file.
 #
-# Copyright (c) 2016. Domagoj Saric. All rights reserved.
+# Copyright (c) 2016 - 2017. Domagoj Saric.
 #
 ################################################################################
 
@@ -24,7 +24,7 @@ set( TNUN_compiler_fastmath                       -fp:except- -fp:fast -Qfast_tr
 set( TNUN_compiler_rtti_on                        -GR                                         )
 set( TNUN_compiler_rtti_off                       -GR-                                        )
 set( TNUN_compiler_exceptions_on                  -EHsc                                       )
-set( TNUN_compiler_exceptions_off                 -wd4577                                     )
+set( TNUN_compiler_exceptions_off                 -D_HAS_EXCEPTIONS=0 -wd4577                 )
 set( TNUN_compiler_report_optimization            -Qpar-report:1 -Qvec-report:2               ) # https://msdn.microsoft.com/en-us/library/jj658585.aspx Vectorizer and Parallelizer Messages
 set( TNUN_compiler_optimize_for_speed             -Ox -Ot -Qpar                               )
 set( TNUN_compiler_optimize_for_size              -Ox -Os                                     )

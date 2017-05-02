@@ -57,9 +57,11 @@ if [ ${PLATFORM_NAME} = "iphonesimulator" ]
 then
 OTHER_SDK_TO_BUILD=iphoneos${SDK_VERSION}
 ARCHITECTURES="armv7 armv7s arm64"
+GCC_PREPROCESSOR_DEFINITIONS=TNUN_iOS_DEVICE_BUILD=1
 else
 OTHER_SDK_TO_BUILD=iphonesimulator${SDK_VERSION}
 ARCHITECTURES="i386 x86_64"
+GCC_PREPROCESSOR_DEFINITIONS=TNUN_iOS_SIMULATOR_BUILD=1
 fi
 
 echo "XCode has selected SDK: ${PLATFORM_NAME} with version: ${SDK_VERSION} (although back-targetting: ${IPHONEOS_DEPLOYMENT_TARGET})"
@@ -91,7 +93,7 @@ export ALREADYINVOKED="true"
 echo "RECURSION: I am the root ... recursing all missing build targets NOW..."
 echo "RECURSION: ...about to invoke: xcodebuild -configuration \"${CONFIGURATION}\" -project \"${PROJECT_NAME}.xcodeproj\" -target \"${TARGET_NAME}\" -sdk \"${OTHER_SDK_TO_BUILD}\" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO" BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\" SYMROOT=\"${SYMROOT}\"
 
-xcodebuild -configuration "${CONFIGURATION}" -project "${PROJECT_NAME}.xcodeproj" -target "${TARGET_NAME}" -sdk "${OTHER_SDK_TO_BUILD}" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" BUILD_ROOT="${BUILD_ROOT}" SYMROOT="${SYMROOT}" ARCHS="${ARCHITECTURES}"
+xcodebuild -configuration "${CONFIGURATION}" -project "${PROJECT_NAME}.xcodeproj" -target "${TARGET_NAME}" -sdk "${OTHER_SDK_TO_BUILD}" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" BUILD_ROOT="${BUILD_ROOT}" SYMROOT="${SYMROOT}" ARCHS="${ARCHITECTURES}" GCC_PREPROCESSOR_DEFINITIONS="\$(value) ${GCC_PREPROCESSOR_DEFINITIONS}"
 
 ACTION="build"
 

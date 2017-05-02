@@ -2,7 +2,7 @@
 #
 # T:N.U.N. Linux CMake tool chain file.
 #
-# Copyright (c) 2016. Domagoj Saric. All rights reserved.
+# Copyright (c) 2016 - 2017. Domagoj Saric.
 #
 ################################################################################
 
@@ -52,6 +52,18 @@ set( TNUN_arch_include_dir "${CMAKE_CURRENT_LIST_DIR}/linux" )
 include( "${TNUN_arch_include_dir}/${TNUN_ABI}.abi.cmake" )
 
 link_libraries( $<$<CONFIG:RELEASE>:-Wl,--gc-sections> )
+
+
+################################################################################
+# malloc overcommit policy
+# Linux has a 'configurable' overcommit policy.
+# https://www.etalabs.net/overcommit.html
+# https://news.ycombinator.com/item?id=2544387
+# http://elinux.org/images/a/a3/CELF_AvoidOOM.pdf
+################################################################################
+
+set( TNUN_MALLOC_OVERCOMMIT_POLICY Partial )
+
 
 ################################################################################
 # TNUN_setup_target_for_arch()

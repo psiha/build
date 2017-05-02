@@ -2,7 +2,7 @@
 #
 # T:N.U.N. Main build (compiler&linker) options file.
 #
-# Copyright (c) 2016. Domagoj Saric. All rights reserved.
+# Copyright (c) 2016 - 2017. Domagoj Saric.
 #
 ################################################################################
 
@@ -79,6 +79,24 @@ if( NOT TNUN_DO_NOT_ADD_DEFAULT_BUILD_FLAGS )
     add_compile_options( ${TNUN_default_warnings} )
 endif()
 
+
+################################################################################
+# malloc overcommit policies
+# https://www.etalabs.net/overcommit.html
+################################################################################
+
+add_definitions(
+    -DTNUN_OVERCOMMIT_Disabled=0
+    -DTNUN_OVERCOMMIT_Partial=1
+    -DTNUN_OVERCOMMIT_Full=2
+    -DTNUN_MALLOC_OVERCOMMIT=TNUN_OVERCOMMIT_${TNUN_MALLOC_OVERCOMMIT_POLICY}
+)
+
+if ( TNUN_MALLOC_OVERCOMMIT_POLICY STREQUAL Full )
+  add_definitions( -DTNUN_NOEXCEPT_EXCEPT_BADALLOC=noexcept )
+else()
+  add_definitions( -DTNUN_NOEXCEPT_EXCEPT_BADALLOC= )
+endif()
 
 # Implementation note:
 # A workaround for the fact that the ios.universal_build.sh script uses

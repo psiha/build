@@ -2,7 +2,7 @@
 #
 # T:N.U.N. Shared toolchain for Apple platforms.
 #
-# Copyright (c) 2016. Domagoj Saric. All rights reserved.
+# Copyright (c) 2016 - 2017. Domagoj Saric.
 #
 ################################################################################
 
@@ -49,6 +49,22 @@ link_libraries( $<$<CONFIG:RELEASE>:-dead_strip> )
 
 set( TNUN_ABI   default    )
 set( TNUN_ABIs ${TNUN_ABI} )
+
+################################################################################
+# malloc overcommit policy
+#
+# iOS's behaviour (the "jetsam" mechanism) seems very similar to Android's
+# overcommit policy _and_ is non-configurable (through public APIs) - IOW:
+# disable/omit all memalloc failure handling there.
+# OSX uses a very similar mechanism as iOS ("memorystatus") yet it is not quite
+# clear what it does after all the 'idle exit' processes are killed... -
+# nonetheless use the same policy as for iOS.
+# http://newosxbook.com/articles/MemoryPressure.html
+# https://developer.apple.com/library/content/documentation/Performance/Conceptual/ManagingMemory/Articles/AboutMemory.html
+#                                             (01.05.2017. Domagoj Saric)
+################################################################################
+
+set( TNUN_MALLOC_OVERCOMMIT_POLICY Full )
 
 #...mrmlj...reinvestigate this...
 # set( CMAKE_XCODE_ATTRIBUTE_OBJROOT          "${PROJECT_BINARY_DIR}" )
