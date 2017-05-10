@@ -34,20 +34,14 @@ add_compile_options( -fstrict-aliasing $<$<COMPILE_LANGUAGE:CXX>:-fstrict-enums>
 # + 'COMPILE_LANGUAGE' isn't supported by VS generators:
 # https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#logical-expressions
 
-## Implementation note:
-# set( CMAKE_CXX_STANDARD 14 ) appends '-std=gnu++14' option on all targets after all compile flags have been processed.
-# This means that '-std=gnu++14' is given to compiler *after* '-std=gnu++1z', which basically disables C++1z support.
-# Correct way of enabling C++1z would be by uncommenting line below and commenting out line 'set( CMAKE_CXX_STANDARD 14 )'.
-# However, such decision can cause problems with some 3rd party libraries (Qt for instance) which have their own CMake 
-# packages which enfore usage of this variable.
-#                                                     ( 04.09.2016. Nenad Miksa )
-
-# add_compile_options( $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++1z> )
-# add_compile_options( $<$<NOT:$<COMPILE_LANGUAGE:CXX>>:-std=gnu11> )
-
+add_compile_options( $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++1z> )
+add_compile_options( $<$<NOT:$<COMPILE_LANGUAGE:CXX>>:-std=gnu11> )
 
 set( CMAKE_C_STANDARD   11 )
 set( CMAKE_CXX_STANDARD 14 )
+if ( CMAKE_VERSION VERSION_GREATER 3.7 )
+    set( CMAKE_CXX_STANDARD 17 )
+endif()
 
 # https://cmake.org/cmake/help/v3.3/policy/CMP0063.html
 cmake_policy( SET CMP0063 NEW )
