@@ -230,10 +230,6 @@ MACRO(ADD_PRECOMPILED_HEADER _targetName _input)
                 list(APPEND _compiler_FLAGS "-mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}")
             endif()
 
-            if( CMAKE_CXX_STANDARD )
-                list( APPEND _compiler_FLAGS "-std=gnu++${CMAKE_CXX_STANDARD}" )
-            endif()
-
             set(COMPILER ${CMAKE_CXX_COMPILER})
             if(${COMPILER} MATCHES "ccache")
     #            message("CCache will not give any boost when precompiled headers are used")
