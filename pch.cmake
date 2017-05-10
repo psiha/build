@@ -103,8 +103,8 @@ function( filter_item filtered_item item )
     # which confuses GCC.
     string( TOUPPER ${item} upper_item )
     if(
-        ( ${upper_item} MATCHES ".*CONFIG:RELEASE.*" AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug" ) OR
-        ( ${upper_item} MATCHES ".*CONFIG:DEBUG.*" AND ${CMAKE_BUILD_TYPE} STREQUAL "Release" )
+        ( ( ${upper_item} MATCHES ".*CONFIG:RELEASE.*" OR ${upper_item} MATCHES ".*NOT:\\\$<CONFIG:DEBUG.*" ) AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug" ) OR
+        ( ( ${upper_item} MATCHES ".*CONFIG:DEBUG.*" OR ${upper_item} MATCHES ".*NOT:\\\$<CONFIG:RELEASE.*" ) AND ${CMAKE_BUILD_TYPE} STREQUAL "Release" )
     )
         set(append_item false)
     endif()
