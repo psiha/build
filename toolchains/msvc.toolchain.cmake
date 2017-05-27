@@ -37,7 +37,7 @@ set( TNUN_compiler_runtime_integer_checks         -RTCc -D_ALLOW_RTCc_IN_STL    
 
 # w4373: '...': virtual function overrides '...', previous versions of the compiler did not override when parameters only differed by const/volatile qualifiers
 # w4324: 'structure was padded due to alignment specifier'
-add_compile_options( /std:c++latest -MP -Oi -Zc:threadSafeInit- )
+add_compile_options( /std:c++latest -MP -Oi -Zc:threadSafeInit- -wd4324 -wd4373 )
 add_definitions(
   -D_CRT_SECURE_NO_WARNINGS
   -D_SCL_SECURE_NO_WARNINGS
