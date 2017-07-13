@@ -15,7 +15,7 @@ list( APPEND TNUN_compiler_report_optimization -Rpass=loop-.* )
 
 list( APPEND TNUN_default_warnings -Wdocumentation )
 
-if( NOT ${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang" AND NOT ANDROID ) # Tested with XCode 8 and Android NDK r13b
+if( NOT ${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang" ) # Tested with XCode 8
     list( APPEND TNUN_compiler_LTO -fwhole-program-vtables )
 
     # http://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
