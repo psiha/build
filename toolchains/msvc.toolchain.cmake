@@ -6,8 +6,6 @@
 #
 ################################################################################
 
-include( "${CMAKE_CURRENT_LIST_DIR}/windows.cmake" )
-
 # www.drdobbs.com/cpp/the-most-underused-compiler-switches-in/240166599
 
 # Implementation note: Use the dash (instead of slash) syntax as the compiler
