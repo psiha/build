@@ -27,6 +27,7 @@ set( TNUN_compiler_release_flags       -fomit-frame-pointer -ffunction-sections 
 set( TNUN_default_warnings             -Wall -Wextra -Wstrict-aliasing       )
 set( TNUN_warnings_as_errors           -Werror                               )
 set( TNUN_native_optimization          -march=native -mtune=native           )
+set( TNUN_compiler_coverage            -fprofile-arcs -ftest-coverage        )
 
 add_compile_options( -fstrict-aliasing $<$<COMPILE_LANGUAGE:CXX>:-fstrict-enums> -fvisibility=hidden $<$<COMPILE_LANGUAGE:CXX>:-fvisibility-inlines-hidden> -fPIC )
 
