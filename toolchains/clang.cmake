@@ -12,7 +12,10 @@ include( "${CMAKE_CURRENT_LIST_DIR}/gcc_compatibles.cmake" )
 
 list( APPEND TNUN_compiler_optimize_for_speed -fvectorize -fslp-vectorize -fslp-vectorize-aggressive )
 list( APPEND TNUN_compiler_report_optimization -Rpass=loop-.* )
-if( NOT ${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang" AND NOT ANDROID ) # Tested with XCode 8 and Android NDK r13b
+
+list( APPEND TNUN_default_warnings -Wdocumentation )
+
+if( NOT ${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang" ) # Tested with XCode 8
     list( APPEND TNUN_compiler_LTO -fwhole-program-vtables )
 
     # http://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
@@ -27,8 +30,10 @@ if( NOT ${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang" AND NOT ANDROID ) # Teste
     # clang-3.9: error: invalid argument '-fsanitize=address' not allowed with '-fsanitize=memory'
     set( TNUN_compiler_runtime_sanity_checks ${TNUN_linker_runtime_sanity_checks} -fno-omit-frame-pointer )
 endif()
-set( TNUN_compiler_runtime_integer_checks -fsanitize=integer )
-set( TNUN_linker_runtime_integer_checks   ${TNUN_compiler_runtime_integer_checks} )
+if( NOT ${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang" ) # Tested with XCode 8.3
+    set( TNUN_compiler_runtime_integer_checks -fsanitize=integer )
+    set( TNUN_linker_runtime_integer_checks   ${TNUN_compiler_runtime_integer_checks} )
+endif()
 
 # Leak sanitizer is available only on Clang on Linux x64.
 # http://clang.llvm.org/docs/LeakSanitizer.html

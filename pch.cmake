@@ -45,7 +45,12 @@
 # SOFTWARE.
 
 macro(get_dependencies_compile_options target compileOptions compileDefinitions includeDirectories systemIncludeDirectories visited)
-    get_target_property(dependencies ${target} INTERFACE_LINK_LIBRARIES)
+    get_target_property( dependencies ${target} INTERFACE_LINK_LIBRARIES )
+    get_target_property( target_type ${target} TYPE )
+    if( NOT ${target_type} STREQUAL INTERFACE_LIBRARY )
+        get_target_property( private_dependencies ${target} LINK_LIBRARIES )
+        list( APPEND dependencies ${private_dependencies} )
+    endif()
     foreach(dep ${dependencies})
         if(TARGET ${dep} )
             # check if we already processed this dependency
@@ -81,12 +86,11 @@ macro(get_dependencies_compile_options target compileOptions compileDefinitions 
 endmacro()
 
 function( filter_item filtered_item item )
+#    message( STATUS "Filtering ${item}" )
     set(append_item true)
     if( ${item} MATCHES ".*COMPILE_LANGUAGE.*" )
-        if( ${item} MATCHES ".*\\\$<\\\$<COMPILE_LANGUAGE:CXX>.*")
-            string( REPLACE ":" ";" item ${item} )
-            list( GET item 2 item ) # 0 is COMPILE_LANGUAGE, 1 is CXX, 2 is value
-            string( REPLACE ">" "" item ${item} )
+        if( ${item} MATCHES ".*\\\$<\\\$<COMPILE_LANGUAGE:CXX>:(.*)>$")
+            set( item ${CMAKE_MATCH_1} )
         else()
             set(append_item false)
         endif()
@@ -98,15 +102,17 @@ function( filter_item filtered_item item )
     # which confuses GCC.
     string( TOUPPER ${item} upper_item )
     if(
-        ( ${upper_item} MATCHES ".*CONFIG:RELEASE.*" AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug" ) OR
-        ( ${upper_item} MATCHES ".*CONFIG:DEBUG.*" AND ${CMAKE_BUILD_TYPE} STREQUAL "Release" )
+        ( ( ${upper_item} MATCHES ".*CONFIG:RELEASE.*" OR ${upper_item} MATCHES ".*NOT:\\\$<CONFIG:DEBUG.*" ) AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug" ) OR
+        ( ( ${upper_item} MATCHES ".*CONFIG:DEBUG.*" OR ${upper_item} MATCHES ".*NOT:\\\$<CONFIG:RELEASE.*" ) AND ${CMAKE_BUILD_TYPE} STREQUAL "Release" )
     )
         set(append_item false)
     endif()
     if( ${append_item} )
         set( ${filtered_item} ${item} PARENT_SCOPE )
+#        message( STATUS "    -> filtered to ${item}" )
     else()
         unset( ${filtered_item} PARENT_SCOPE )
+#        message( STATUS "    -> filtered out" )
     endif()
 endfunction()
 
@@ -175,11 +181,12 @@ MACRO(ADD_PRECOMPILED_HEADER _targetName _input)
             set( depsIncludeDirectories "" )
             set( depsSystemIncludeDirectories "" )
             get_dependencies_compile_options( ${_targetName} depsCompileOptions depsCompileDefinitions depsIncludeDirectories depsSystemIncludeDirectories visited )
-    #        message("Additional compile flags for ${_targetName}: ${targetCompileFlags}")
+#            message("Additional compile flags for ${_targetName}: ${targetCompileFlags}")
 
             get_directory_property( _directory_flags INCLUDE_DIRECTORIES )
             get_target_property( _target_include_dirs ${_targetName} INCLUDE_DIRECTORIES )
-            foreach( item ${_directory_flags} ${_target_include_dirs} ${depsIncludeDirectories} )
+            get_target_property( _target_interface_include_dirs ${_targetName} INTERFACE_INCLUDE_DIRECTORIES )
+            foreach( item ${_directory_flags} ${_target_include_dirs} ${_target_interface_include_dirs} ${depsIncludeDirectories} )
                 filter_item( filtered_item ${item} )
                 if( filtered_item )
                     list( APPEND _compiler_FLAGS "-I${filtered_item}" )
@@ -224,10 +231,6 @@ MACRO(ADD_PRECOMPILED_HEADER _targetName _input)
                 list(APPEND _compiler_FLAGS "-mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}")
             endif()
 
-            if( CMAKE_CXX_STANDARD )
-                list( APPEND _compiler_FLAGS "-std=gnu++${CMAKE_CXX_STANDARD}" )
-            endif()
-
             set(COMPILER ${CMAKE_CXX_COMPILER})
             if(${COMPILER} MATCHES "ccache")
     #            message("CCache will not give any boost when precompiled headers are used")
@@ -237,6 +240,9 @@ MACRO(ADD_PRECOMPILED_HEADER _targetName _input)
             if( CMAKE_CXX_COMPILER_LAUNCHER )
                 set( COMPILER ${CMAKE_CXX_COMPILER_LAUNCHER} ${COMPILER} )
             endif()
+
+            list( REMOVE_DUPLICATES _compiler_FLAGS )
+
             SEPARATE_ARGUMENTS(_compiler_FLAGS)
 
             ADD_CUSTOM_COMMAND(
