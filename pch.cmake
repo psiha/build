@@ -233,12 +233,8 @@ MACRO(ADD_PRECOMPILED_HEADER _targetName _input)
 
             set(COMPILER ${CMAKE_CXX_COMPILER})
             if(${COMPILER} MATCHES "ccache")
-    #            message("CCache will not give any boost when precompiled headers are used")
                 string(STRIP ${CMAKE_CXX_COMPILER_ARG1} CARG1)
-                set( COMPILER ${CMAKE_CXX_COMPILER} ${CARG1} )
-            endif()
-            if( CMAKE_CXX_COMPILER_LAUNCHER )
-                set( COMPILER ${CMAKE_CXX_COMPILER_LAUNCHER} ${COMPILER} )
+                set( COMPILER ${CARG1} )
             endif()
 
             list( REMOVE_DUPLICATES _compiler_FLAGS )
