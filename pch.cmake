@@ -218,6 +218,11 @@ MACRO(ADD_PRECOMPILED_HEADER _targetName _input)
                     list(APPEND _compiler_FLAGS ${filtered_item})
                 endif()
             endforeach()
+	    
+	    get_target_property( _target_pic ${_targetName} POSITION_INDEPENDENT_CODE )
+            if(_target_pic)
+                list(APPEND _compiler_FLAGS "-fPIC")
+            endif()
 
             if( ANDROID )
                 list( APPEND _compiler_FLAGS "--sysroot=${CMAKE_SYSROOT}" )
