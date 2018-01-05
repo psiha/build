@@ -20,7 +20,8 @@ list( APPEND TNUN_compiler_LTO -fwhole-program-vtables )
 # http://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
 # http://clang.llvm.org/docs/AddressSanitizer.html
 # http://clang.llvm.org/docs/UsersManual.html#controlling-code-generation
-set( TNUN_linker_runtime_sanity_checks -fsanitize=undefined -fsanitize=address )
+set( TNUN_compiler_runtime_sanity_checks -fsanitize=undefined -fsanitize=address )
+set( TNUN_linker_runtime_sanity_checks ${TNUN_compiler_runtime_sanity_checks} )
 # -fsanitize=cfi disabled because of error:
 # clang-3.9: error: invalid argument '-fsanitize=cfi' only allowed with '-flto'
 
