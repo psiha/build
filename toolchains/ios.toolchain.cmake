@@ -37,10 +37,6 @@ if( NOT ${CMAKE_GENERATOR} MATCHES "Xcode" )
     message( FATAL_ERROR "iOS toolchain supports only XCode generator" )
 endif()
 
-# Compiler detection is skipped, so we must manually set these variables so code that depend on them can work
-set( CMAKE_CXX_COMPILER_ID "AppleClang" CACHE STRING "C++ compiler id" )
-set( CMAKE_C_COMPILER_ID   "AppleClang" CACHE STRING "C compiler id"   )
-
 set( TNUN_os_suffix iOS )
 
 set( TNUN_cpu_archs default )
@@ -48,6 +44,7 @@ set( TNUN_cpu_archs default )
 # Skip the platform compiler checks for cross compiling (or not)...
 set( CMAKE_CXX_COMPILER_WORKS true CACHE STRING "Skip CMake compiler detection (requires a functioning code signing identity and provisioning profile)." )
 set( CMAKE_C_COMPILER_WORKS   ${CMAKE_CXX_COMPILER_WORKS} )
+
 if ( NOT CMAKE_CXX_COMPILER_WORKS )
     # Make sure all executables are bundles otherwise try compiles will fail.
     set( CMAKE_MACOSX_BUNDLE                         true                         )
@@ -68,7 +65,7 @@ list( APPEND TNUN_compiler_optimize_for_size -mthumb ) #...mrmlj...this will cau
 # http://stackoverflow.com/questions/1211854/xcode-conditional-build-settings-based-on-architecture-device-arm-vs-simulat
 # http://cmake.3232098.n2.nabble.com/Different-settings-for-different-configurations-in-Xcode-td6908021.html
 # http://public.kitware.com/Bug/view.php?id=8915 Missing feature to set Xcode specific build settings
-set( XCODE_ATTRIBUTE_CFLAGS_armv7  "-mcpu=cortex-a8 -mfpu=neon -mtune=cortex-a9"  ) 
+set( XCODE_ATTRIBUTE_CFLAGS_armv7  "-mcpu=cortex-a8 -mfpu=neon -mtune=cortex-a9"  )
 set( XCODE_ATTRIBUTE_CFLAGS_armv7s "                -mfpu=neon -mtune=cortex-a15" ) # http://www.anandtech.com/show/6292/iphone-5-a6-not-a15-custom-core
 set( CMAKE_XCODE_ATTRIBUTE_OTHER_CFLAGS[arch=armv7]          "${XCODE_ATTRIBUTE_CFLAGS_armv7}  $(OTHER_CFLAGS)"         )
 set( CMAKE_XCODE_ATTRIBUTE_OTHER_CFLAGS[arch=armv7s]         "${XCODE_ATTRIBUTE_CFLAGS_armv7s} $(OTHER_CFLAGS)"         )
