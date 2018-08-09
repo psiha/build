@@ -88,7 +88,7 @@ function( TNUN_ios_add_universal_build target )
     add_custom_command(
         TARGET ${target}
         POST_BUILD
-        COMMAND "${TNUN_toolchains_dir}/ios.universal_build.sh"
+        COMMAND /bin/bash "${TNUN_toolchains_dir}/ios.universal_build.sh"
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         VERBATIM
     )
