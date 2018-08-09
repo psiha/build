@@ -17,6 +17,8 @@
 #
 ################################################################################
 
+set(CMAKE_C_COMPILER_ID   AppleClang)
+set(CMAKE_CXX_COMPILER_ID AppleClang)
 
 include( "${CMAKE_CURRENT_LIST_DIR}/apple.cmake" )
 unset( TNUN_native_optimization ) # This makes no sense when cross-compiling.
