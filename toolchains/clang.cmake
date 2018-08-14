@@ -31,9 +31,12 @@ set( TNUN_linker_runtime_sanity_checks ${TNUN_compiler_runtime_sanity_checks} )
 # set( TNUN_compiler_runtime_sanity_checks ${TNUN_linker_runtime_sanity_checks} -fno-omit-frame-pointer )
 
 # safe-stack sanitizer causes multiple symbols linker error when combined with address sanitizer
-#if( NOT ${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang" ) 
+#if( NOT ${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang" )
     # list( APPEND TNUN_linker_runtime_sanity_checks -fsanitize=safe-stack )
 #endif()
+
+set( TNUN_code_coverage_compiler_flags -fprofile-instr-generate -fcoverage-mapping )
+set( TNUN_code_coverage_linker_flags   -fprofile-instr-generate )
 
 if( NOT ${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang" ) # Tested with XCode 8.3
     set( TNUN_compiler_runtime_integer_checks -fsanitize=integer )
