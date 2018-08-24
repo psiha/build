@@ -103,6 +103,8 @@ macro( add_precompiled_header _targetName _input )
 
             add_custom_target( ${_targetName}_PCH_symlink
                 COMMAND
+                    ${CMAKE_COMMAND} -E make_directory ${GCH_PATH}
+                COMMAND
                     ${CMAKE_COMMAND} -E create_symlink "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/${_targetName}_PCH.dir/${pch_relative_path}.o" "${_output}"
                 COMMENT
                     "Creating symbolic link to built precompiled header"
