@@ -95,11 +95,19 @@ macro( add_precompiled_header _targetName _input )
             get_target_property( dependencies ${_targetName} INTERFACE_LINK_LIBRARIES )
             target_link_libraries( ${_targetName}_PCH PRIVATE ${dependencies} )
 
+            get_target_property( dependencies ${_targetName} LINK_LIBRARIES )
+            target_link_libraries( ${_targetName}_PCH PRIVATE ${dependencies} )
+
             get_filename_component( _name ${_input} NAME )
             set( GCH_PATH "${CMAKE_CURRENT_BINARY_DIR}/${_targetName}-pch" )
             set( _output "${GCH_PATH}/${_name}.gch" )
 
             file( RELATIVE_PATH pch_relative_path ${CMAKE_CURRENT_SOURCE_DIR} ${_input} )
+            # check if there are folder-ups - in that case CMake will generate absolute path within CMake.dir folder
+            string( FIND "${pch_relative_path}" "../" pos )
+            if ( NOT ${pos} EQUAL -1 )
+                set( pch_relative_path ${_input} )
+            endif()
 
             add_custom_target( ${_targetName}_PCH_symlink
                 COMMAND
