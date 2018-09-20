@@ -104,16 +104,28 @@ macro( add_precompiled_header _targetName _input )
 
             file( RELATIVE_PATH pch_relative_path ${CMAKE_CURRENT_SOURCE_DIR} ${_input} )
             # check if there are folder-ups - in that case CMake will generate absolute path within CMake.dir folder
-            string( FIND "${pch_relative_path}" "../" pos )
-            if ( NOT ${pos} EQUAL -1 )
+            string( FIND "${pch_relative_path}" "../" pos_nix )
+            string( FIND "${pch_relative_path}" "..\\" pos_win )
+            if ( NOT ${pos_nix} EQUAL -1 OR NOT ${pos_win} EQUAL -1 )
                 set( pch_relative_path ${_input} )
+            endif()
+            file( TO_NATIVE_PATH "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/${_targetName}_PCH.dir/${pch_relative_path}.o" built_pch_path )
+
+            if ( CMAKE_HOST_WIN32 )
+                string( REGEX REPLACE "\\\\(.):" "\\\\\\1_" built_pch_path    "${built_pch_path}"    )
+                string( REGEX REPLACE    "/(.):"    "/\\1_" pch_relative_path "${pch_relative_path}" )
+                string( REPLACE       "//"       "/"        pch_relative_path "${pch_relative_path}" )
+                file( TO_NATIVE_PATH "${_output}" _output )
+                set( mklink del "${_output}" && mklink "${_output}" "${built_pch_path}" )
+            else()
+                set( mklink "${CMAKE_COMMAND}" -E create_symlink "${built_pch_path}" "${_output}" )
             endif()
 
             add_custom_target( ${_targetName}_PCH_symlink
                 COMMAND
                     ${CMAKE_COMMAND} -E make_directory ${GCH_PATH}
                 COMMAND
-                    ${CMAKE_COMMAND} -E create_symlink "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/${_targetName}_PCH.dir/${pch_relative_path}.o" "${_output}"
+                    ${mklink}
                 COMMENT
                     "Creating symbolic link to built precompiled header"
                 VERBATIM
