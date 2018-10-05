@@ -88,7 +88,6 @@ macro( add_precompiled_header _targetName _input )
         if( ${CMAKE_GENERATOR} STREQUAL "Xcode" )
             set_target_properties(${_targetName} PROPERTIES XCODE_ATTRIBUTE_GCC_PREFIX_HEADER ${_input} XCODE_ATTRIBUTE_GCC_PRECOMPILE_PREFIX_HEADER "Yes")
         else()
-
             add_library( ${_targetName}_PCH OBJECT ${_input} )
             set_source_files_properties( ${_input} PROPERTIES OBJECT_DEPENDS "${PCH_LOCAL_DEPENDS}" COMPILE_OPTIONS -xc++-header LANGUAGE "CXX" COMPILE_DEFINITIONS "USING_PCH" )
 
@@ -133,7 +132,6 @@ macro( add_precompiled_header _targetName _input )
             add_dependencies( ${_targetName}_PCH_symlink ${_targetName}_PCH )
 
             get_target_property( _target_include_dirs ${_targetName} INCLUDE_DIRECTORIES )
-
             if( _target_include_dirs )
                 target_include_directories( ${_targetName}_PCH PRIVATE ${_target_include_dirs} )
             endif()
@@ -144,21 +142,28 @@ macro( add_precompiled_header _targetName _input )
             endif()
 
             get_target_property( _target_system_include_dirs ${_targetName} INTERFACE_SYSTEM_INCLUDE_DIRECTORIES )
-
             if( _target_system_include_dirs )
                 target_include_directories( ${_targetName}_PCH SYSTEM PRIVATE ${_target_system_include_dirs} )
             endif()
 
             get_target_property( _target_compile_definitions ${_targetName} COMPILE_DEFINITIONS )
-
             if( _target_compile_definitions )
                 target_compile_definitions( ${_targetName}_PCH PRIVATE ${_target_compile_definitions} )
             endif()
 
             get_target_property( _target_compile_options ${_targetName} COMPILE_OPTIONS )
-
             if( _target_compile_options )
                 target_compile_options( ${_targetName}_PCH PRIVATE ${_target_compile_options} )
+            endif()
+            
+            get_target_property( _target_compile_features ${_targetName} COMPILE_FEATURES )
+            if( _target_compile_features )
+                target_compile_features( ${_targetName}_PCH PRIVATE ${_target_compile_features} )
+            endif()
+            
+            get_target_property( _interface_target_compile_features ${_targetName} INTERFACE_COMPILE_FEATURES )
+            if( _interface_target_compile_features )
+                target_compile_features( ${_targetName}_PCH PRIVATE ${_interface_target_compile_features} )
             endif()
 
             ## Implementation note:
