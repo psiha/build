@@ -49,7 +49,7 @@ set( TNUN_ABIs
 )
 
 if( NOT DEFINED TNUN_ABI AND ${CMAKE_GENERATOR} MATCHES "Visual Studio" )
-  if ( ${CMAKE_GENERATOR} MATCHES 64 )
+  if ( CMAKE_VS_PLATFORM_NAME MATCHES 64 )
     set( TNUN_ABI x64 )
   else()
     set( TNUN_ABI Win32 )

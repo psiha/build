@@ -74,9 +74,15 @@ elseif( ANDROID_ABI STREQUAL "armeabi" ) # psiha/build does not support armeabi
 elseif( ANDROID_ABI STREQUAL "mips" ) # psiha/build has incomplete mips support
     set( TNUN_ABI mipsel-linux-android )
     unset( TNUN_ARCH )
+    # mips does not support LTO (tested with NDK r15b)
+    unset( TNUN_compiler_LTO )
+    unset( TNUN_linker_LTO )
 elseif( ANDROID_ABI STREQUAL "mips64" )
     set( TNUN_ABI mips64el-linux-android )
     unset( TNUN_ARCH )
+    # mips64 does not support LTO (tested with NDK r15b)
+    unset( TNUN_compiler_LTO )
+    unset( TNUN_linker_LTO )
 endif()
 
 if ( TNUN_ARCH )
