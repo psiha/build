@@ -17,27 +17,31 @@
 #
 ################################################################################
 
-set(CMAKE_C_COMPILER_ID   AppleClang)
-set(CMAKE_CXX_COMPILER_ID AppleClang)
+cmake_minimum_required( VERSION 3.14 )
+
+set( CMAKE_C_COMPILER_ID   AppleClang )
+set( CMAKE_CXX_COMPILER_ID AppleClang )
+
+if( NOT ${CMAKE_GENERATOR} MATCHES "Xcode" )
+    message( FATAL_ERROR "iOS toolchain supports only XCode generator" )
+endif()
 
 include( "${CMAKE_CURRENT_LIST_DIR}/apple.cmake" )
 unset( TNUN_native_optimization ) # This makes no sense when cross-compiling.
 
 # Standard settings
-set( CMAKE_SYSTEM_NAME      Darwin )
+set( CMAKE_SYSTEM_NAME      iOS    )
+set( CMAKE_OSX_SYSROOT      "iphoneos" )
 set( CPACK_SYSTEM_NAME      iOS    )
-set( CMAKE_SYSTEM_VERSION   6      )
+set( CMAKE_SYSTEM_VERSION   8.0    )
 set( CMAKE_SYSTEM_PROCESSOR arm    )
+set( CMAKE_OSX_ARCHITECTURES armv7 armv7s arm64 i386 x86_64 )
 set( APPLE true )
 set( iOS   true )
 # Compatibility with build scripts that rely on iOS toolchains defining IOS instead of iOS
 # CMake variables are case sensitive (unlike functions, macros and commands: https://cmake.org/cmake/help/latest/manual/cmake-language.7.html#variables
 set( IOS   true )
 set( UNIX  true )
-
-if( NOT ${CMAKE_GENERATOR} MATCHES "Xcode" )
-    message( FATAL_ERROR "iOS toolchain supports only XCode generator" )
-endif()
 
 set( TNUN_os_suffix iOS )
 
