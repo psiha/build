@@ -10,7 +10,7 @@
 
 include( "${CMAKE_CURRENT_LIST_DIR}/gcc_compatibles.cmake" )
 
-list( APPEND TNUN_compiler_optimize_for_speed -fvectorize -fslp-vectorize -fslp-vectorize-aggressive )
+list( APPEND TNUN_compiler_optimize_for_speed -fvectorize -fslp-vectorize )
 list( APPEND TNUN_compiler_report_optimization -Rpass=loop-.* )
 
 list( APPEND TNUN_default_warnings -Wdocumentation )
