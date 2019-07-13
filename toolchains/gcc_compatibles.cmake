@@ -44,6 +44,12 @@ if ( CMAKE_VERSION VERSION_GREATER 3.7 )
     set( CMAKE_CXX_STANDARD 17 )
     if ( CMAKE_VERSION VERSION_GREATER 3.11 )
         set( CMAKE_CXX_STANDARD 20 )
+        # workaround for bug in cmake (tested with 3.14.5) - on Apple Clang it will add
+        # -std=gnu++1z for CMAKE_CXX_STANDARD 20 as last compiler option,
+        # thus overriding the above add_compile_options statement
+        if ( CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" )
+            unset( CMAKE_CXX_STANDARD )
+        endif()
     endif()
 endif()
 
