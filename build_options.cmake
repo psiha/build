@@ -43,7 +43,7 @@ function( TNUN_add_link_options configuration )
     #                                         (01.06.2016.) (Domagoj Saric)
     string( TOUPPER ${configuration} configuration )
     foreach( arg ${ARGN} )
-        link_libraries( $<$<CONFIG:${configuration}>:${arg}> )
+        add_link_options( $<$<CONFIG:${configuration}>:${arg}> )
     endforeach()
 endfunction()
 
