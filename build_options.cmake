@@ -63,9 +63,8 @@ elseif( ${CMAKE_SYSTEM_NAME} MATCHES "Linux" )
     include( "${CMAKE_CURRENT_LIST_DIR}/toolchains/linux.toolchain.cmake" )
 elseif( ANDROID_TOOLCHAIN ) # TNUN android.toolchain.cmake does not define this variable, while native Android Studio toolchain does
     include( "${CMAKE_CURRENT_LIST_DIR}/toolchains/android-studio.toolchain.cmake" )
-elseif( "${CMAKE_SYSTEM_NAME}" STREQUAL "Emscripten" )
-    include( "${CMAKE_CURRENT_LIST_DIR}/toolchains/clang.cmake" )
-    include( "${CMAKE_CURRENT_LIST_DIR}/toolchains/gcc_compatibles_stl.cmake" )
+elseif( EMSCRIPTEN )
+    include( "${CMAKE_CURRENT_LIST_DIR}/toolchains/emscripten.cmake" )
 else()
     # Android and iOS (crosscompiling platforms) have to specify the toolchain
     # file explicitly.
