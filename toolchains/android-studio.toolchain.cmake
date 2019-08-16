@@ -103,7 +103,15 @@ if( NOT ( ANDROID_ABI STREQUAL "mips" OR ANDROID_ABI STREQUAL "mips64" ) )
         set( gold_suffix ".exe" )
     endif()
     link_libraries( -fuse-ld=gold${gold_suffix} )
-    link_libraries( $<$<CONFIG:RELEASE>:-Wl,--icf=all> ) # http://research.google.com/pubs/pub36912.html Safe ICF: Pointer Safe and Unwinding Aware Identical Code Folding in Gold
+    # Implementation note:
+    # NDK r17 (and r18 as well) on x86 with ICF and LTO combined causes internal linker error.
+    #
+    #                              Nenad Miksa (19.09.2018.)
+    if( ANDROID_ABI STREQUAL "x86" )
+        link_libraries( $<$<CONFIG:RELEASE>:-Wl,--icf=none> )
+    else()
+        link_libraries( $<$<CONFIG:RELEASE>:-Wl,--icf=all> ) # http://research.google.com/pubs/pub36912.html Safe ICF: Pointer Safe and Unwinding Aware Identical Code Folding in Gold
+    endif()
 endif()
 
 link_libraries( $<$<CONFIG:RELEASE>:-Wl,--gc-sections> )

@@ -48,8 +48,14 @@ set( TNUN_ABIs
   x64
 )
 
-if( NOT DEFINED TNUN_ABI )
+if( NOT DEFINED TNUN_ABI AND ${CMAKE_GENERATOR} MATCHES "Visual Studio" )
   if ( CMAKE_VS_PLATFORM_NAME MATCHES 64 )
+    set( TNUN_ABI x64 )
+  else()
+    set( TNUN_ABI Win32 )
+  endif()
+else()
+  if ( ${CMAKE_SIZEOF_VOID_P} EQUAL 8 )
     set( TNUN_ABI x64 )
   else()
     set( TNUN_ABI Win32 )

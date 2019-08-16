@@ -41,11 +41,6 @@ if( ${TNUN_CPP_LIBRARY} STREQUAL "stdc++" )
         add_compile_options( -static )
         link_libraries( -static-libstdc++ -static-libgcc )
     endif()
-
-    add_definitions(
-        -D__STDC_FORMAT_MACROS
-        -D_GLIBCXX_USE_CXX11_ABI=0
-    )
 endif()
 
 set( TNUN_arch_include_dir "${CMAKE_CURRENT_LIST_DIR}/linux" )
