@@ -71,8 +71,8 @@ list( APPEND TNUN_compiler_optimize_for_size -mthumb ) #...mrmlj...this will cau
 # http://stackoverflow.com/questions/1211854/xcode-conditional-build-settings-based-on-architecture-device-arm-vs-simulat
 # http://cmake.3232098.n2.nabble.com/Different-settings-for-different-configurations-in-Xcode-td6908021.html
 # http://public.kitware.com/Bug/view.php?id=8915 Missing feature to set Xcode specific build settings
-set( XCODE_ATTRIBUTE_CFLAGS_armv7  "-mcpu=cortex-a8 -mfpu=neon -mtune=cortex-a9"  )
-set( XCODE_ATTRIBUTE_CFLAGS_armv7s "                -mfpu=neon -mtune=cortex-a15" ) # http://www.anandtech.com/show/6292/iphone-5-a6-not-a15-custom-core
+set( XCODE_ATTRIBUTE_CFLAGS_armv7  "-mcpu=cortex-a9 -mfpu=neon" ) 
+set( XCODE_ATTRIBUTE_CFLAGS_armv7s "-mcpu=swift"                )
 set( CMAKE_XCODE_ATTRIBUTE_OTHER_CFLAGS[arch=armv7]          "${XCODE_ATTRIBUTE_CFLAGS_armv7}  $(OTHER_CFLAGS)"         )
 set( CMAKE_XCODE_ATTRIBUTE_OTHER_CFLAGS[arch=armv7s]         "${XCODE_ATTRIBUTE_CFLAGS_armv7s} $(OTHER_CFLAGS)"         )
 set( CMAKE_XCODE_ATTRIBUTE_OTHER_CPLUSPLUSFLAGS[arch=armv7]  "${XCODE_ATTRIBUTE_CFLAGS_armv7}  $(OTHER_CPLUSPLUSFLAGS)" )

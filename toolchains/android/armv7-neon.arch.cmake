@@ -11,3 +11,5 @@ include( "${CMAKE_CURRENT_LIST_DIR}/armv7-vfp3d16.arch.cmake" )
 set( TNUN_arch_suffix ARMv7a_NEON )
 
 set( TNUN_arch_compiler_options -mfpu=neon )
+remove_definitions( -mtune=cortex-a9 )
+add_compile_options( -mtune=cortex-a15 )
