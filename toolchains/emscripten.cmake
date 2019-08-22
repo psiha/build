@@ -28,3 +28,8 @@ set( CMAKE_EXECUTABLE_SUFFIX ".html" )
 # see: https://github.com/emscripten-core/emscripten/blob/master/src/settings.js
 
 set( TNUN_MALLOC_OVERCOMMIT_POLICY Partial )
+
+set( enable_memory_growth "SHELL:-s ALLOW_MEMORY_GROWTH=1" )
+
+add_compile_options( ${enable_memory_growth} )
+add_link_options( ${enable_memory_growth} )
