@@ -11,7 +11,6 @@ include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
 set( TNUN_compiler_debug_symbols -g4 "SHELL:-s DEMANGLE_SUPPORT=1" )
 set( TNUN_linker_debug_symbols   -g4 "SHELL:-s DEMANGLE_SUPPORT=1" )
 
-
 set( TNUN_linker_exceptions_on  "SHELL:-s DISABLE_EXCEPTION_CATCHING=0" )
 set( TNUN_linker_exceptions_off "SHELL:-s DISABLE_EXCEPTION_CATCHING=1" )
 
@@ -29,8 +28,3 @@ set( CMAKE_EXECUTABLE_SUFFIX ".html" )
 # see: https://github.com/emscripten-core/emscripten/blob/master/src/settings.js
 
 set( TNUN_MALLOC_OVERCOMMIT_POLICY Partial )
-
-set( enable_memory_growth "SHELL:-s ALLOW_MEMORY_GROWTH=1" )
-
-add_compile_options( ${enable_memory_growth} )
-add_link_options( ${enable_memory_growth} )
