@@ -28,3 +28,8 @@ set( CMAKE_EXECUTABLE_SUFFIX ".html" )
 # see: https://github.com/emscripten-core/emscripten/blob/master/src/settings.js
 
 set( TNUN_MALLOC_OVERCOMMIT_POLICY Partial )
+
+# always use STRICT mode: https://github.com/emscripten-core/emscripten/blob/1.38.43/src/settings.js#L809
+set( strict_mode "SHELL:-s STRICT=1" )
+add_compile_options( ${strict_mode} )
+add_link_options( ${strict_mode} )
