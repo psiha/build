@@ -33,3 +33,5 @@ set( TNUN_MALLOC_OVERCOMMIT_POLICY Partial )
 set( strict_mode "SHELL:-s STRICT=1" )
 add_compile_options( ${strict_mode} )
 add_link_options( ${strict_mode} )
+
+add_compile_options( -fno-PIC )
