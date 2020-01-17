@@ -33,6 +33,11 @@ string( REPLACE "-fstack-protector-strong" ""    CMAKE_C_FLAGS                  
 string( REPLACE "-fstack-protector-strong" ""    CMAKE_CXX_FLAGS                "${CMAKE_CXX_FLAGS}"        )
 string( REPLACE "-fstack-protector-strong" ""    CMAKE_ASM_FLAGS                "${CMAKE_ASM_FLAGS}"        )
 
+string( REPLACE "-D_FORTIFY_SOURCE=2"      ""    ANDROID_COMPILER_FLAGS         "${ANDROID_COMPILER_FLAGS}" )
+string( REPLACE "-D_FORTIFY_SOURCE=2"      ""    CMAKE_C_FLAGS                  "${CMAKE_C_FLAGS}  "        )
+string( REPLACE "-D_FORTIFY_SOURCE=2"      ""    CMAKE_CXX_FLAGS                "${CMAKE_CXX_FLAGS}"        )
+string( REPLACE "-D_FORTIFY_SOURCE=2"      ""    CMAKE_ASM_FLAGS                "${CMAKE_ASM_FLAGS}"        )
+
 string( REPLACE "-O2"                      "-O3" ANDROID_COMPILER_FLAGS_RELEASE "${ANDROID_COMPILER_FLAGS_RELEASE}" )
 string( REPLACE "-O2"                      "-O3" CMAKE_C_FLAGS_RELEASE          "${CMAKE_C_FLAGS_RELEASE}  "        )
 string( REPLACE "-O2"                      "-O3" CMAKE_CXX_FLAGS_RELEASE        "${CMAKE_CXX_FLAGS_RELEASE}"        )
@@ -54,6 +59,9 @@ if("${ANDROID_TOOLCHAIN}" STREQUAL "clang")
 else()
     include( "${CMAKE_CURRENT_LIST_DIR}/gcc.cmake" )
 endif()
+
+# Re-enable source fortification only in debug/development builds
+set( TNUN_compiler_assertions -D_FORTIFY_SOURCE=2 )
 
 set( TNUN_arch_include_dir "${CMAKE_CURRENT_LIST_DIR}/android" )
 set( TNUN_ABI  ${ANDROID_ABI} )
