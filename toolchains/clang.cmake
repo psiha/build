@@ -15,7 +15,8 @@ list( APPEND TNUN_compiler_report_optimization -Rpass=loop-.* )
 
 list( APPEND TNUN_default_warnings -Wdocumentation )
 
-list( APPEND TNUN_compiler_LTO -fwhole-program-vtables )
+list( APPEND TNUN_compiler_LTO         -fwhole-program-vtables    )
+list( APPEND TNUN_compiler_disable_LTO -fno-whole-program-vtables )
 
 # http://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
 # http://clang.llvm.org/docs/AddressSanitizer.html

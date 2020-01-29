@@ -17,6 +17,7 @@ set( TNUN_compiler_debug_flags                    -DDEBUG -Od -MDd              
 set( TNUN_compiler_release_flags                  -Ox -Oy -GF -Gw -Gm- -GS- -Gy -MD           )
 set( TNUN_linker_debug_symbols                    -DEBUG                                      )
 set( TNUN_compiler_LTO                            -GL                                         )
+set( TNUN_compiler_disable_LTO                    -GL-                                        )
 set( TNUN_linker_LTO                              -LTCG                                       )
 set( TNUN_compiler_fastmath                       -fp:except- -fp:fast -Qfast_transcendentals )
 set( TNUN_compiler_precisemath                    -fp:precise                                 )
