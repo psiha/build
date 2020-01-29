@@ -19,6 +19,7 @@ set( TNUN_linker_debug_symbols                    -DEBUG                        
 set( TNUN_compiler_LTO                            -GL                                         )
 set( TNUN_linker_LTO                              -LTCG                                       )
 set( TNUN_compiler_fastmath                       -fp:except- -fp:fast -Qfast_transcendentals )
+set( TNUN_compiler_precisemath                    -fp:precise                                 )
 set( TNUN_compiler_rtti_on                        -GR                                         )
 set( TNUN_compiler_rtti_off                       -GR-                                        )
 set( TNUN_compiler_exceptions_on                  -EHsc                                       )
