@@ -103,26 +103,29 @@ endif()
 # Some settings from android.toolchain.cmake which are better than in the
 # default toolchain shipped with Android Studio.
 
-# apparently gold is not supported on mips
+# apparently mips supports only the default linker
 if( NOT ( ANDROID_ABI STREQUAL "mips" OR ANDROID_ABI STREQUAL "mips64" ) )
     # Implementation note: https://github.com/android-ndk/ndk/issues/75
     #                                         (01.03.2017. Domagoj Saric)
     if ( CMAKE_HOST_WIN32 )
-        set( gold_suffix ".exe" )
+        set( linker_suffix ".exe" )
     endif()
+
+    set( TNUN_USE_LINKER "gold" CACHE STRING "Linker to use" )
+    set_property( CACHE TNUN_USE_LINKER PROPERTY STRINGS "gold" "lld" )
 
     # Implementation note:
     # NDK r17 (and r18 as well) on x86 with ICF and LTO combined causes internal linker error.
     #
     #                              Nenad Miksa (19.09.2018.)
     # Additional note:
-    # LTO with gold fails on Android x86. Use LLD on that platform and gold otherwise.
+    # LTO with gold fails on Android x86. Use LLD on that platform and selected linker otherwise.
     #                              Nenad Miksa (17.01.2020.)
     if( ANDROID_ABI STREQUAL "x86" )
-        link_libraries( -fuse-ld=lld${gold_suffix} )
+        link_libraries( -fuse-ld=lld${linker_suffix} )
         link_libraries( $<$<CONFIG:RELEASE>:-Wl,--icf=none> )
     else()
-        link_libraries( -fuse-ld=gold${gold_suffix} )
+        link_libraries( -fuse-ld=${TNUN_USE_LINKER}${linker_suffix} )
         link_libraries( $<$<CONFIG:RELEASE>:-Wl,--icf=all> ) # http://research.google.com/pubs/pub36912.html Safe ICF: Pointer Safe and Unwinding Aware Identical Code Folding in Gold
     endif()
 endif()
