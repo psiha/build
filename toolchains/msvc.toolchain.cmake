@@ -28,6 +28,8 @@ set( TNUN_compiler_exceptions_off                 -D_HAS_EXCEPTIONS=0 -wd4577   
 set( TNUN_compiler_report_optimization            -Qpar-report:1 -Qvec-report:2               ) # https://msdn.microsoft.com/en-us/library/jj658585.aspx Vectorizer and Parallelizer Messages
 set( TNUN_compiler_optimize_for_speed             -Ox -Ot -Ob3 -Qpar                          )
 set( TNUN_compiler_optimize_for_size              -Ox -Os -Ob2                                )
+set( TNUN_compiler_thread_safe_init               -Zc:threadSafeInit                          )
+set( TNUN_compiler_disable_thread_safe_init       -Zc:threadSafeInit-                         )
 set( TNUN_compiler_runtime_sanity_checks          -GS -sdl -guard:cf                          ) #...mrmlj...-fp:strict would disable fast-math so for now it is moved to the dbg_only version
 set( TNUN_compiler_dbg_only_runtime_sanity_checks -RTC1 -fp:strict                            )
 set( TNUN_warnings_as_errors                      -WX                                         )
@@ -39,7 +41,7 @@ set( TNUN_compiler_runtime_integer_checks         -RTCc -D_ALLOW_RTCc_IN_STL    
 # w4324: 'structure was padded due to alignment specifier'
 # w5104: 'found 'L#x' in macro replacement list, did you mean 'L""#x'?' @ windows.h + experimental PP
 # w5105: 'macro expansion producing 'defined' has undefined behavior' @ windows.h + experimental PP
-add_compile_options( /std:c++latest /permissive- /experimental:preprocessor -MP -Oi -Zc:threadSafeInit- -wd4324 -wd4373 -wd5104 -wd5105 )
+add_compile_options( /std:c++latest /permissive- /experimental:preprocessor -MP -Oi -wd4324 -wd4373 -wd5104 -wd5105 )
 add_definitions(
   -D_CRT_SECURE_NO_WARNINGS
   -D_SCL_SECURE_NO_WARNINGS
