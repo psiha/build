@@ -28,6 +28,23 @@ function( TNUN_add_compile_options configuration )
     endforeach()
 endfunction()
 
+function( TNUN_remove_compile_options_for_config configuration )
+    string( TOUPPER ${configuration} configuration )
+    get_directory_property( current_compile_options COMPILE_OPTIONS )
+    foreach( arg ${ARGN} )
+        set( option $<$<CONFIG:${configuration}>:${arg}> )
+        string( REPLACE "${option}" "" current_compile_options "${current_compile_options}" )
+    endforeach()
+    set_directory_properties( PROPERTIES COMPILE_OPTIONS "${current_compile_options}" )
+endfunction()
+
+function( TNUN_remove_compile_options )
+    get_directory_property( current_compile_options COMPILE_OPTIONS )
+    foreach( option ${ARGN} )
+        string( REPLACE "${option}" "" current_compile_options "${current_compile_options}" )
+    endforeach()
+    set_directory_properties( PROPERTIES COMPILE_OPTIONS "${current_compile_options}" )
+endfunction()
 
 ################################################################################
 #
