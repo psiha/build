@@ -34,9 +34,11 @@ set( CMAKE_EXECUTABLE_SUFFIX ".html" )
 
 set( TNUN_MALLOC_OVERCOMMIT_POLICY Partial )
 
-# always use STRICT mode: https://github.com/emscripten-core/emscripten/blob/1.38.43/src/settings.js#L809
-set( strict_mode "SHELL:-s STRICT=1" )
-add_compile_options( ${strict_mode} )
-add_link_options( ${strict_mode} )
+if ( NOT ${clang_major_version} EQUAL 6 )
+# always use STRICT mode if not using fastcomp (on fastcomp with 1.39.16 it's broken): https://github.com/emscripten-core/emscripten/blob/1.38.43/src/settings.js#L809
+    set( strict_mode "SHELL:-s STRICT=1" )
+    add_compile_options( ${strict_mode} )
+    add_link_options( ${strict_mode} )
+endif()
 
 add_compile_options( -fno-PIC )
