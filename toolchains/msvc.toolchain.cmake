@@ -41,7 +41,7 @@ set( TNUN_compiler_runtime_integer_checks         -RTCc -D_ALLOW_RTCc_IN_STL    
 # w4324: 'structure was padded due to alignment specifier'
 # w5104: 'found 'L#x' in macro replacement list, did you mean 'L""#x'?' @ windows.h + experimental PP
 # w5105: 'macro expansion producing 'defined' has undefined behavior' @ windows.h + experimental PP
-add_compile_options( /std:c++latest /permissive- /experimental:preprocessor -MP -Oi -wd4324 -wd4373 -wd5104 -wd5105 )
+add_compile_options( /std:c++latest /permissive- /Zc:preprocessor -MP -Oi -wd4324 -wd4373 -wd5104 -wd5105 )
 add_definitions(
   -D_CRT_SECURE_NO_WARNINGS
   -D_SCL_SECURE_NO_WARNINGS
