@@ -65,4 +65,6 @@ endif()
 
 add_compile_options( -Wheader-guard -fdiagnostics-color )
 
+set( TNUN_compiler_time_trace "-ftime-trace" )
+
 set( CLANG true )
