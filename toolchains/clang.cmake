@@ -15,7 +15,8 @@ list( APPEND TNUN_compiler_report_optimization -Rpass=loop-.* )
 
 list( APPEND TNUN_default_warnings -Wdocumentation )
 
-list( APPEND TNUN_compiler_LTO -fwhole-program-vtables )
+list( APPEND TNUN_compiler_LTO         -fwhole-program-vtables    )
+list( APPEND TNUN_compiler_disable_LTO -fno-whole-program-vtables )
 
 # http://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
 # http://clang.llvm.org/docs/AddressSanitizer.html
@@ -63,5 +64,7 @@ if( "${CMAKE_CXX_COMPILER}" MATCHES ".*ccache" )
 endif()
 
 add_compile_options( -Wheader-guard -fdiagnostics-color )
+
+set( TNUN_compiler_time_trace "-ftime-trace" )
 
 set( CLANG true )

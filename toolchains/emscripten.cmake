@@ -17,7 +17,12 @@ set( TNUN_linker_exceptions_off "SHELL:-s DISABLE_EXCEPTION_CATCHING=1" )
 list( APPEND TNUN_compiler_exceptions_on  ${TNUN_linker_exceptions_on}  )
 list( APPEND TNUN_compiler_exceptions_off ${TNUN_linker_exceptions_off} )
 
-list( APPEND TNUN_linker_LTO "SHELL:--llvm-lto 3" "SHELL:--llvm-opts 3")
+# use that on fastcomp - upstream backend does this out of the box when -flto is specified and whines about --llvm-lto flag being ignored
+string( REPLACE "." ";" VERSION_LIST ${CMAKE_CXX_COMPILER_VERSION} )
+list( GET VERSION_LIST 0 clang_major_version  )
+if ( ${clang_major_version} EQUAL 6 )
+    list( APPEND TNUN_linker_LTO "SHELL:--llvm-lto 3" "SHELL:--llvm-opts 3")
+endif()
 
 set( TNUN_compiler_assertions "SHELL:-s ASSERTIONS=2" "SHELL:-s GL_ASSERTIONS=1" "SHELL:-s SAFE_HEAP=1" )
 set( TNUN_linker_assertions ${TNUN_compiler_assertions} )
@@ -29,7 +34,11 @@ set( CMAKE_EXECUTABLE_SUFFIX ".html" )
 
 set( TNUN_MALLOC_OVERCOMMIT_POLICY Partial )
 
-# always use STRICT mode: https://github.com/emscripten-core/emscripten/blob/1.38.43/src/settings.js#L809
-set( strict_mode "SHELL:-s STRICT=1" )
-add_compile_options( ${strict_mode} )
-add_link_options( ${strict_mode} )
+if ( NOT ${clang_major_version} EQUAL 6 )
+# always use STRICT mode if not using fastcomp (on fastcomp with 1.39.16 it's broken): https://github.com/emscripten-core/emscripten/blob/1.38.43/src/settings.js#L809
+    set( strict_mode "SHELL:-s STRICT=1" )
+    add_compile_options( ${strict_mode} )
+    add_link_options( ${strict_mode} )
+endif()
+
+add_compile_options( -fno-PIC )

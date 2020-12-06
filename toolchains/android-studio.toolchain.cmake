@@ -33,6 +33,11 @@ string( REPLACE "-fstack-protector-strong" ""    CMAKE_C_FLAGS                  
 string( REPLACE "-fstack-protector-strong" ""    CMAKE_CXX_FLAGS                "${CMAKE_CXX_FLAGS}"        )
 string( REPLACE "-fstack-protector-strong" ""    CMAKE_ASM_FLAGS                "${CMAKE_ASM_FLAGS}"        )
 
+string( REPLACE "-D_FORTIFY_SOURCE=2"      ""    ANDROID_COMPILER_FLAGS         "${ANDROID_COMPILER_FLAGS}" )
+string( REPLACE "-D_FORTIFY_SOURCE=2"      ""    CMAKE_C_FLAGS                  "${CMAKE_C_FLAGS}  "        )
+string( REPLACE "-D_FORTIFY_SOURCE=2"      ""    CMAKE_CXX_FLAGS                "${CMAKE_CXX_FLAGS}"        )
+string( REPLACE "-D_FORTIFY_SOURCE=2"      ""    CMAKE_ASM_FLAGS                "${CMAKE_ASM_FLAGS}"        )
+
 string( REPLACE "-O2"                      "-O3" ANDROID_COMPILER_FLAGS_RELEASE "${ANDROID_COMPILER_FLAGS_RELEASE}" )
 string( REPLACE "-O2"                      "-O3" CMAKE_C_FLAGS_RELEASE          "${CMAKE_C_FLAGS_RELEASE}  "        )
 string( REPLACE "-O2"                      "-O3" CMAKE_CXX_FLAGS_RELEASE        "${CMAKE_CXX_FLAGS_RELEASE}"        )
@@ -54,6 +59,9 @@ if("${ANDROID_TOOLCHAIN}" STREQUAL "clang")
 else()
     include( "${CMAKE_CURRENT_LIST_DIR}/gcc.cmake" )
 endif()
+
+# Re-enable source fortification only in debug/development builds
+set( TNUN_compiler_assertions -D_FORTIFY_SOURCE=2 )
 
 set( TNUN_arch_include_dir "${CMAKE_CURRENT_LIST_DIR}/android" )
 set( TNUN_ABI  ${ANDROID_ABI} )
@@ -95,21 +103,29 @@ endif()
 # Some settings from android.toolchain.cmake which are better than in the
 # default toolchain shipped with Android Studio.
 
-# apparently gold is not supported on mips
+# apparently mips supports only the default linker
 if( NOT ( ANDROID_ABI STREQUAL "mips" OR ANDROID_ABI STREQUAL "mips64" ) )
     # Implementation note: https://github.com/android-ndk/ndk/issues/75
     #                                         (01.03.2017. Domagoj Saric)
     if ( CMAKE_HOST_WIN32 )
-        set( gold_suffix ".exe" )
+        set( linker_suffix ".exe" )
     endif()
-    link_libraries( -fuse-ld=gold${gold_suffix} )
+
+    set( TNUN_USE_LINKER "gold" CACHE STRING "Linker to use" )
+    set_property( CACHE TNUN_USE_LINKER PROPERTY STRINGS "gold" "lld" )
+
     # Implementation note:
     # NDK r17 (and r18 as well) on x86 with ICF and LTO combined causes internal linker error.
     #
     #                              Nenad Miksa (19.09.2018.)
+    # Additional note:
+    # LTO with gold fails on Android x86. Use LLD on that platform and selected linker otherwise.
+    #                              Nenad Miksa (17.01.2020.)
     if( ANDROID_ABI STREQUAL "x86" )
+        link_libraries( -fuse-ld=lld${linker_suffix} )
         link_libraries( $<$<CONFIG:RELEASE>:-Wl,--icf=none> )
     else()
+        link_libraries( -fuse-ld=${TNUN_USE_LINKER}${linker_suffix} )
         link_libraries( $<$<CONFIG:RELEASE>:-Wl,--icf=all> ) # http://research.google.com/pubs/pub36912.html Safe ICF: Pointer Safe and Unwinding Aware Identical Code Folding in Gold
     endif()
 endif()

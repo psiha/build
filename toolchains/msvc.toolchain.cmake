@@ -17,6 +17,7 @@ set( TNUN_compiler_debug_flags                    -DDEBUG -Od -MDd              
 set( TNUN_compiler_release_flags                  -Ox -Oy -GF -Gw -Gm- -GS- -Gy -MD           )
 set( TNUN_linker_debug_symbols                    -DEBUG                                      )
 set( TNUN_compiler_LTO                            -GL                                         )
+set( TNUN_compiler_disable_LTO                    -GL-                                        )
 set( TNUN_linker_LTO                              -LTCG                                       )
 set( TNUN_compiler_fastmath                       -fp:except- -fp:fast -Qfast_transcendentals )
 set( TNUN_compiler_precisemath                    -fp:precise                                 )
@@ -27,6 +28,8 @@ set( TNUN_compiler_exceptions_off                 -D_HAS_EXCEPTIONS=0 -wd4577   
 set( TNUN_compiler_report_optimization            -Qpar-report:1 -Qvec-report:2               ) # https://msdn.microsoft.com/en-us/library/jj658585.aspx Vectorizer and Parallelizer Messages
 set( TNUN_compiler_optimize_for_speed             -Ox -Ot -Ob3 -Qpar                          )
 set( TNUN_compiler_optimize_for_size              -Ox -Os -Ob2                                )
+set( TNUN_compiler_thread_safe_init               -Zc:threadSafeInit                          )
+set( TNUN_compiler_disable_thread_safe_init       -Zc:threadSafeInit-                         )
 set( TNUN_compiler_runtime_sanity_checks          -GS -sdl -guard:cf                          ) #...mrmlj...-fp:strict would disable fast-math so for now it is moved to the dbg_only version
 set( TNUN_compiler_dbg_only_runtime_sanity_checks -RTC1 -fp:strict                            )
 set( TNUN_warnings_as_errors                      -WX                                         )
@@ -38,7 +41,14 @@ set( TNUN_compiler_runtime_integer_checks         -RTCc -D_ALLOW_RTCc_IN_STL    
 # w4324: 'structure was padded due to alignment specifier'
 # w5104: 'found 'L#x' in macro replacement list, did you mean 'L""#x'?' @ windows.h + experimental PP
 # w5105: 'macro expansion producing 'defined' has undefined behavior' @ windows.h + experimental PP
-add_compile_options( /std:c++latest /permissive- /experimental:preprocessor -MP -Oi -Zc:threadSafeInit- -wd4324 -wd4373 -wd5104 -wd5105 )
+add_compile_options( /std:c++latest /permissive- -MP -Oi -wd4324 -wd4373 -wd5104 -wd5105 )
+
+if ( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "19.26" )
+    add_compile_options( /Zc:preprocessor )
+else()
+    add_compile_options( /experimental:preprocessor )
+endif()
+
 add_definitions(
   -D_CRT_SECURE_NO_WARNINGS
   -D_SCL_SECURE_NO_WARNINGS

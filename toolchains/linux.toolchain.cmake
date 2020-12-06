@@ -35,11 +35,14 @@ endif()
 set( TNUN_LIBCPP_LOCATION /usr/include/c++/v1 )
 include( ${CMAKE_CURRENT_LIST_DIR}/gcc_compatibles_stl.cmake )
 
-if( ${TNUN_CPP_LIBRARY} STREQUAL "stdc++" )
-    option( TNUN_STATIC_LIBC "Link all binaries statically with libc and libc++" false )
-    if( ${TNUN_STATIC_LIBC} )
-        add_compile_options( -static )
+option( TNUN_STATIC_LIBC "Link all binaries statically with libc and libc++" false )
+
+if( ${TNUN_STATIC_LIBC} )
+    link_libraries( -static )
+    if( ${TNUN_CPP_LIBRARY} STREQUAL "stdc++" )
         link_libraries( -static-libstdc++ -static-libgcc )
+    elseif( ${TNUN_CPP_LIBRARY} STREQUAL "libc++" )
+        link_libraries( -s c++ pthread dl c++abi unwind c dl m )
     endif()
 endif()
 
@@ -48,6 +51,11 @@ include( "${TNUN_arch_include_dir}/${TNUN_ABI}.abi.cmake" )
 
 link_libraries( $<$<CONFIG:RELEASE>:-Wl,--gc-sections> )
 
+set( TNUN_USE_LINKER "default" CACHE STRING "Linker to use" )
+set_property( CACHE TNUN_USE_LINKER PROPERTY STRINGS "default" "gold" "lld" )
+if ( NOT TNUN_USE_LINKER STREQUAL "default" )
+    link_libraries( -fuse-ld=${TNUN_USE_LINKER} )
+endif()
 
 ################################################################################
 # malloc overcommit policy
