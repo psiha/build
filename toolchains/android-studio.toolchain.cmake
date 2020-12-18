@@ -111,7 +111,7 @@ if( NOT ( ANDROID_ABI STREQUAL "mips" OR ANDROID_ABI STREQUAL "mips64" ) )
         set( linker_suffix ".exe" )
     endif()
 
-    set( TNUN_USE_LINKER "gold" CACHE STRING "Linker to use" )
+    set( TNUN_USE_LINKER "lld" CACHE STRING "Linker to use" )
     set_property( CACHE TNUN_USE_LINKER PROPERTY STRINGS "gold" "lld" )
 
     # Implementation note:
