@@ -24,8 +24,11 @@ if ( ${clang_major_version} EQUAL 6 )
     list( APPEND TNUN_linker_LTO "SHELL:--llvm-lto 3" "SHELL:--llvm-opts 3")
 endif()
 
-set( TNUN_compiler_assertions "SHELL:-s ASSERTIONS=2" "SHELL:-s GL_ASSERTIONS=1" "SHELL:-s SAFE_HEAP=1" )
+set( TNUN_compiler_assertions "SHELL:-s ASSERTIONS=2" "SHELL:-s STACK_OVERFLOW_CHECK=2" "SHELL:-s GL_ASSERTIONS=1" "SHELL:-s SAFE_HEAP=1" )
 set( TNUN_linker_assertions ${TNUN_compiler_assertions} )
+
+list( APPEND TNUN_compiler_release_flags "SHELL:-s ASSERTIONS=0" "SHELL:-s STACK_OVERFLOW_CHECK=0" )
+list( APPEND TNUN_linker_release_flags ${TNUN_compiler_release_flags} "SHELL:--closure 1" "SHELL:-s IGNORE_CLOSURE_COMPILER_ERRORS=1" )
 
 set( CMAKE_EXECUTABLE_SUFFIX ".html" )
 

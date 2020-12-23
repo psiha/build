@@ -116,6 +116,7 @@ if( NOT TNUN_DO_NOT_ADD_DEFAULT_BUILD_FLAGS )
     TNUN_add_compile_options( Debug   ${TNUN_compiler_debug_flags} ${TNUN_compiler_debug_symbols} )
     TNUN_add_compile_options( Release ${TNUN_compiler_release_flags} )
     add_compile_options( ${TNUN_default_warnings} )
+    TNUN_add_link_options( Release ${TNUN_linker_release_flags} )
 endif()
 
 
