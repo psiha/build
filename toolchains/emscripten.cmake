@@ -45,3 +45,8 @@ if ( NOT ${clang_major_version} EQUAL 6 )
 endif()
 
 add_compile_options( -fno-PIC )
+
+# always use emmalloc, instead of default dlmalloc
+# https://groups.google.com/g/emscripten-discuss/c/SCZMkfk8hyk?pli=1
+# https://github.com/emscripten-core/emscripten/blob/2.0.12/src/settings.js#L121
+add_link_options( "SHELL:-s MALLOC=emmalloc" )
