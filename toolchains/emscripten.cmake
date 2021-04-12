@@ -8,8 +8,15 @@
 
 include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
 
-set( TNUN_compiler_debug_symbols -g4 "SHELL:-s DEMANGLE_SUPPORT=1" )
-set( TNUN_linker_debug_symbols   -g4 "SHELL:-s DEMANGLE_SUPPORT=1" )
+set( TNUN_debug_symbols "SHELL:-s DEMANGLE_SUPPORT=1" )
+if ( EMSCRIPTEN_VERSION VERSION_GREATER_EQUAL "2.0.17" )
+    list( APPEND TNUN_debug_symbols -g3 -gsource-map )
+else()
+    list( APPEND TNUN_debug_symbols -g4 )
+endif()
+
+set( TNUN_compiler_debug_symbols ${TNUN_debug_symbols} )
+set( TNUN_linker_debug_symbols   ${TNUN_debug_symbols} )
 
 set( TNUN_linker_exceptions_on  "SHELL:-s DISABLE_EXCEPTION_CATCHING=0" )
 set( TNUN_linker_exceptions_off "SHELL:-s DISABLE_EXCEPTION_CATCHING=1" )
