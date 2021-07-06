@@ -49,6 +49,21 @@ else()
     add_compile_options( /experimental:preprocessor )
 endif()
 
+if ( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "19.28" )
+    # Use Address Sanitizer instead of RTC (RTC is not compatible with ASan - compilation passes, but RTC throws a lot of false positives)
+    list( REMOVE_ITEM TNUN_compiler_dbg_only_runtime_sanity_checks -RTC1 )
+    unset( TNUN_compiler_runtime_integer_checks )  # RTCc not compatible with ASan, and we don't want to enable RTC in STL
+
+    list( APPEND TNUN_compiler_runtime_sanity_checks -fsanitize=address )
+    # Implementation note:
+    # CMake 3.20 and earlier will fail to recognize the -fsanitize=address
+    # flag and enable it in Visual Studio project. This needs to be done manually.
+    # Ninja and Makefile projects are not affected.
+    # The tracking issue is: https://gitlab.kitware.com/cmake/cmake/-/issues/21081
+    #                                         (06.07.2021. Nenad Miksa)
+    #
+endif()
+
 add_definitions(
   -D_CRT_SECURE_NO_WARNINGS
   -D_SCL_SECURE_NO_WARNINGS
