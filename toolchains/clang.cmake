@@ -67,4 +67,7 @@ add_compile_options( -Wheader-guard -fdiagnostics-color )
 
 set( TNUN_compiler_time_trace "-ftime-trace" )
 
+# Assumes Clang 11.0.0 or newer (Apple clang 12.0.0 or newer)
+add_compile_options( -fenable-matrix )
+
 set( CLANG true )
