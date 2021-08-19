@@ -8,15 +8,14 @@
 
 include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
 
-set( TNUN_debug_symbols "SHELL:-s DEMANGLE_SUPPORT=1" )
 if ( EMSCRIPTEN_VERSION VERSION_GREATER_EQUAL "2.0.17" )
-    list( APPEND TNUN_debug_symbols -g3 -gsource-map )
+    set( TNUN_debug_symbols -g3 -gsource-map )
 else()
-    list( APPEND TNUN_debug_symbols -g4 )
+    set( TNUN_debug_symbols -g4 )
 endif()
 
 set( TNUN_compiler_debug_symbols ${TNUN_debug_symbols} )
-set( TNUN_linker_debug_symbols   ${TNUN_debug_symbols} )
+set( TNUN_linker_debug_symbols   ${TNUN_debug_symbols} "SHELL:-s DEMANGLE_SUPPORT=1" )
 
 set( TNUN_linker_exceptions_on  "SHELL:-s DISABLE_EXCEPTION_CATCHING=0" )
 set( TNUN_linker_exceptions_off "SHELL:-s DISABLE_EXCEPTION_CATCHING=1" )
@@ -24,11 +23,9 @@ set( TNUN_linker_exceptions_off "SHELL:-s DISABLE_EXCEPTION_CATCHING=1" )
 list( APPEND TNUN_compiler_exceptions_on  ${TNUN_linker_exceptions_on}  )
 list( APPEND TNUN_compiler_exceptions_off ${TNUN_linker_exceptions_off} )
 
-set( TNUN_compiler_assertions "SHELL:-s ASSERTIONS=2" "SHELL:-s STACK_OVERFLOW_CHECK=2" "SHELL:-s GL_ASSERTIONS=1" "SHELL:-s SAFE_HEAP=1" )
-set( TNUN_linker_assertions ${TNUN_compiler_assertions} )
+set( TNUN_linker_assertions "SHELL:-s ASSERTIONS=2" "SHELL:-s STACK_OVERFLOW_CHECK=2" "SHELL:-s GL_ASSERTIONS=1" "SHELL:-s SAFE_HEAP=1" )
 
-list( APPEND TNUN_compiler_release_flags "SHELL:-s ASSERTIONS=0" "SHELL:-s STACK_OVERFLOW_CHECK=0" )
-list( APPEND TNUN_linker_release_flags ${TNUN_compiler_release_flags} "SHELL:--closure 1" "SHELL:-s IGNORE_CLOSURE_COMPILER_ERRORS=1" )
+list( APPEND TNUN_linker_release_flags "SHELL:-s ASSERTIONS=0" "SHELL:-s STACK_OVERFLOW_CHECK=0" "SHELL:--closure 1" "SHELL:-s IGNORE_CLOSURE_COMPILER_ERRORS=1" )
 
 set( CMAKE_EXECUTABLE_SUFFIX ".html" )
 
