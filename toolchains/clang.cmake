@@ -15,7 +15,27 @@ list( APPEND TNUN_compiler_report_optimization -Rpass=loop-.* )
 
 list( APPEND TNUN_default_warnings -Wdocumentation )
 
-list( APPEND TNUN_compiler_LTO         -fwhole-program-vtables    )
+set( TNUN_compiler_LTO -flto=thin -fwhole-program-vtables )
+set( TNUN_linker_LTO   -flto=thin                         )
+
+# LTO cache folder - enables incremental LTO
+set( LTO_CACHE_DIR "${CMAKE_CURRENT_BINARY_DIR}/lto.cache" )
+if ( APPLE )
+    list( APPEND TNUN_linker_LTO "-Wl,-cache_path_lto,${LTO_CACHE_DIR}" )
+else()
+    list( APPEND TNUN_linker_LTO "-Wl,--thinlto-cache-dir=${CMAKE_CURRENT_BINARY_DIR}/lto.cache" )
+endif()
+
+
+# LTO parallelism - will use all cores if CMAKE_PARALLEL_LEVEL is not defined
+if ( DEFINED ENV{CMAKE_BUILD_PARALLEL_LEVEL} )
+    if ( APPLE )
+        list( APPEND TNUN_linker_LTO -Wl,-mllvm,-threads=$ENV{CMAKE_BUILD_PARALLEL_LEVEL} )
+    else()
+        list( APPEND TNUN_linker_LTO -Wl,--thinlto-jobs=$ENV{CMAKE_BUILD_PARALLEL_LEVEL} )
+    endif()
+endif()
+
 list( APPEND TNUN_compiler_disable_LTO -fno-whole-program-vtables )
 
 # http://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
