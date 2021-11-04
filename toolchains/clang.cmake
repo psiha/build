@@ -15,31 +15,57 @@ list( APPEND TNUN_compiler_report_optimization -Rpass=loop-.* )
 
 list( APPEND TNUN_default_warnings -Wdocumentation )
 
-set( TNUN_compiler_LTO -flto=thin -fwhole-program-vtables )
-set( TNUN_linker_LTO   -flto=thin                         )
+set( THIN_LTO_SUPPORTED ON )
 
-# LTO cache folder - enables incremental LTO
-set( LTO_CACHE_DIR "${CMAKE_CURRENT_BINARY_DIR}/lto.cache" )
-if ( APPLE )
-    list( APPEND TNUN_linker_LTO "-Wl,-cache_path_lto,${LTO_CACHE_DIR}" )
-else()
-    list( APPEND TNUN_linker_LTO "-Wl,--thinlto-cache-dir=${CMAKE_CURRENT_BINARY_DIR}/lto.cache" )
+if ( DEFINED EMSCRIPTEN AND EMSCRIPTEN_VERSION VERSION_LESS "2.0.33" )
+    # https://github.com/emscripten-core/emscripten/issues/12763
+    set( THIN_LTO_SUPPORTED OFF )
 endif()
 
+if ( THIN_LTO_SUPPORTED )
+    set( TNUN_compiler_LTO -flto=thin )
+    set( TNUN_linker_LTO   -flto=thin )
 
-# LTO parallelism - will use all cores if CMAKE_PARALLEL_LEVEL is not defined
+    if ( NOT EMSCRIPTEN )
+        # https://github.com/emscripten-core/emscripten/issues/15427
+        list( APPEND TNUN_compiler_LTO -fwhole-program-vtables )
+    endif()
 
-if ( DEFINED ENV{CMAKE_BUILD_PARALLEL_LEVEL} )
-    set( LTO_JOBS $ENV{CMAKE_BUILD_PARALLEL_LEVEL} )
-else()
-    # https://clang.llvm.org/docs/ThinLTO.html#controlling-backend-parallelism
-    set( LTO_JOBS all )
-endif()
+    # LTO cache folder - enables incremental LTO
+    set( LTO_CACHE_DIR "${CMAKE_CURRENT_BINARY_DIR}/lto.cache" )
+    if ( APPLE )
+        list( APPEND TNUN_linker_LTO "-Wl,-cache_path_lto,${LTO_CACHE_DIR}" )
+    else()
+        list( APPEND TNUN_linker_LTO "-Wl,--thinlto-cache-dir=${CMAKE_CURRENT_BINARY_DIR}/lto.cache" )
+        list( APPEND TNUN_linker_LTO_gold "-Wl,-plugin-opt,cache-dir=${CMAKE_CURRENT_BINARY_DIR}/lto.cache" )
+    endif()
 
-if ( APPLE )
-    list( APPEND TNUN_linker_LTO -Wl,-mllvm,-threads=${LTO_JOBS} )
-else()
-    list( APPEND TNUN_linker_LTO -Wl,--thinlto-jobs=${LTO_JOBS} )
+
+    # LTO parallelism - will use all cores if CMAKE_PARALLEL_LEVEL is not defined
+
+    if ( DEFINED ENV{CMAKE_BUILD_PARALLEL_LEVEL} )
+        set( LTO_JOBS $ENV{CMAKE_BUILD_PARALLEL_LEVEL} )
+    else()
+        # https://clang.llvm.org/docs/ThinLTO.html#controlling-backend-parallelism
+        set( LTO_JOBS all )
+        # Apple linker does not understand "all", so detect number of cores
+        if( CMAKE_HOST_APPLE )
+            find_program( cmd_sysctl "sysctl" )
+            if( cmd_sysctl )
+                execute_process( COMMAND ${cmd_sysctl} "hw.ncpu" OUTPUT_VARIABLE info )
+                string( REGEX REPLACE "^.*hw.ncpu: ([0-9]+).*$" "\\1" LTO_JOBS "${info}" )
+            else()
+                set( LTO_JOBS 0 )
+            endif()
+        endif()
+    endif()
+
+    if ( APPLE )
+        list( APPEND TNUN_linker_LTO -Wl,-mllvm,-threads=${LTO_JOBS} )
+    else()
+        list( APPEND TNUN_linker_LTO -Wl,--thinlto-jobs=${LTO_JOBS} )
+        list( APPEND TNUN_linker_LTO_gold -Wl,-plugin-opt,jobs=${LTO_JOBS} )
+    endif()
 endif()
 
 list( APPEND TNUN_compiler_disable_LTO -fno-whole-program-vtables )
