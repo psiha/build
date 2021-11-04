@@ -12,4 +12,4 @@ set( TNUN_arch_suffix ARMv7a_NEON )
 
 set( TNUN_arch_compiler_options -mfpu=neon-vfpv4 )
 remove_definitions( -mtune=cortex-a9 )
-add_compile_options( -mtune=cortex-a15 )
+add_compile_options( -mtune=cortex-a53 )
