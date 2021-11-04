@@ -28,12 +28,18 @@ endif()
 
 
 # LTO parallelism - will use all cores if CMAKE_PARALLEL_LEVEL is not defined
+
 if ( DEFINED ENV{CMAKE_BUILD_PARALLEL_LEVEL} )
-    if ( APPLE )
-        list( APPEND TNUN_linker_LTO -Wl,-mllvm,-threads=$ENV{CMAKE_BUILD_PARALLEL_LEVEL} )
-    else()
-        list( APPEND TNUN_linker_LTO -Wl,--thinlto-jobs=$ENV{CMAKE_BUILD_PARALLEL_LEVEL} )
-    endif()
+    set( LTO_JOBS $ENV{CMAKE_BUILD_PARALLEL_LEVEL} )
+else()
+    # https://clang.llvm.org/docs/ThinLTO.html#controlling-backend-parallelism
+    set( LTO_JOBS all )
+endif()
+
+if ( APPLE )
+    list( APPEND TNUN_linker_LTO -Wl,-mllvm,-threads=${LTO_JOBS} )
+else()
+    list( APPEND TNUN_linker_LTO -Wl,--thinlto-jobs=${LTO_JOBS} )
 endif()
 
 list( APPEND TNUN_compiler_disable_LTO -fno-whole-program-vtables )
