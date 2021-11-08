@@ -60,11 +60,13 @@ if ( THIN_LTO_SUPPORTED )
         endif()
     endif()
 
+    set( TNUN_linker_LTO_jobs ${LTO_JOBS} CACHE STRING "Number of LTO parallel jobs" )
+
     if ( APPLE )
-        list( APPEND TNUN_linker_LTO -Wl,-mllvm,-threads=${LTO_JOBS} )
+        list( APPEND TNUN_linker_LTO -Wl,-mllvm,-threads=${TNUN_linker_LTO_jobs} )
     else()
-        list( APPEND TNUN_linker_LTO -Wl,--thinlto-jobs=${LTO_JOBS} )
-        list( APPEND TNUN_linker_LTO_gold -Wl,-plugin-opt,jobs=${LTO_JOBS} )
+        list( APPEND TNUN_linker_LTO -Wl,--thinlto-jobs=${TNUN_linker_LTO_jobs} )
+        list( APPEND TNUN_linker_LTO_gold -Wl,-plugin-opt,jobs=${TNUN_linker_LTO_jobs} )
     endif()
 endif()
 
