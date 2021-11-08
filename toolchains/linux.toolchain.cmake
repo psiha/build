@@ -53,8 +53,13 @@ link_libraries( $<$<CONFIG:RELEASE>:-Wl,--gc-sections> )
 
 set( TNUN_USE_LINKER "default" CACHE STRING "Linker to use" )
 set_property( CACHE TNUN_USE_LINKER PROPERTY STRINGS "default" "gold" "lld" )
+
 if ( NOT TNUN_USE_LINKER STREQUAL "default" )
     link_libraries( -fuse-ld=${TNUN_USE_LINKER} )
+
+    if ( TNUN_USE_LINKER STREQUAL "gold" AND CLANG )
+        set( TNUN_linker_LTO ${TNUN_linker_LTO_gold} )
+    endif()
 endif()
 
 ################################################################################
