@@ -43,6 +43,9 @@ macro( TNUN_enable_bitcode )
 
   set( CMAKE_XCODE_ATTRIBUTE_ENABLE_BITCODE[variant=Release] "YES" )
   set( CMAKE_XCODE_ATTRIBUTE_BITCODE_GENERATION_MODE[variant=Release] "bitcode" ) # Without this, Xcode adds -fembed-bitcode-marker compile options instead of -fembed-bitcode
+
+  # -mllvm and -bitcode_bundle (Xcode setting ENABLE_BITCODE=YES) cannot be used together
+  list( REMOVE_ITEM TNUN_linker_LTO -Wl,-mllvm,-threads=${TNUN_linker_LTO_jobs} )
 endmacro()
 
 link_libraries( $<$<CONFIG:RELEASE>:-dead_strip> )
