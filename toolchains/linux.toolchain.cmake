@@ -16,13 +16,17 @@ set( TNUN_os_suffix Linux )
 
 if( NOT DEFINED TNUN_ABI )
     if ( ${CMAKE_SIZEOF_VOID_P} EQUAL 8 )
-        set( TNUN_ABI_DEFAULT x64 )
+        if ( ${CMAKE_SYSTEM_PROCESSOR} STREQUAL "aarch64" )
+            set( TNUN_ABI_DEFAULT aarch64 )
+        else()
+            set( TNUN_ABI_DEFAULT x64 )
+        endif()
     else()
         set( TNUN_ABI_DEFAULT x86 )
     endif()
 
-    set(TNUN_ABI ${TNUN_ABI_DEFAULT} CACHE STRING "Build architecture / ABI")
-    set_property(CACHE TNUN_ABI PROPERTY STRINGS "x64" "x86")
+    set( TNUN_ABI ${TNUN_ABI_DEFAULT} CACHE STRING "Build architecture / ABI" )
+    set_property( CACHE TNUN_ABI PROPERTY STRINGS "x64" "x86" "aarch64" )
 
 endif()
 
