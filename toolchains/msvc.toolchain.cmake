@@ -24,7 +24,7 @@ set( TNUN_compiler_precisemath                    -fp:precise                   
 set( TNUN_compiler_rtti_on                        -GR                                         )
 set( TNUN_compiler_rtti_off                       -GR-                                        )
 set( TNUN_compiler_exceptions_on                  -EHsc                                       )
-set( TNUN_compiler_exceptions_off                 -D_HAS_EXCEPTIONS=0 -wd4577                 )
+set( TNUN_compiler_exceptions_off                 -EHs-c- -D_HAS_EXCEPTIONS=0 -wd4577         )
 set( TNUN_compiler_report_optimization            -Qpar-report:1 -Qvec-report:2               ) # https://msdn.microsoft.com/en-us/library/jj658585.aspx Vectorizer and Parallelizer Messages
 set( TNUN_compiler_optimize_for_speed             -Ox -Ot -Ob3 -Qpar                          )
 set( TNUN_compiler_optimize_for_size              -Ox -Os -Ob2                                )
@@ -41,27 +41,68 @@ set( TNUN_compiler_runtime_integer_checks         -RTCc -D_ALLOW_RTCc_IN_STL    
 # w4324: 'structure was padded due to alignment specifier'
 # w5104: 'found 'L#x' in macro replacement list, did you mean 'L""#x'?' @ windows.h + experimental PP
 # w5105: 'macro expansion producing 'defined' has undefined behavior' @ windows.h + experimental PP
-add_compile_options( /std:c++latest /permissive- -MP -Oi -wd4324 -wd4373 -wd5104 -wd5105 )
+add_compile_options( /std:c++latest /permissive- -Oi -wd4324 -wd4373 -wd5104 -wd5105 )
 
-if ( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "19.26" )
-    add_compile_options( /Zc:preprocessor )
+if ( CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" ) # real MSVC, not clang-cl
+    add_compile_options( -MP )
+    if ( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "19.26" )
+        add_compile_options( /Zc:preprocessor )
+    else()
+        add_compile_options( /experimental:preprocessor )
+    endif()
+
+    if ( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "19.28" )
+        # Use Address Sanitizer instead of RTC (RTC is not compatible with ASan - compilation passes, but RTC throws a lot of false positives)
+        list( REMOVE_ITEM TNUN_compiler_dbg_only_runtime_sanity_checks -RTC1 )
+        unset( TNUN_compiler_runtime_integer_checks )  # RTCc not compatible with ASan, and we don't want to enable RTC in STL
+
+        list( APPEND TNUN_compiler_runtime_sanity_checks -fsanitize=address )
+        # Implementation note:
+        # CMake 3.20 and earlier will fail to recognize the -fsanitize=address
+        # flag and enable it in Visual Studio project. This needs to be done manually.
+        # Ninja and Makefile projects are not affected.
+        # The tracking issue is: https://gitlab.kitware.com/cmake/cmake/-/issues/21081
+        #                                         (06.07.2021. Nenad Miksa)
+        #
+    endif()
 else()
-    add_compile_options( /experimental:preprocessor )
-endif()
+    set( THIN_LTO_SUPPORTED ON )
+    set( TNUN_compiler_LTO -flto=thin -fwhole-program-vtables )
+    list( APPEND TNUN_compiler_disable_LTO -fno-whole-program-vtables )
+    list( APPEND TNUN_linker_LTO "/lldltocache:${CMAKE_CURRENT_BINARY_DIR}/lto.cache" )
 
-if ( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "19.28" )
-    # Use Address Sanitizer instead of RTC (RTC is not compatible with ASan - compilation passes, but RTC throws a lot of false positives)
-    list( REMOVE_ITEM TNUN_compiler_dbg_only_runtime_sanity_checks -RTC1 )
-    unset( TNUN_compiler_runtime_integer_checks )  # RTCc not compatible with ASan, and we don't want to enable RTC in STL
+    if ( DEFINED ENV{CMAKE_BUILD_PARALLEL_LEVEL} )
+        set( LTO_JOBS $ENV{CMAKE_BUILD_PARALLEL_LEVEL} )
+    else()
+        set( LTO_JOBS $ENV{NUMBER_OF_PROCESSORS} )
+    endif()
 
-    list( APPEND TNUN_compiler_runtime_sanity_checks -fsanitize=address )
-    # Implementation note:
-    # CMake 3.20 and earlier will fail to recognize the -fsanitize=address
-    # flag and enable it in Visual Studio project. This needs to be done manually.
-    # Ninja and Makefile projects are not affected.
-    # The tracking issue is: https://gitlab.kitware.com/cmake/cmake/-/issues/21081
-    #                                         (06.07.2021. Nenad Miksa)
-    #
+    set( TNUN_linker_LTO_jobs ${LTO_JOBS} CACHE STRING "Number of LTO parallel jobs" )
+
+    if ( DEFINED ENV{CMAKE_BUILD_PARALLEL_LEVEL} )
+        list( APPEND TNUN_linker_LTO "/threads:${TNUN_linker_LTO_jobs}" )
+    endif()
+
+    # remove unsupported compile flags
+    list( REMOVE_ITEM TNUN_compiler_release_flags -Gm- )
+    # clang sanitizers do not support MDd and MTd runtimes
+    # also, on WOA64, MDd runtime does not exist (even with true msvc compiler)
+    string( REPLACE "-MDd" "-MD" TNUN_compiler_debug_flags "${TNUN_compiler_debug_flags}" )
+    list( REMOVE_ITEM TNUN_compiler_fastmath -Qfast_transcendentals )
+
+    add_compile_options( -Wno-error=unused-command-line-argument -Wno-macro-redefined )
+
+    # clang sanitizers work only on Intel at the moment
+    if ( CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64" )
+        set( TNUN_compiler_runtime_sanity_checks -fsanitize=undefined -fsanitize=address -fsanitize=integer )
+
+        set( TNUN_linker_runtime_sanity_checks clang_rt.asan_dynamic-x86_64.lib clang_rt.asan_dynamic_runtime_thunk-x86_64.lib )
+
+        add_compile_options( /clang:-msse3 /clang:-msse4 )
+    endif()
+
+    # Assumes Clang 11.0.0 or newer
+    add_compile_options( /clang:-fenable-matrix )
 endif()
 
 add_definitions(
@@ -74,17 +115,26 @@ add_definitions(
 set( TNUN_ABIs
   Win32
   x64
+  Aarch64
 )
 
 if( NOT DEFINED TNUN_ABI AND ${CMAKE_GENERATOR} MATCHES "Visual Studio" )
   if ( CMAKE_VS_PLATFORM_NAME MATCHES 64 )
-    set( TNUN_ABI x64 )
+    if ( CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64" )
+        set( TNUN_ABI aarch64 )
+    else()
+        set( TNUN_ABI x64 )
+    endif()
   else()
     set( TNUN_ABI Win32 )
   endif()
 else()
   if ( ${CMAKE_SIZEOF_VOID_P} EQUAL 8 )
-    set( TNUN_ABI x64 )
+    if ( CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64" )
+        set( TNUN_ABI aarch64 )
+    else()
+        set( TNUN_ABI x64 )
+    endif()
   else()
     set( TNUN_ABI Win32 )
   endif()
