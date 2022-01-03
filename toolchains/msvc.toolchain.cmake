@@ -69,7 +69,7 @@ else()
     set( THIN_LTO_SUPPORTED ON )
     set( TNUN_compiler_LTO -flto=thin -fwhole-program-vtables )
     list( APPEND TNUN_compiler_disable_LTO -fno-whole-program-vtables )
-    list( APPEND TNUN_linker_LTO "/lldltocache:${CMAKE_CURRENT_BINARY_DIR}/lto.cache" )
+    set( TNUN_linker_LTO "/lldltocache:${CMAKE_CURRENT_BINARY_DIR}/lto.cache" )
 
     if ( DEFINED ENV{CMAKE_BUILD_PARALLEL_LEVEL} )
         set( LTO_JOBS $ENV{CMAKE_BUILD_PARALLEL_LEVEL} )
