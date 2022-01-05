@@ -41,10 +41,17 @@ set( TNUN_compiler_runtime_integer_checks         -RTCc -D_ALLOW_RTCc_IN_STL    
 # w4324: 'structure was padded due to alignment specifier'
 # w5104: 'found 'L#x' in macro replacement list, did you mean 'L""#x'?' @ windows.h + experimental PP
 # w5105: 'macro expansion producing 'defined' has undefined behavior' @ windows.h + experimental PP
-add_compile_options( /std:c++latest /permissive- -Oi -wd4324 -wd4373 -wd5104 -wd5105 )
+add_compile_options( /permissive- -Oi -wd4324 -wd4373 -wd5104 -wd5105 )
+
+# if using real MSVC of clang-cl in Visual Studio, then we need to add /MP. Ninja + clang-cl does not recognize those flags
+if ( CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" OR ${CMAKE_GENERATOR} MATCHES "Visual Studio" )
+    add_compile_options( /std:c++latest /MP )
+else()
+    add_compile_options( $<$<COMPILE_LANGUAGE:CXX>:/clang:-std=gnu++20> )
+    add_compile_options( $<$<NOT:$<COMPILE_LANGUAGE:CXX>>:/clang:-std=gnu11> )
+endif()
 
 if ( CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" ) # real MSVC, not clang-cl
-    add_compile_options( -MP )
     if ( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "19.26" )
         add_compile_options( /Zc:preprocessor )
     else()
