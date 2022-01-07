@@ -47,6 +47,7 @@ add_compile_options( /permissive- -Oi -wd4324 -wd4373 -wd5104 -wd5105 )
 if ( CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" OR ${CMAKE_GENERATOR} MATCHES "Visual Studio" )
     add_compile_options( /std:c++latest /MP )
 else()
+    # unused argument /std:c++latest
     add_compile_options( $<$<COMPILE_LANGUAGE:CXX>:/clang:-std=gnu++20> )
     add_compile_options( $<$<NOT:$<COMPILE_LANGUAGE:CXX>>:/clang:-std=gnu11> )
 endif()
@@ -74,8 +75,8 @@ if ( CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" ) # real MSVC, not clang-cl
     endif()
 else()
     set( THIN_LTO_SUPPORTED ON )
-    set( TNUN_compiler_LTO -flto=thin -fwhole-program-vtables )
-    list( APPEND TNUN_compiler_disable_LTO -fno-whole-program-vtables )
+    set( TNUN_compiler_LTO         -flto=thin -fwhole-program-vtables    )
+    set( TNUN_compiler_disable_LTO -fno-lto   -fno-whole-program-vtables )
     set( TNUN_linker_LTO "/lldltocache:${CMAKE_CURRENT_BINARY_DIR}/lto.cache" )
 
     if ( DEFINED ENV{CMAKE_BUILD_PARALLEL_LEVEL} )
@@ -98,6 +99,17 @@ else()
     list( REMOVE_ITEM TNUN_compiler_fastmath -Qfast_transcendentals )
 
     add_compile_options( -Wno-error=unused-command-line-argument -Wno-macro-redefined )
+
+    # without those __cpp_rtti macro has incorrect definitions
+    list( APPEND TNUN_compiler_rtti_on  /clang:-frtti    )
+    list( APPEND TNUN_compiler_rtti_off /clang:-fno-rtti )
+
+    # argument unused during compilation - use default clang optimization flags, not the MSVC-emulated ones
+    list( REMOVE_ITEM TNUN_compiler_optimize_for_speed -Ob3 -Qpar )
+    list( APPEND TNUN_compiler_optimize_for_speed /clang:-O3 /clang:-fvectorize /clang:-fslp-vectorize )
+
+    list( APPEND TNUN_compiler_report_optimization /clang:-Rpass=loop-.* )
+    set( TNUN_compiler_time_trace /clang:-ftime-trace )
 
     # clang sanitizers work only on Intel at the moment
     if ( CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64" )
