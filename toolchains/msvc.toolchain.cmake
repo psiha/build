@@ -122,6 +122,8 @@ else()
 
     # Assumes Clang 11.0.0 or newer
     add_compile_options( /clang:-fenable-matrix )
+
+    set( CLANG_CL true )
 endif()
 
 add_definitions(
