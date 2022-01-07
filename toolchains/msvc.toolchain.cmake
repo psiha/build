@@ -101,8 +101,8 @@ else()
     add_compile_options( -Wno-error=unused-command-line-argument -Wno-macro-redefined )
 
     # without those __cpp_rtti macro has incorrect definitions
-    list( APPEND TNUN_compiler_rtti_on  /clang:-frtti    )
-    list( APPEND TNUN_compiler_rtti_off /clang:-fno-rtti )
+    list( APPEND TNUN_compiler_rtti_on  /clang:-frtti    -D_HAS_STATIC_RTTI=1 )
+    list( APPEND TNUN_compiler_rtti_off /clang:-fno-rtti -D_HAS_STATIC_RTTI=0 )
 
     # argument unused during compilation - use default clang optimization flags, not the MSVC-emulated ones
     list( REMOVE_ITEM TNUN_compiler_optimize_for_speed -Ob3 -Qpar )
