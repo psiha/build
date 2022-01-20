@@ -67,6 +67,11 @@ if ( CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" ) # real MSVC, not clang-cl
         #
     endif()
 else()
+    set( CLANG_CL true )
+    
+    # https://github.com/llvm/llvm-project/issues/53259
+    add_compile_definitions( __GNUC__ )
+    
     # if using Visual Studio, then we need to add /MP. Ninja + clang-cl does not recognize this flag
     if ( ${CMAKE_GENERATOR} MATCHES "Visual Studio" )
         add_compile_options( /MP )
@@ -77,10 +82,10 @@ else()
         add_compile_options( $<$<NOT:$<COMPILE_LANGUAGE:CXX>>:/clang:-std=gnu11> )
     endif()
 
-    set( THIN_LTO_SUPPORTED ON )
-    set( TNUN_compiler_LTO         -flto=thin -fwhole-program-vtables    )
-    set( TNUN_compiler_disable_LTO -fno-lto   -fno-whole-program-vtables )
-    set( TNUN_linker_LTO "/lldltocache:${CMAKE_CURRENT_BINARY_DIR}/lto.cache" )
+    set( THIN_LTO_SUPPORTED        ON                                                   )
+    set( TNUN_compiler_LTO         -flto=thin -fwhole-program-vtables                   )
+    set( TNUN_compiler_disable_LTO -fno-lto   -fno-whole-program-vtables                )
+    set( TNUN_linker_LTO           "/lldltocache:${CMAKE_CURRENT_BINARY_DIR}/lto.cache" )
 
     if ( DEFINED ENV{CMAKE_BUILD_PARALLEL_LEVEL} )
         set( LTO_JOBS $ENV{CMAKE_BUILD_PARALLEL_LEVEL} )
@@ -125,8 +130,6 @@ else()
 
     # Assumes Clang 11.0.0 or newer
     add_compile_options( /clang:-fenable-matrix )
-
-    set( CLANG_CL true )
 endif()
 
 add_definitions(
