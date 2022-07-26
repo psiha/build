@@ -13,6 +13,8 @@
 #
 ################################################################################
 
+# Similar to the builtin add_compile_options, but receives build configuration as a first
+# parameter. Abstracts-away usage of generator expressions.
 function( TNUN_add_compile_options configuration )
     # Implementation note:
     # The builtin add_compile_options() seems broken (w/ CMake 3.5.2) when used
@@ -28,6 +30,8 @@ function( TNUN_add_compile_options configuration )
     endforeach()
 endfunction()
 
+# Similar to the builtin add_compile_options, but applies given options
+# only to the c++ sources.
 function( TNUN_add_cxx_compile_options )
     if( ${CMAKE_GENERATOR} MATCHES "Visual Studio" )
         add_compile_options( ${ARGV} )
@@ -38,6 +42,9 @@ function( TNUN_add_cxx_compile_options )
     endif()
 endfunction()
 
+# Behaves as the combination of TNUN_add_compile_options and
+# TNUN_add_cxx_compile_options - it applies given options to only
+# C++ sources for given build configuration.
 function( TNUN_add_cxx_compile_options_for_config configuration )
     if( ${CMAKE_GENERATOR} MATCHES "Visual Studio" )
         foreach( arg ${ARGN} )
@@ -50,6 +57,8 @@ function( TNUN_add_cxx_compile_options_for_config configuration )
     endif()
 endfunction()
 
+# Removes already set compile options for given configuration.
+# Useful for unsetting flags set with the TNUN_add_compile_options
 function( TNUN_remove_compile_options_for_config configuration )
     string( TOUPPER ${configuration} configuration )
     get_directory_property( current_compile_options COMPILE_OPTIONS )
@@ -60,6 +69,8 @@ function( TNUN_remove_compile_options_for_config configuration )
     set_directory_properties( PROPERTIES COMPILE_OPTIONS "${current_compile_options}" )
 endfunction()
 
+# Removes given compile options if they are already set.
+# Useful for undoing CMake's builtin add_compile_options.
 function( TNUN_remove_compile_options )
     get_directory_property( current_compile_options COMPILE_OPTIONS )
     foreach( option ${ARGN} )
@@ -68,6 +79,8 @@ function( TNUN_remove_compile_options )
     set_directory_properties( PROPERTIES COMPILE_OPTIONS "${current_compile_options}" )
 endfunction()
 
+# Removes given compile options from given target for given build type.
+# Useful for undoing CMake's builtin target_compile_options
 function( TNUN_target_remove_compile_options_for_config target configuration )
     string( TOUPPER ${configuration} configuration )
     get_target_property( current_compile_options ${target} COMPILE_OPTIONS )
@@ -78,6 +91,8 @@ function( TNUN_target_remove_compile_options_for_config target configuration )
     set_target_properties( ${target} PROPERTIES COMPILE_OPTIONS "${current_compile_options}" )
 endfunction()
 
+# Removes given compile options from given target.
+# Useful for undoing CMake's builtin target_compile_options
 function( TNUN_target_remove_compile_options target )
     string( TOUPPER ${configuration} configuration )
     get_target_property( current_compile_options ${target} COMPILE_OPTIONS )
@@ -94,6 +109,8 @@ endfunction()
 #
 ################################################################################
 
+# Similar to CMake's builtin add_link_options, but applies given options only
+# to given build type.
 function( TNUN_add_link_options configuration )
     # Implementation note:
     # The documented feature of link_libraries(), that it also accepts linker
@@ -106,6 +123,8 @@ function( TNUN_add_link_options configuration )
     endforeach()
 endfunction()
 
+# Removes given link options for given build type.
+# Useful for undoing the effect of TNUN_add_link_options
 function( TNUN_remove_link_options_for_config configuration )
     string( TOUPPER ${configuration} configuration )
     get_directory_property( current_link_options LINK_OPTIONS )
@@ -116,6 +135,8 @@ function( TNUN_remove_link_options_for_config configuration )
     set_directory_properties( PROPERTIES LINK_OPTIONS "${current_link_options}" )
 endfunction()
 
+# Removes given link options.
+# Useful for undoing CMake's builtin add_link_options.
 function( TNUN_remove_link_options )
     get_directory_property( current_link_options LINK_OPTIONS )
     foreach( option ${ARGN} )
@@ -124,6 +145,8 @@ function( TNUN_remove_link_options )
     set_directory_properties( PROPERTIES LINK_OPTIONS "${current_link_options}" )
 endfunction()
 
+# Removes given link options from given target for given build type.
+# Useful for undoing CMake's builtin target_link_options.
 function( TNUN_target_remove_link_options_for_config target configuration )
     string( TOUPPER ${configuration} configuration )
     get_target_property( current_link_options ${target} LINK_OPTIONS )
@@ -134,6 +157,8 @@ function( TNUN_target_remove_link_options_for_config target configuration )
     set_target_properties( ${target} PROPERTIES LINK_OPTIONS "${current_link_options}" )
 endfunction()
 
+# Removes given link options from given target.
+# Useful for undoing CMake's builtin target_link_options.
 function( TNUN_target_remove_link_options target )
     string( TOUPPER ${configuration} configuration )
     get_target_property( current_link_options ${target} LINK_OPTIONS )
