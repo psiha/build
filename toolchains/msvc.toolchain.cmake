@@ -68,10 +68,10 @@ if ( CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" ) # real MSVC, not clang-cl
     endif()
 else()
     set( CLANG_CL true )
-
+    
     # https://github.com/llvm/llvm-project/issues/53259
     add_compile_definitions( __GNUC__ )
-
+    
     # if using Visual Studio, then we need to add /MP. Ninja + clang-cl does not recognize this flag
     if ( ${CMAKE_GENERATOR} MATCHES "Visual Studio" )
         add_compile_options( /MP )
@@ -121,14 +121,9 @@ else()
 
     # clang sanitizers work only on Intel at the moment
     if ( CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64" )
-        # set( TNUN_compiler_runtime_sanity_checks -fsanitize=undefined -fsanitize=address -fsanitize=integer )
+        set( TNUN_compiler_runtime_sanity_checks -fsanitize=undefined -fsanitize=address -fsanitize=integer )
 
-        # set( TNUN_linker_runtime_sanity_checks clang_rt.asan_dynamic-x86_64.lib clang_rt.asan_dynamic_runtime_thunk-x86_64.lib )
-
-        # Non-MSVC sanitizers are generally broken, especially if using newer version of LLVM than shipped with Visual Studio
-        # Simply disable sanitization on Windows
-        unset( TNUN_compiler_runtime_sanity_checks )
-        unset( TNUN_linker_runtime_sanity_checks   )
+        set( TNUN_linker_runtime_sanity_checks clang_rt.asan_dynamic-x86_64.lib clang_rt.asan_dynamic_runtime_thunk-x86_64.lib )
 
         add_compile_options( /clang:-msse3 /clang:-msse4 )
     endif()
