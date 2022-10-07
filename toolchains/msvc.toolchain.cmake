@@ -125,7 +125,7 @@ else()
 
         set( TNUN_linker_runtime_sanity_checks clang_rt.asan_dynamic-x86_64.lib clang_rt.asan_dynamic_runtime_thunk-x86_64.lib )
 
-        add_compile_options( /clang:-msse3 /clang:-msse4 /clang:-mavx )
+        add_compile_options( /clang:-msse3 /clang:-msse4 /clang:-mavx /clang:-mavx2 /clang:-mfma )
     endif()
 
     # Assumes Clang 11.0.0 or newer
