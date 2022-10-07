@@ -68,10 +68,10 @@ if ( CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" ) # real MSVC, not clang-cl
     endif()
 else()
     set( CLANG_CL true )
-    
+
     # https://github.com/llvm/llvm-project/issues/53259
     add_compile_definitions( __GNUC__ )
-    
+
     # if using Visual Studio, then we need to add /MP. Ninja + clang-cl does not recognize this flag
     if ( ${CMAKE_GENERATOR} MATCHES "Visual Studio" )
         add_compile_options( /MP )
@@ -125,7 +125,7 @@ else()
 
         set( TNUN_linker_runtime_sanity_checks clang_rt.asan_dynamic-x86_64.lib clang_rt.asan_dynamic_runtime_thunk-x86_64.lib )
 
-        add_compile_options( /clang:-msse3 /clang:-msse4 )
+        add_compile_options( /clang:-msse3 /clang:-msse4 /clang:-mavx )
     endif()
 
     # Assumes Clang 11.0.0 or newer
