@@ -28,7 +28,7 @@ set( TNUN_compiler_thread_safe_init         -fthreadsafe-statics                
 set( TNUN_compiler_disable_thread_safe_init -fno-threadsafe-statics                                                             )
 set( TNUN_compiler_report_optimization      -ftree-vectorizer-verbose=6                                                         )
 set( TNUN_compiler_release_flags            -fomit-frame-pointer -ffunction-sections -fmerge-all-constants -fno-stack-protector )
-set( TNUN_default_warnings                  -Wall -Wextra -Wstrict-aliasing                                                     )
+set( TNUN_default_warnings                  -Wall -Wextra -Wconversion -Wstrict-aliasing                                        )
 set( TNUN_warnings_as_errors                -Werror                                                                             )
 set( TNUN_native_optimization               -march=native -mtune=native                                                         )
 set( TNUN_compiler_coverage                 -fprofile-arcs -ftest-coverage                                                      )
