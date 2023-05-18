@@ -42,24 +42,24 @@ include( ${CMAKE_CURRENT_LIST_DIR}/gcc_compatibles_stl.cmake )
 option( TNUN_STATIC_LIBC "Link all binaries statically with libc and libc++" false )
 
 if( ${TNUN_STATIC_LIBC} )
-    link_libraries( -static )
+    list( APPEND TNUN_common_link_options -static )
     if( ${TNUN_CPP_LIBRARY} STREQUAL "stdc++" )
-        link_libraries( -static-libstdc++ -static-libgcc )
+        list( APPEND TNUN_common_link_options -static-libstdc++ -static-libgcc )
     elseif( ${TNUN_CPP_LIBRARY} STREQUAL "libc++" )
-        link_libraries( -s c++ pthread dl c++abi unwind c dl m )
+        list( APPEND TNUN_common_link_options -s c++ pthread dl c++abi unwind c dl m )
     endif()
 endif()
 
 set( TNUN_arch_include_dir "${CMAKE_CURRENT_LIST_DIR}/linux" )
 include( "${TNUN_arch_include_dir}/${TNUN_ABI}.abi.cmake" )
 
-link_libraries( $<$<CONFIG:RELEASE>:-Wl,--gc-sections> )
+list( APPEND TNUN_common_link_options $<$<CONFIG:RELEASE>:-Wl,--gc-sections> )
 
 set( TNUN_USE_LINKER "default" CACHE STRING "Linker to use" )
 set_property( CACHE TNUN_USE_LINKER PROPERTY STRINGS "default" "gold" "lld" )
 
 if ( NOT TNUN_USE_LINKER STREQUAL "default" )
-    link_libraries( -fuse-ld=${TNUN_USE_LINKER} )
+    list( APPEND TNUN_common_link_options -fuse-ld=${TNUN_USE_LINKER} )
 
     if ( TNUN_USE_LINKER STREQUAL "gold" AND CLANG )
         set( TNUN_linker_LTO ${TNUN_linker_LTO_gold} )

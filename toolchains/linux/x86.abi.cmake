@@ -6,5 +6,5 @@
 #
 ################################################################################
 
-add_compile_options( -m32 )
-link_libraries( -m32 )
+list( APPEND TNUN_common_compiler_options -m32 )
+list( APPEND TNUN_common_link_options     -m32 )

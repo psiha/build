@@ -16,7 +16,7 @@ if( APPLE )
     unset( APPLE )
 endif()
 
-add_definitions( -D__ANDROID__ )
+set( TNUN_common_compile_definitions __ANDROID__ )
 
 set( TNUN_os_suffix Android )
 
@@ -88,8 +88,8 @@ endif()
 # Some settings from android.toolchain.cmake which are better than in the
 # default toolchain shipped with Android Studio.
 
-link_libraries( $<$<CONFIG:RELEASE>:-Wl,--icf=all>     ) # http://research.google.com/pubs/pub36912.html Safe ICF: Pointer Safe and Unwinding Aware Identical Code Folding in Gold
-link_libraries( $<$<CONFIG:RELEASE>:-Wl,--gc-sections> )
+list( APPEND TNUN_common_link_options $<$<CONFIG:RELEASE>:-Wl,--icf=all>     ) # http://research.google.com/pubs/pub36912.html Safe ICF: Pointer Safe and Unwinding Aware Identical Code Folding in Gold
+list( APPEND TNUN_common_link_options $<$<CONFIG:RELEASE>:-Wl,--gc-sections> )
 
 
 ################################################################################

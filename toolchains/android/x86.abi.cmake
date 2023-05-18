@@ -13,4 +13,4 @@ set( ANDROID_ARCH_NAME        "x86"                )
 set( ANDROID_GCC_MACHINE_NAME "i686-linux-android" )
 set( TNUN_cpu_archs           "x86"                )
 
-add_compile_options( -m32 -march=atom -mmmx -mssse3 -mcx16 )
+list( APPEND TNUN_common_compiler_options -m32 -march=atom -mmmx -mssse3 -mcx16 )

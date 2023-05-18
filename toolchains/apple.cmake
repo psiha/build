@@ -30,10 +30,10 @@ cmake_policy( SET CMP0025 NEW )
 
 if( ${CMAKE_CXX_COMPILER_ID} MATCHES "Clang" )
     include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
-    add_compile_options( -fconstant-cfstrings -fobjc-call-cxx-cdtors )
+    list( APPEND TNUN_common_compiler_options -fconstant-cfstrings -fobjc-call-cxx-cdtors )
 else()
     include( "${CMAKE_CURRENT_LIST_DIR}/gcc_compatibles.cmake" )
-    add_compile_options( -mconstant-cfstrings )
+    list( APPEND TNUN_common_compiler_options -mconstant-cfstrings )
 endif()
 
 # Xcode (7 & 8) report that function-sections are incompatible embed-bitcode
@@ -47,17 +47,17 @@ macro( TNUN_enable_bitcode )
     if ( XCODE )
         list( REMOVE_ITEM TNUN_compiler_release_flags -ffunction-sections )
 
-        set( CMAKE_XCODE_ATTRIBUTE_ENABLE_BITCODE[variant=Release] "YES" )
+        set( CMAKE_XCODE_ATTRIBUTE_ENABLE_BITCODE[variant=Release]          "YES"     )
         set( CMAKE_XCODE_ATTRIBUTE_BITCODE_GENERATION_MODE[variant=Release] "bitcode" ) # Without this, Xcode adds -fembed-bitcode-marker compile options instead of -fembed-bitcode
 
         # -mllvm and -bitcode_bundle (Xcode setting ENABLE_BITCODE=YES) cannot be used together
         list( REMOVE_ITEM TNUN_linker_LTO -Wl,-mllvm,-threads=${TNUN_linker_LTO_jobs} )
     else()
-        add_compile_options( $<$<CONFIG:Release>:-fembed-bitcode> )
+        list( APPEND TNUN_common_compiler_options $<$<CONFIG:Release>:-fembed-bitcode> )
     endif()
 endmacro()
 
-link_libraries( $<$<CONFIG:RELEASE>:-dead_strip> )
+list( APPEND TNUN_common_link_options $<$<CONFIG:RELEASE>:-dead_strip> )
 
 set( TNUN_ABI   default    )
 set( TNUN_ABIs ${TNUN_ABI} )

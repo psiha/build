@@ -13,6 +13,6 @@ if( ${CMAKE_SYSTEM_NAME} MATCHES "Linux" )
     set( TNUN_code_coverage_linker_flags   -fprofile-arcs -ftest-coverage gcov )
 endif()
 
-add_compile_options( -fdiagnostics-color )
+list( APPEND TNUN_common_compiler_options -fdiagnostics-color )
 
 set( GCC true )

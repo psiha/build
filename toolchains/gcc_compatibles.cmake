@@ -33,19 +33,19 @@ set( TNUN_warnings_as_errors                -Werror                             
 set( TNUN_native_optimization               -march=native -mtune=native                                                         )
 set( TNUN_compiler_coverage                 -fprofile-arcs -ftest-coverage                                                      )
 
-add_compile_options( -fstrict-aliasing $<$<COMPILE_LANGUAGE:CXX>:-fstrict-enums> -fvisibility=hidden $<$<COMPILE_LANGUAGE:CXX>:-fvisibility-inlines-hidden> )
+set( TNUN_common_compiler_options -fstrict-aliasing $<$<COMPILE_LANGUAGE:CXX>:-fstrict-enums> -fvisibility=hidden $<$<COMPILE_LANGUAGE:CXX>:-fvisibility-inlines-hidden> )
 
 if ( NOT WIN32 )
     # -fPIC is not supported on Windows
-    add_compile_options( -fPIC )
+    list( APPEND TNUN_common_compiler_options -fPIC )
 endif()
 
 # "Unknown language" error with CMake 3.5.2 if COMPILE_LANGUAGE:C is used.
 # + 'COMPILE_LANGUAGE' isn't supported by VS generators:
 # https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#logical-expressions
 
-add_compile_options( $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++20> )
-add_compile_options( $<$<NOT:$<COMPILE_LANGUAGE:CXX>>:-std=gnu11> )
+set( TNUN_common_compiler_options $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++20> )
+set( TNUN_common_compiler_options $<$<NOT:$<COMPILE_LANGUAGE:CXX>>:-std=gnu11> )
 
 set( CMAKE_C_STANDARD   11 )
 set( CMAKE_CXX_STANDARD 14 )

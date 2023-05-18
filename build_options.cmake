@@ -191,35 +191,23 @@ else()
     # file explicitly.
 endif()
 
-set( TNUN_compiler_dev_release_flags ${TNUN_compiler_release_flags} )
-if ( CMAKE_CXX_COMPILER_ID STREQUAL "MSVC"  ) # real MSVC, not clang-cl
-    string( REPLACE "MD" "MDd" TNUN_compiler_dev_release_flags "${TNUN_compiler_dev_release_flags}" )
-endif()
-list( APPEND TNUN_compiler_release_flags -DNDEBUG )
-if( NOT TNUN_DO_NOT_ADD_DEFAULT_BUILD_FLAGS )
-    TNUN_add_compile_options( Debug   ${TNUN_compiler_debug_flags} ${TNUN_compiler_debug_symbols} )
-    TNUN_add_compile_options( Release ${TNUN_compiler_release_flags} )
-    add_compile_options( ${TNUN_default_warnings} )
-    TNUN_add_link_options( Release ${TNUN_linker_release_flags} )
-endif()
-
 
 ################################################################################
 # malloc overcommit policies
 # https://www.etalabs.net/overcommit.html
 ################################################################################
 
-add_definitions(
-    -DTNUN_OVERCOMMIT_Disabled=0
-    -DTNUN_OVERCOMMIT_Partial=1
-    -DTNUN_OVERCOMMIT_Full=2
-    -DTNUN_MALLOC_OVERCOMMIT=TNUN_OVERCOMMIT_${TNUN_MALLOC_OVERCOMMIT_POLICY}
+list( APPEND TNUN_common_compile_definitions
+    TNUN_OVERCOMMIT_Disabled=0
+    TNUN_OVERCOMMIT_Partial=1
+    TNUN_OVERCOMMIT_Full=2
+    TNUN_MALLOC_OVERCOMMIT=TNUN_OVERCOMMIT_${TNUN_MALLOC_OVERCOMMIT_POLICY}
 )
 
 if ( TNUN_MALLOC_OVERCOMMIT_POLICY STREQUAL Full )
-  add_definitions( -DTNUN_NOEXCEPT_EXCEPT_BADALLOC=noexcept )
+    list( APPEND TNUN_common_compile_definitions TNUN_NOEXCEPT_EXCEPT_BADALLOC=noexcept )
 else()
-  add_definitions( -DTNUN_NOEXCEPT_EXCEPT_BADALLOC= )
+    list( APPEND TNUN_common_compile_definitions TNUN_NOEXCEPT_EXCEPT_BADALLOC= )
 endif()
 
 # Implementation note:
@@ -231,4 +219,22 @@ if ( iOS )
     set( install_configs "" )
 else()
     set( install_configs Release )
+endif()
+
+set( TNUN_compiler_dev_release_flags ${TNUN_compiler_release_flags} )
+if ( CMAKE_CXX_COMPILER_ID STREQUAL "MSVC"  ) # real MSVC, not clang-cl
+    string( REPLACE "MD" "MDd" TNUN_compiler_dev_release_flags "${TNUN_compiler_dev_release_flags}" )
+endif()
+list( APPEND TNUN_compiler_release_flags -DNDEBUG )
+if( NOT TNUN_DO_NOT_ADD_DEFAULT_BUILD_FLAGS )
+    TNUN_add_compile_options( Debug          ${TNUN_compiler_debug_flags}       ${TNUN_compiler_debug_symbols} )
+    TNUN_add_compile_options( Release        ${TNUN_compiler_release_flags}                                    )
+    TNUN_add_compile_options( RelWithDebInfo ${TNUN_compiler_dev_release_flags} ${TNUN_compiler_debug_symbols} )
+
+    add_compile_options    ( ${TNUN_common_compiler_options} ${TNUN_default_warnings} )
+    add_compile_definitions( ${TNUN_common_compile_definitions}                       )
+    add_link_options       ( ${TNUN_common_link_options}                              )
+    TNUN_add_link_options  ( Debug          ${TNUN_linker_debug_flags}                )
+    TNUN_add_link_options  ( Release        ${TNUN_linker_release_flags}              )
+    TNUN_add_link_options  ( RelWithDebInfo ${TNUN_linker_dev_release_flags}          )
 endif()

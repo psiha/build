@@ -10,7 +10,7 @@ set( CMAKE_ANDROID_ARCH   armeabi-v7a     )
 set( ANDROID_NDK_ABI_NAME armeabi-v7a     )
 set( TNUN_arch_suffix     ARMv7a_VFP3-D16 )
 
-add_compile_options( -march=armv7-a -mtune=cortex-a53 )
+list( APPEND TNUN_common_compiler_options -march=armv7-a -mtune=cortex-a53 )
 list( APPEND TNUN_compiler_optimize_for_size  -mthumb )
 list( APPEND TNUN_compiler_optimize_for_speed -marm   )
 
@@ -32,10 +32,10 @@ list( APPEND TNUN_compiler_optimize_for_speed -marm   )
 
 option( TNUN_ANDROID_ARM7_HARDFLOAT_ABI "Use hardfloat ABI for armv7 binaries" false )
 if( ${TNUN_ANDROID_ARM7_HARDFLOAT_ABI} )
-    add_compile_options( -mhard-float -D_NDK_MATH_NO_SOFTFP=1 )
-    link_libraries( -Wl,--no-warn-mismatch -lm_hard )
+    list( APPEND TNUN_common_compiler_options -mhard-float -D_NDK_MATH_NO_SOFTFP=1 )
+    list( APPEND TNUN_common_link_options     -Wl,--no-warn-mismatch -lm_hard )
 endif()
 
 # this is *required* to use the following linker flags that routes around
 # a CPU bug in some Cortex-A8 implementations:
-link_libraries( "-Wl,--fix-cortex-a8" )
+list( APPEND TNUN_common_link_options "-Wl,--fix-cortex-a8" )

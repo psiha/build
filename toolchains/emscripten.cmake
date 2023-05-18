@@ -36,12 +36,12 @@ set( TNUN_MALLOC_OVERCOMMIT_POLICY Partial )
 
 # always use STRICT mode
 set( strict_mode "SHELL:-s STRICT=1" )
-add_compile_options( ${strict_mode} )
-add_link_options( ${strict_mode} )
+list( APPEND TNUN_common_compiler_options ${strict_mode} )
+list( APPEND TNUN_common_link_options     ${strict_mode} )
 
-add_compile_options( -fno-PIC )
+list( APPEND TNUN_common_compiler_options -fno-PIC )
 
 # always use emmalloc, instead of default dlmalloc
 # https://groups.google.com/g/emscripten-discuss/c/SCZMkfk8hyk?pli=1
 # https://github.com/emscripten-core/emscripten/blob/2.0.12/src/settings.js#L121
-add_link_options( "SHELL:-s MALLOC=emmalloc" )
+list( APPEND TNUN_common_link_options "SHELL:-s MALLOC=emmalloc" )

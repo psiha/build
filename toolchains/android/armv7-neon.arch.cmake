@@ -10,4 +10,4 @@ include( "${CMAKE_CURRENT_LIST_DIR}/armv7-vfp3d16.arch.cmake" )
 
 set( TNUN_arch_suffix ARMv7a_NEON )
 
-add_compile_options( -mfpu=neon-vfpv4 )
+list( APPEND TNUN_common_compiler_options -mfpu=neon-vfpv4 )

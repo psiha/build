@@ -36,20 +36,19 @@ set( TNUN_warnings_as_errors                      -WX                           
 set( TNUN_default_warnings                        -W4                                         )
 set( TNUN_compiler_runtime_integer_checks         -RTCc -D_ALLOW_RTCc_IN_STL                  ) # A separate option as it can break valid code or code that relies on behaviour that these checks catch https://www.reddit.com/r/cpp/comments/46mhne/rtcc_rejects_conformant_code_with_visual_c_2015
 
-
 # w4373: '...': virtual function overrides '...', previous versions of the compiler did not override when parameters only differed by const/volatile qualifiers
 # w4324: 'structure was padded due to alignment specifier'
 # w5104: 'found 'L#x' in macro replacement list, did you mean 'L""#x'?' @ windows.h + experimental PP
 # w5105: 'macro expansion producing 'defined' has undefined behavior' @ windows.h + experimental PP
-add_compile_options( /permissive- -Oi -wd4324 -wd4373 -wd5104 -wd5105 )
-
+set( TNUN_common_compiler_options /permissive- -Oi -wd4324 -wd4373 -wd5104 -wd5105 )
+set( TNUN_common_compile_definitions )
 
 if ( CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" ) # real MSVC, not clang-cl
-    add_compile_options( /std:c++latest /MP )
+    list( APPEND TNUN_common_compiler_options /std:c++latest /MP )
     if ( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "19.26" )
-        add_compile_options( /Zc:preprocessor )
+        list( APPEND TNUN_common_compiler_options /Zc:preprocessor )
     else()
-        add_compile_options( /experimental:preprocessor )
+        list( APPEND TNUN_common_compiler_options /experimental:preprocessor )
     endif()
 
     if ( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "19.28" )
@@ -70,16 +69,16 @@ else()
     set( CLANG_CL true )
 
     # https://github.com/llvm/llvm-project/issues/53259
-    add_compile_definitions( __GNUC__ )
+    list( APPEND TNUN_common_compile_definitions __GNUC__ )
 
     # if using Visual Studio, then we need to add /MP. Ninja + clang-cl does not recognize this flag
     if ( ${CMAKE_GENERATOR} MATCHES "Visual Studio" )
-        add_compile_options( /MP )
+        list( APPEND TNUN_common_compiler_options /MP )
         # clang-cl does not recognize /std:c++latest flag
-        add_compile_options( /clang:-std=gnu++20 )
+        list( APPEND TNUN_common_compiler_options /clang:-std=gnu++20 )
     else()
-        add_compile_options( $<$<COMPILE_LANGUAGE:CXX>:/clang:-std=gnu++20> )
-        add_compile_options( $<$<NOT:$<COMPILE_LANGUAGE:CXX>>:/clang:-std=gnu11> )
+        list( APPEND TNUN_common_compiler_options $<$<COMPILE_LANGUAGE:CXX>:/clang:-std=gnu++20> )
+        list( APPEND TNUN_common_compiler_options $<$<NOT:$<COMPILE_LANGUAGE:CXX>>:/clang:-std=gnu11> )
     endif()
 
     set( THIN_LTO_SUPPORTED        ON                                                   )
@@ -106,7 +105,7 @@ else()
     string( REPLACE "-MDd" "-MD" TNUN_compiler_debug_flags "${TNUN_compiler_debug_flags}" )
     list( REMOVE_ITEM TNUN_compiler_fastmath -Qfast_transcendentals )
 
-    add_compile_options( -Wno-error=unused-command-line-argument -Wno-macro-redefined )
+    list( APPEND TNUN_default_warnings -Wno-error=unused-command-line-argument -Wno-macro-redefined )
 
     # without those __cpp_rtti macro has incorrect definitions
     list( APPEND TNUN_compiler_rtti_on  /clang:-frtti    -D_HAS_STATIC_RTTI=1 )
@@ -125,18 +124,18 @@ else()
 
         set( TNUN_linker_runtime_sanity_checks clang_rt.asan_dynamic-x86_64.lib clang_rt.asan_dynamic_runtime_thunk-x86_64.lib )
 
-        add_compile_options( /clang:-msse3 /clang:-msse4 /clang:-mavx /clang:-mavx2 /clang:-mfma )
+        list( APPEND TNUN_common_compiler_options /clang:-msse3 /clang:-msse4 /clang:-mavx /clang:-mavx2 /clang:-mfma )
     endif()
 
     # Assumes Clang 11.0.0 or newer
-    add_compile_options( /clang:-fenable-matrix )
+    list( APPEND TNUN_common_compiler_options /clang:-fenable-matrix )
 endif()
 
-add_definitions(
-  -D_CRT_SECURE_NO_WARNINGS
-  -D_SCL_SECURE_NO_WARNINGS
-  -D_SBCS
-  -D_WIN32_WINNT=0x0A00 # Win10
+list( APPEND TNUN_common_compile_definitions
+  _CRT_SECURE_NO_WARNINGS
+  _SCL_SECURE_NO_WARNINGS
+  _SBCS
+  _WIN32_WINNT=0x0A00 # Win10
 )
 
 set( TNUN_ABIs

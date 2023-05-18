@@ -10,4 +10,4 @@ set( TNUN_cpu_archs
   x86_sse2
 )
 
-add_compile_options( -arch:SSE2 )
+list( APPEND TNUN_common_compiler_options -arch:SSE2 )
