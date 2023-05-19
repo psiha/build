@@ -24,9 +24,14 @@ function( TNUN_add_compile_options configuration )
     # https://cmake.org/pipermail/cmake-developers/2012-August/016617.html
     # http://stackoverflow.com/a/35361099/6041906
     #                                         (14.05.2016.) (Domagoj Saric)
-    string( TOUPPER ${configuration} configuration )
     foreach( arg ${ARGN} )
         add_compile_options( $<$<CONFIG:${configuration}>:${arg}> )
+    endforeach()
+endfunction()
+
+function( TNUN_target_compile_options configuration target visibility )
+    foreach( arg ${ARGN} )
+        target_compile_options( ${target} ${visibility} $<$<CONFIG:${configuration}>:${arg}> )
     endforeach()
 endfunction()
 
@@ -117,9 +122,14 @@ function( TNUN_add_link_options configuration )
     # options, is (ab)used here to simulate add_compile_options() behaviour.
     # https://cmake.org/cmake/help/latest/prop_tgt/LINK_LIBRARIES.html
     #                                         (01.06.2016.) (Domagoj Saric)
-    string( TOUPPER ${configuration} configuration )
     foreach( arg ${ARGN} )
         add_link_options( $<$<CONFIG:${configuration}>:${arg}> )
+    endforeach()
+endfunction()
+
+function( TNUN_target_link_options configuration target visibility )
+    foreach( arg ${ARGN} )
+        target_link_options( ${target} ${visibility} $<$<CONFIG:${configuration}>:${arg}> )
     endforeach()
 endfunction()
 
