@@ -44,8 +44,8 @@ endif()
 # + 'COMPILE_LANGUAGE' isn't supported by VS generators:
 # https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#logical-expressions
 
-set( TNUN_common_compiler_options $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++20> )
-set( TNUN_common_compiler_options $<$<NOT:$<COMPILE_LANGUAGE:CXX>>:-std=gnu11> )
+list( APPEND TNUN_common_compiler_options $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++2b> )
+list( APPEND TNUN_common_compiler_options $<$<NOT:$<COMPILE_LANGUAGE:CXX>>:-std=gnu11> )
 
 set( CMAKE_C_STANDARD   11 )
 set( CMAKE_CXX_STANDARD 14 )
