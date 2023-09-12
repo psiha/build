@@ -8,7 +8,9 @@
 
 include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
 
-if ( EMSCRIPTEN_VERSION VERSION_GREATER_EQUAL "2.0.17" )
+if ( EMSCRIPTEN_VERSION VERSION_GREATER_EQUAL "3.1.32" )
+    set( TNUN_debug_symbols -g )
+elseif ( EMSCRIPTEN_VERSION VERSION_GREATER_EQUAL "2.0.17" )
     set( TNUN_debug_symbols -g3 -gsource-map )
 else()
     set( TNUN_debug_symbols -g4 )
