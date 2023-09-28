@@ -19,20 +19,7 @@ include( "${CMAKE_CURRENT_LIST_DIR}/apple.cmake" )
 # cmake_policy( SET CMP0042 OLD )
 # set( CMAKE_MACOSX_RPATH 0 ) # even with the policy set CMake 3.5.2 still issues the warning?
 
-set( CMAKE_OSX_ARCHITECTURES           "$(ARCHS_STANDARD)"           )
-set( CMAKE_XCODE_ATTRIBUTE_VALID_ARCHS "$(ARCHS_STANDARD_32_64_BIT)" )
-set( CMAKE_OSX_DEPLOYMENT_TARGET       "10.14"                       )
-set( CPACK_SYSTEM_NAME                 "OSX"                         )
-
-# Implementation note:
-# CMake (3.5.2) 'somehow' adds ${CMAKE_OSX_ARCHITECTURES} and
-# ${CMAKE_OSX_SYSROOT} to the compiler options even if a generator other than
-# Xcode (e.g. Ninja) is used (and this breaks the build of course).
-#                                         (27.06.2016.) (Domagoj Saric)
-if ( NOT ${CMAKE_GENERATOR} MATCHES "Xcode" )
-  unset( CMAKE_OSX_ARCHITECTURES )
-  unset( CMAKE_OSX_SYSROOT       )
-endif ()
+set( CMAKE_OSX_DEPLOYMENT_TARGET "10.14" )
 
 set( OSX true )
 

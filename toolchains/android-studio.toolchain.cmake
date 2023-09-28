@@ -16,7 +16,7 @@ if( APPLE )
     unset( APPLE )
 endif()
 
-add_definitions( -D__ANDROID__ )
+set( TNUN_common_compile_definitions __ANDROID__ )
 
 set( TNUN_os_suffix Android )
 
@@ -76,21 +76,6 @@ if( ANDROID_ABI STREQUAL "armeabi-v7a" )
 elseif( ANDROID_ABI STREQUAL "arm64-v8a" )
     set( TNUN_ABI  aarch64-linux-android )
     set( TNUN_ARCH aarch64 )
-elseif( ANDROID_ABI STREQUAL "armeabi" ) # psiha/build does not support armeabi
-    unset( TNUN_ABI  )
-    unset( TNUN_ARCH )
-elseif( ANDROID_ABI STREQUAL "mips" ) # psiha/build has incomplete mips support
-    set( TNUN_ABI mipsel-linux-android )
-    unset( TNUN_ARCH )
-    # mips does not support LTO (tested with NDK r15b)
-    unset( TNUN_compiler_LTO )
-    unset( TNUN_linker_LTO )
-elseif( ANDROID_ABI STREQUAL "mips64" )
-    set( TNUN_ABI mips64el-linux-android )
-    unset( TNUN_ARCH )
-    # mips64 does not support LTO (tested with NDK r15b)
-    unset( TNUN_compiler_LTO )
-    unset( TNUN_linker_LTO )
 endif()
 
 if ( TNUN_ARCH )
@@ -103,34 +88,8 @@ endif()
 # Some settings from android.toolchain.cmake which are better than in the
 # default toolchain shipped with Android Studio.
 
-# apparently mips supports only the default linker
-if( NOT ( ANDROID_ABI STREQUAL "mips" OR ANDROID_ABI STREQUAL "mips64" ) )
-    # Implementation note: https://github.com/android-ndk/ndk/issues/75
-    #                                         (01.03.2017. Domagoj Saric)
-    if ( CMAKE_HOST_WIN32 )
-        set( linker_suffix ".exe" )
-    endif()
-
-    set( TNUN_USE_LINKER "gold" CACHE STRING "Linker to use" )
-    set_property( CACHE TNUN_USE_LINKER PROPERTY STRINGS "gold" "lld" )
-
-    # Implementation note:
-    # NDK r17 (and r18 as well) on x86 with ICF and LTO combined causes internal linker error.
-    #
-    #                              Nenad Miksa (19.09.2018.)
-    # Additional note:
-    # LTO with gold fails on Android x86. Use LLD on that platform and selected linker otherwise.
-    #                              Nenad Miksa (17.01.2020.)
-    if( ANDROID_ABI STREQUAL "x86" )
-        link_libraries( -fuse-ld=lld${linker_suffix} )
-        link_libraries( $<$<CONFIG:RELEASE>:-Wl,--icf=none> )
-    else()
-        link_libraries( -fuse-ld=${TNUN_USE_LINKER}${linker_suffix} )
-        link_libraries( $<$<CONFIG:RELEASE>:-Wl,--icf=all> ) # http://research.google.com/pubs/pub36912.html Safe ICF: Pointer Safe and Unwinding Aware Identical Code Folding in Gold
-    endif()
-endif()
-
-link_libraries( $<$<CONFIG:RELEASE>:-Wl,--gc-sections> )
+list( APPEND TNUN_common_link_options $<$<CONFIG:RELEASE>:-Wl,--icf=all>     ) # http://research.google.com/pubs/pub36912.html Safe ICF: Pointer Safe and Unwinding Aware Identical Code Folding in Gold
+list( APPEND TNUN_common_link_options $<$<CONFIG:RELEASE>:-Wl,--gc-sections> )
 
 
 ################################################################################

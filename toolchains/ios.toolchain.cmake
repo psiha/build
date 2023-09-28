@@ -17,41 +17,25 @@
 #
 ################################################################################
 
-cmake_minimum_required( VERSION 3.14 )
+cmake_minimum_required( VERSION 3.24 )
 
-set( CMAKE_C_COMPILER_ID   AppleClang )
-set( CMAKE_CXX_COMPILER_ID AppleClang )
-
-if( NOT ${CMAKE_GENERATOR} MATCHES "Xcode" )
-    message( FATAL_ERROR "iOS toolchain supports only XCode generator" )
-endif()
+set( CMAKE_SYSTEM_NAME    iOS  )
+set( CMAKE_CROSSCOMPILING true )
 
 include( "${CMAKE_CURRENT_LIST_DIR}/apple.cmake" )
 unset( TNUN_native_optimization ) # This makes no sense when cross-compiling.
 
 # Standard settings
-set( CMAKE_SYSTEM_NAME      iOS    )
-set( CMAKE_OSX_SYSROOT      "iphoneos" )
 set( CPACK_SYSTEM_NAME      iOS    )
-set( CMAKE_SYSTEM_VERSION   8.0    )
-set( CMAKE_SYSTEM_PROCESSOR arm    )
-set( CMAKE_OSX_ARCHITECTURES armv7 armv7s arm64 i386 x86_64 )
-set( APPLE true )
-set( iOS   true )
+set( CMAKE_SYSTEM_VERSION   9.0    )
+set( iOS                    true   )
 # Compatibility with build scripts that rely on iOS toolchains defining IOS instead of iOS
 # CMake variables are case sensitive (unlike functions, macros and commands: https://cmake.org/cmake/help/latest/manual/cmake-language.7.html#variables
 set( IOS   true )
-set( UNIX  true )
 
 set( TNUN_os_suffix iOS )
 
-set( TNUN_cpu_archs default )
-
-# Skip the platform compiler checks for cross compiling (or not)...
-set( CMAKE_CXX_COMPILER_WORKS true CACHE STRING "Skip CMake compiler detection (requires a functioning code signing identity and provisioning profile)." )
-set( CMAKE_C_COMPILER_WORKS   ${CMAKE_CXX_COMPILER_WORKS} )
-
-if ( NOT CMAKE_CXX_COMPILER_WORKS )
+if ( XCODE )
     # Make sure all executables are bundles otherwise try compiles will fail.
     set( CMAKE_MACOSX_BUNDLE                         true                         )
     set( CMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY    "iPhone Developer"           )
@@ -62,7 +46,6 @@ endif()
 # http://code.google.com/p/ios-cmake/source/browse/toolchain/iOS.cmake
 # http://stackoverflow.com/questions/5010062/xcodebuild-simulator-or-device
 set( CMAKE_XCODE_EFFECTIVE_PLATFORMS "-universal;-iphonesimulator;-iphoneos;" )
-set( CMAKE_IOS_DEVELOPER_ROOT        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer" )
 set( CMAKE_XCODE_ATTRIBUTE_SDKROOT   iphoneos ) # "Latest iOS"
 
 list( APPEND TNUN_compiler_optimize_for_size -mthumb ) #...mrmlj...this will cause (harmless) warnings on ARM64 builds...
@@ -71,8 +54,8 @@ list( APPEND TNUN_compiler_optimize_for_size -mthumb ) #...mrmlj...this will cau
 # http://stackoverflow.com/questions/1211854/xcode-conditional-build-settings-based-on-architecture-device-arm-vs-simulat
 # http://cmake.3232098.n2.nabble.com/Different-settings-for-different-configurations-in-Xcode-td6908021.html
 # http://public.kitware.com/Bug/view.php?id=8915 Missing feature to set Xcode specific build settings
-set( XCODE_ATTRIBUTE_CFLAGS_armv7  "-mcpu=cortex-a9 -mfpu=neon" ) 
-set( XCODE_ATTRIBUTE_CFLAGS_armv7s "-mcpu=swift"                )
+set( XCODE_ATTRIBUTE_CFLAGS_armv7  "-mcpu=swift -mfpu=neon-vfpv4" )
+set( XCODE_ATTRIBUTE_CFLAGS_armv7s "-mcpu=swift -mfpu=neon-vfpv4" )
 set( CMAKE_XCODE_ATTRIBUTE_OTHER_CFLAGS[arch=armv7]          "${XCODE_ATTRIBUTE_CFLAGS_armv7}  $(OTHER_CFLAGS)"         )
 set( CMAKE_XCODE_ATTRIBUTE_OTHER_CFLAGS[arch=armv7s]         "${XCODE_ATTRIBUTE_CFLAGS_armv7s} $(OTHER_CFLAGS)"         )
 set( CMAKE_XCODE_ATTRIBUTE_OTHER_CPLUSPLUSFLAGS[arch=armv7]  "${XCODE_ATTRIBUTE_CFLAGS_armv7}  $(OTHER_CPLUSPLUSFLAGS)" )

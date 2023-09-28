@@ -28,19 +28,24 @@ set( TNUN_compiler_thread_safe_init         -fthreadsafe-statics                
 set( TNUN_compiler_disable_thread_safe_init -fno-threadsafe-statics                                                             )
 set( TNUN_compiler_report_optimization      -ftree-vectorizer-verbose=6                                                         )
 set( TNUN_compiler_release_flags            -fomit-frame-pointer -ffunction-sections -fmerge-all-constants -fno-stack-protector )
-set( TNUN_default_warnings                  -Wall -Wextra -Wstrict-aliasing                                                     )
+set( TNUN_default_warnings                  -Wall -Wextra -Wconversion -Wshadow -Wstrict-aliasing                               )
 set( TNUN_warnings_as_errors                -Werror                                                                             )
 set( TNUN_native_optimization               -march=native -mtune=native                                                         )
 set( TNUN_compiler_coverage                 -fprofile-arcs -ftest-coverage                                                      )
 
-add_compile_options( -fstrict-aliasing $<$<COMPILE_LANGUAGE:CXX>:-fstrict-enums> -fvisibility=hidden $<$<COMPILE_LANGUAGE:CXX>:-fvisibility-inlines-hidden> -fPIC )
+set( TNUN_common_compiler_options -fstrict-aliasing $<$<COMPILE_LANGUAGE:CXX>:-fstrict-enums> -fvisibility=hidden $<$<COMPILE_LANGUAGE:CXX>:-fvisibility-inlines-hidden> )
+
+if ( NOT WIN32 )
+    # -fPIC is not supported on Windows
+    list( APPEND TNUN_common_compiler_options -fPIC )
+endif()
 
 # "Unknown language" error with CMake 3.5.2 if COMPILE_LANGUAGE:C is used.
 # + 'COMPILE_LANGUAGE' isn't supported by VS generators:
 # https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#logical-expressions
 
-add_compile_options( $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++2a> )
-add_compile_options( $<$<NOT:$<COMPILE_LANGUAGE:CXX>>:-std=gnu11> )
+list( APPEND TNUN_common_compiler_options $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++2b> )
+list( APPEND TNUN_common_compiler_options $<$<NOT:$<COMPILE_LANGUAGE:CXX>>:-std=gnu11> )
 
 set( CMAKE_C_STANDARD   11 )
 set( CMAKE_CXX_STANDARD 14 )
@@ -51,9 +56,13 @@ if ( CMAKE_VERSION VERSION_GREATER 3.7 )
         # workaround for bug in cmake (tested with 3.14.5) - on Apple Clang it will add
         # -std=gnu++1z for CMAKE_CXX_STANDARD 20 as last compiler option,
         # thus overriding the above add_compile_options statement
-        if ( CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" )
+        # Note: with CMake 3.21, the flag is set correctly
+        if ( CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" AND CMAKE_VERSION VERSION_LESS 3.21 )
             unset( CMAKE_CXX_STANDARD )
         endif()
+    endif()
+    if ( CMAKE_VERSION VERSION_GREATER 3.19 )
+        set( CMAKE_CXX_STANDARD 23 )
     endif()
 endif()
 

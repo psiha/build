@@ -23,8 +23,3 @@ set( abi_sufix                "eabi"                          )
 set( ANDROID_ARCH_NAME        "arm"                           )
 set( ANDROID_GCC_MACHINE_NAME "arm-linux-android${abi_sufix}" )
 set( CMAKE_SYSTEM_PROCESSOR   "armv7-a"                       )
-
-list( APPEND TNUN_compiler_optimize_for_size  -mthumb )
-list( APPEND TNUN_compiler_optimize_for_speed -marm   )
-
-add_compile_options( -march=armv7-a -mtune=cortex-a15 )

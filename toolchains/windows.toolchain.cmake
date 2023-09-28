@@ -19,8 +19,11 @@ set( CPACK_SYSTEM_NAME ${TNUN_os_suffix} )
 
 set( TNUN_MALLOC_OVERCOMMIT_POLICY Disabled )
 
-if ( CMAKE_CXX_COMPILER_ID STREQUAL Clang )
-  include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
+# if using clang-cl, use msvc.toolchain.cmake
+if ( CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT MSVC )
+    message( STATUS "Using clang toolchain" )
+    include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
 else()
-  include( "${CMAKE_CURRENT_LIST_DIR}/msvc.toolchain.cmake" )
+    message( STATUS "Using msvc toolchain" )
+    include( "${CMAKE_CURRENT_LIST_DIR}/msvc.toolchain.cmake" )
 endif()

@@ -13,4 +13,4 @@ set( ANDROID_GCC_MACHINE_NAME "aarch64-linux-android" )
 set( CMAKE_SYSTEM_PROCESSOR   "aarch64"               )
 set( TNUN_cpu_archs           "aarch64"               )
 
-add_compile_options( -march=armv8-a )
+list( APPEND TNUN_common_compiler_options -march=armv8-a )

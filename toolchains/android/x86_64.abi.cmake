@@ -14,4 +14,4 @@ set( ANDROID_ARCH_NAME        "x86_64"               )
 set( ANDROID_GCC_MACHINE_NAME "x86_64-linux-android" )
 set( TNUN_cpu_archs           "x86_64"               )
 
-add_compile_options( -m64 -march=atom -msse4.2 -mpopcnt ) # assume Silvermont arch
+list( APPEND TNUN_common_compiler_options -m64 -march=atom -msse4.2 -mpopcnt ) # assume Silvermont arch
