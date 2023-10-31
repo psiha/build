@@ -24,14 +24,14 @@ Reusable components for cross-platform project builds.
 
 ## Standard development environment
 * Tools:
-    * [CMake](http://cmake.org) (latest/3.5.2)
-    * [Doxygen](http://www.doxygen.org) (latest/1.8.11)
+    * [CMake](http://cmake.org)
+    * [Doxygen](http://www.doxygen.org)
     * [Git](http://www.git-scm.com)
     * [TortoiseGit](https://tortoisegit.org)
     * [Notepad++](https://notepad-plus-plus.org) (recommended for editing CMake scripts)
-    * supported platforms:
-        * Windows - Visual Studio (2015 Update 2)
-        * OS X    - Xcode ((latest/7.3)
+    * supported/tested platforms:
+        * Windows - Visual Studio
+        * OS X    - Xcode
         * iOS     - toolchains/ios.readme.txt
         * Android - toolchains/android/readme.txt
 
