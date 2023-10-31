@@ -1,6 +1,6 @@
 ################################################################################
 #
-# T:N.U.N. Android ABI config file.
+# PSI Android ABI config file.
 #
 # Copyright (c) 2016. Domagoj Saric. All rights reserved.
 #
@@ -12,6 +12,6 @@ set( CMAKE_SYSTEM_PROCESSOR   "x86_64"               )
 set( ANDROID_NDK_ABI_NAME     "x86_64"               )
 set( ANDROID_ARCH_NAME        "x86_64"               )
 set( ANDROID_GCC_MACHINE_NAME "x86_64-linux-android" )
-set( TNUN_cpu_archs           "x86_64"               )
+set( PSI_cpu_archs            "x86_64"               )
 
-list( APPEND TNUN_common_compiler_options -m64 -march=atom -msse4.2 -mpopcnt ) # assume Silvermont arch
+list( APPEND PSI_common_compiler_options -m64 -march=atom -msse4.2 -mpopcnt ) # assume Silvermont arch

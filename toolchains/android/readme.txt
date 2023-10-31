@@ -18,7 +18,7 @@
           - CMake ANDROID_NDK variable
           - environment ANDROID_NDK variable
           - ${ANDROID_NDK_ROOT}/android-ndk-${android_ndk_default_version}
-          - $ENV{TNUN_3rd_party_root}/Android/NDK/android-ndk-${android_ndk_default_version}
+          - $ENV{PSI_3rd_party_root}/Android/NDK/android-ndk-${android_ndk_default_version}
           where android_ndk_default_version is (currently) r11c
     - Android SDK (r24+) http://developer.android.com/sdk/index.html (studio bundle or command line tools separately)
         - install the required platforms (Android SDK Manager) and emulators (Android AVD Manager)

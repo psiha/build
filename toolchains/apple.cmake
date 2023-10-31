@@ -1,6 +1,6 @@
 ################################################################################
 #
-# T:N.U.N. Shared toolchain for Apple platforms.
+# PSI Shared toolchain for Apple platforms.
 #
 # Copyright (c) 2016 - 2017. Domagoj Saric.
 #
@@ -30,37 +30,37 @@ cmake_policy( SET CMP0025 NEW )
 
 if( ${CMAKE_CXX_COMPILER_ID} MATCHES "Clang" )
     include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
-    list( APPEND TNUN_common_compiler_options -fconstant-cfstrings -fobjc-call-cxx-cdtors )
+    list( APPEND PSI_common_compiler_options -fconstant-cfstrings -fobjc-call-cxx-cdtors )
 else()
     include( "${CMAKE_CURRENT_LIST_DIR}/gcc_compatibles.cmake" )
-    list( APPEND TNUN_common_compiler_options -mconstant-cfstrings )
+    list( APPEND PSI_common_compiler_options -mconstant-cfstrings )
 endif()
 
 # Xcode (7 & 8) report that function-sections are incompatible embed-bitcode
 set( CMAKE_XCODE_ATTRIBUTE_ENABLE_BITCODE "NO" )
-macro( TNUN_enable_bitcode )
+macro( PSI_enable_bitcode )
   # -ffunction-sections is not supported with -fembed-bitcode
   # Also, on Xcode 8.2:
   # -fno-function-sections is not supported with -fembed-bitcode
   # So, we need to ensure this neither of those flag is ever set.
 
     if ( XCODE )
-        list( REMOVE_ITEM TNUN_compiler_release_flags -ffunction-sections )
+        list( REMOVE_ITEM PSI_compiler_release_flags -ffunction-sections )
 
         set( CMAKE_XCODE_ATTRIBUTE_ENABLE_BITCODE[variant=Release]          "YES"     )
         set( CMAKE_XCODE_ATTRIBUTE_BITCODE_GENERATION_MODE[variant=Release] "bitcode" ) # Without this, Xcode adds -fembed-bitcode-marker compile options instead of -fembed-bitcode
 
         # -mllvm and -bitcode_bundle (Xcode setting ENABLE_BITCODE=YES) cannot be used together
-        list( REMOVE_ITEM TNUN_linker_LTO -Wl,-mllvm,-threads=${TNUN_linker_LTO_jobs} )
+        list( REMOVE_ITEM PSI_linker_LTO -Wl,-mllvm,-threads=${PSI_linker_LTO_jobs} )
     else()
-        list( APPEND TNUN_common_compiler_options $<$<CONFIG:Release>:-fembed-bitcode> )
+        list( APPEND PSI_common_compiler_options $<$<CONFIG:Release>:-fembed-bitcode> )
     endif()
 endmacro()
 
-list( APPEND TNUN_common_link_options $<$<CONFIG:RELEASE>:-dead_strip> )
+list( APPEND PSI_common_link_options $<$<CONFIG:RELEASE>:-dead_strip> )
 
-set( TNUN_ABI   default    )
-set( TNUN_ABIs ${TNUN_ABI} )
+set( PSI_ABI   default   )
+set( PSI_ABIs ${PSI_ABI} )
 
 ################################################################################
 # malloc overcommit policy
@@ -76,7 +76,7 @@ set( TNUN_ABIs ${TNUN_ABI} )
 #                                             (01.05.2017. Domagoj Saric)
 ################################################################################
 
-set( TNUN_MALLOC_OVERCOMMIT_POLICY Full )
+set( PSI_MALLOC_OVERCOMMIT_POLICY Full )
 
 #...mrmlj...reinvestigate this...
 # set( CMAKE_XCODE_ATTRIBUTE_OBJROOT          "${PROJECT_BINARY_DIR}" )

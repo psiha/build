@@ -1,13 +1,13 @@
 ################################################################################
 #
-# T:N.U.N. Android ABI config file.
+# PSI Android ABI config file.
 #
 # Copyright (c) 2016. - 2018. Domagoj Saric. All rights reserved.
 #
 ################################################################################
 
 # https://en.wikipedia.org/wiki/ARM_architecture
-set( TNUN_cpu_archs
+set( PSI_cpu_archs
   # Implementation note: Dropping support for the old armeabi archs greatly
   # simplifies things: CMAKE_SYSTEM_PROCESSOR and ANDROID_NDK_ABI_NAME become
   # fixed (armv7-a and armeabi-v7a, respectively) just like in other ABIs.

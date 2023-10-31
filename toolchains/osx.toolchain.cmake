@@ -1,6 +1,6 @@
 ################################################################################
 #
-# T:N.U.N. Apple OS X CMake tool chain file.
+# PSI Apple OS X CMake tool chain file.
 #
 # Copyright (c) 2016. Domagoj Saric. All rights reserved.
 #
@@ -23,19 +23,19 @@ set( CMAKE_OSX_DEPLOYMENT_TARGET "10.14" )
 
 set( OSX true )
 
-set( TNUN_os_suffix OSX )
+set( PSI_os_suffix OSX )
 
-set( TNUN_cpu_archs default )
+set( PSI_cpu_archs default )
 
-set( TNUN_LIBCPP_LOCATION /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1 )
+set( PSI_LIBCPP_LOCATION /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1 )
 include( ${CMAKE_CURRENT_LIST_DIR}/gcc_compatibles_stl.cmake )
 
 ################################################################################
-# TNUN_setup_target_for_arch()
+# PSI_setup_target_for_arch()
 ################################################################################
 
-function( TNUN_setup_target_for_arch target base_target_name arch )
+function( PSI_setup_target_for_arch target base_target_name arch )
   set_property( TARGET ${target} PROPERTY ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${PROJECT_BINARY_DIR}/lib" )
   set_property( TARGET ${target} PROPERTY LIBRARY_OUTPUT_DIRECTORY_RELEASE "${PROJECT_BINARY_DIR}/lib" )
-  set_property( TARGET ${target} PROPERTY OUTPUT_NAME                       "${base_target_name}_${TNUN_os_suffix}" )
+  set_property( TARGET ${target} PROPERTY OUTPUT_NAME                       "${base_target_name}_${PSI_os_suffix}" )
 endfunction()

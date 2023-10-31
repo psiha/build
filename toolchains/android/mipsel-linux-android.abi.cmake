@@ -1,6 +1,6 @@
 ################################################################################
 #
-# T:N.U.N. Android ABI config file.
+# PSI Android ABI config file.
 #
 # Copyright (c) 2016. Domagoj Saric. All rights reserved.
 #

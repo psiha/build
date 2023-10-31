@@ -1,6 +1,6 @@
 ################################################################################
 #
-# T:N.U.N. Android CMake toolchain file.
+# PSI Android CMake toolchain file.
 #
 # Copyright (c) 2016 - 2017. Domagoj Saric.
 #
@@ -34,10 +34,10 @@ include( "${CMAKE_CURRENT_LIST_DIR}/../utilities.cmake" )
 #                                             (31.05.2016.) (Domagoj Saric)
 ################################################################################
 
-find_program( TNUN_ninja_path ninja )
-if ( NOT TNUN_ninja_path )
+find_program( PSI_ninja_path ninja )
+if ( NOT PSI_ninja_path )
     set( ninja_dl ninja-win.zip )
-    TNUN_make_temp_path( ninja_dl )
+    PSI_make_temp_path( ninja_dl )
     file( DOWNLOAD
         # https://github.com/ninja-build/ninja
         https://github.com/ninja-build/ninja/releases/download/v1.7.1/ninja-win.zip
@@ -47,7 +47,7 @@ if ( NOT TNUN_ninja_path )
     )
     list( GET success 0 success )
     if ( NOT success EQUAL 0 )
-        message( FATAL_ERROR "[TNUN] Error downloading Ninja." )
+        message( FATAL_ERROR "[PSI] Error downloading Ninja." )
     endif()
     set( windir $ENV{windir} )
     execute_process( COMMAND ${CMAKE_COMMAND} -E tar xzf
@@ -58,9 +58,9 @@ if ( NOT TNUN_ninja_path )
         ERROR_VARIABLE  output
     )
     if ( NOT success EQUAL 0 )
-        message( FATAL_ERROR "[TNUN] Error extracting Ninja to ${windir}." )
+        message( FATAL_ERROR "[PSI] Error extracting Ninja to ${windir}." )
     endif()
-endif( NOT TNUN_ninja_path )
+endif( NOT PSI_ninja_path )
 
 
 ################################################################################
@@ -75,11 +75,11 @@ if ( NOT ANDROID_NDK )
         if ( ANDROID_NDK_ROOT )
             set( ANDROID_NDK "${ANDROID_NDK_ROOT}/android-ndk-${android_ndk_default_version}" )
         else()
-            set( ANDROID_NDK "$ENV{TNUN_3rd_party_root}/Android/NDK/android-ndk-${android_ndk_default_version}" )
+            set( ANDROID_NDK "$ENV{PSI_3rd_party_root}/Android/NDK/android-ndk-${android_ndk_default_version}" )
         endif()
     endif()
     if( NOT IS_DIRECTORY ${ANDROID_NDK} )
-        message( FATAL_ERROR "[TNUN] Cannot find Android NDK." )
+        message( FATAL_ERROR "[PSI] Cannot find Android NDK." )
     endif()
 endif ( NOT ANDROID_NDK )
 
@@ -92,7 +92,7 @@ set( CMAKE_SYSTEM_VERSION 2.6                  )
 set( ANDROID true )
 set( UNIX    true )
 
-set( TNUN_os_suffix Android )
+set( PSI_os_suffix Android )
 
 # Detect current host platform (to support builds on 32 bit hosts).
 if ( NOT DEFINED ANDROID_NDK_HOST_X64 AND (CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "amd64|x86_64|AMD64" OR CMAKE_HOST_APPLE) )
@@ -116,7 +116,7 @@ elseif( CMAKE_HOST_UNIX )
     set( ANDROID_NDK_HOST_SYSTEM_NAME "linux-x86" )
   endif()
 else()
-  message( FATAL_ERROR "[TNUN] Cross-compilation on your platform is not supported by this CMake toolchain" )
+  message( FATAL_ERROR "[PSI] Cross-compilation on your platform is not supported by this CMake toolchain" )
 endif()
 
 
@@ -125,7 +125,7 @@ set( ANDROID_NDK_TOOLCHAINS_SUBPATH "/prebuilt/${ANDROID_NDK_HOST_SYSTEM_NAME}" 
 set( ANDROID_CLANG_TOOLCHAIN_ROOT   "${ANDROID_NDK_TOOLCHAINS_PATH}/llvm${ANDROID_NDK_TOOLCHAINS_SUBPATH}" )
 
 
-set( TNUN_ABIs
+set( PSI_ABIs
   aarch64-linux-android
   arm-linux-androideabi
   x86_64
@@ -135,22 +135,22 @@ set( TNUN_ABIs
 )
 
 
-if( NOT DEFINED TNUN_ABI )
+if( NOT DEFINED PSI_ABI )
   include( CMakeForceCompiler )
   CMAKE_FORCE_CXX_COMPILER( "${CMAKE_COMMAND}" none_yet )
   CMAKE_FORCE_C_COMPILER  ( "${CMAKE_COMMAND}" none_yet )
-  #...mrmlj...this fails to work...the sub-builds, even though they get a properly defined TNUN_ABI fail @ the compiler check !??
+  #...mrmlj...this fails to work...the sub-builds, even though they get a properly defined PSI_ABI fail @ the compiler check !??
   #return()
   #...mrmlj...as a workaround set a default abi to make the checks pass and then unset it at the end (so that sub_project.cmake can detect that this is the root 'invocation' and skip creating any targets)...
-  set( TNUN_ABI arm-linux-androideabi )
-  set( TNUN_internal_workaround_unset_abi true )
+  set( PSI_ABI arm-linux-androideabi )
+  set( PSI_internal_workaround_unset_abi true )
 endif()
 
 
 if ( NOT ANDROID_NATIVE_API_LEVEL )
-    if ( TNUN_ABI MATCHES arm-linux-androideabi )
+    if ( PSI_ABI MATCHES arm-linux-androideabi )
     set( ANDROID_NATIVE_API_LEVEL 15 ) # ICS
-  elseif ( TNUN_ABI STREQUAL x86 )
+  elseif ( PSI_ABI STREQUAL x86 )
     set( ANDROID_NATIVE_API_LEVEL 18 ) # JB
   else() # 64bit
     set( ANDROID_NATIVE_API_LEVEL 21 ) # L
@@ -159,7 +159,7 @@ endif()
 
 set( CMAKE_ANDROID_API_MIN ${ANDROID_NATIVE_API_LEVEL} )
 if ( CROSS_COMPILING )
-  message( STATUS "[TNUN] Targeting Android API level ${ANDROID_NATIVE_API_LEVEL}." )
+  message( STATUS "[PSI] Targeting Android API level ${ANDROID_NATIVE_API_LEVEL}." )
 endif()
 
 set( CMAKE_ANDROID_STL_TYPE c++_static )
@@ -168,10 +168,10 @@ set( gcc_ver   4.9 )
 set( abi_sufix ""  )
 
 # http://clang.llvm.org/docs/CrossCompilation.html
-set( TNUN_arch_include_dir "${CMAKE_CURRENT_LIST_DIR}/android" )
-include( "${TNUN_arch_include_dir}/${TNUN_ABI}.abi.cmake" )
+set( PSI_arch_include_dir "${CMAKE_CURRENT_LIST_DIR}/android" )
+include( "${PSI_arch_include_dir}/${PSI_ABI}.abi.cmake" )
 
-set( ANDROID_GCC_TOOLCHAIN_NAME "${TNUN_ABI}-${gcc_ver}" )
+set( ANDROID_GCC_TOOLCHAIN_NAME "${PSI_ABI}-${gcc_ver}" )
 set( ANDROID_TOOLCHAIN_ROOT     "${ANDROID_NDK_TOOLCHAINS_PATH}/${ANDROID_GCC_TOOLCHAIN_NAME}${ANDROID_NDK_TOOLCHAINS_SUBPATH}" )
 set( ANDROID_LLVM_TRIPLE        "${CMAKE_SYSTEM_PROCESSOR}-none-linux-android${abi_sufix}" )
 
@@ -179,9 +179,9 @@ set( ANDROID_LLVM_TRIPLE        "${CMAKE_SYSTEM_PROCESSOR}-none-linux-android${a
 # Android support files
 set( ANDROID_CXX_ROOT         "${ANDROID_NDK}/sources/cxx-stl"                       )
 set( ANDROID_LLVM_ROOT        "${ANDROID_CXX_ROOT}/llvm-libc++"                      )
-set( TNUN_ABI_INCLUDE_DIRS "${ANDROID_CXX_ROOT}/llvm-libc++abi/libcxxabi/include" )
+set( PSI_ABI_INCLUDE_DIRS "${ANDROID_CXX_ROOT}/llvm-libc++abi/libcxxabi/include" )
 set( ANDROID_STL_INCLUDE_DIRS "${ANDROID_LLVM_ROOT}/libcxx/include"
-                              "${TNUN_ABI_INCLUDE_DIRS}"                          )
+                              "${PSI_ABI_INCLUDE_DIRS}"                          )
 set( ANDROID_SYSROOT          "${ANDROID_NDK}/platforms/android-${ANDROID_NATIVE_API_LEVEL}/arch-${ANDROID_ARCH_NAME}" )
 
 # where is the target environment
@@ -229,7 +229,7 @@ set( CMAKE_OBJDUMP      "${ANDROID_TOOLCHAIN_ROOT}/bin/${_CMAKE_TOOLCHAIN_PREFIX
 set( CMAKE_RANLIB       "${ANDROID_TOOLCHAIN_ROOT}/bin/${_CMAKE_TOOLCHAIN_PREFIX}ranlib${TOOL_OS_SUFFIX}"  )
 
 include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
-unset( TNUN_native_optimization ) # This makes no sense when cross-compiling.
+unset( PSI_native_optimization ) # This makes no sense when cross-compiling.
 
 add_definitions( -DANDROID -D__ANDROID__ )
 
@@ -239,27 +239,27 @@ add_definitions( -DANDROID -D__ANDROID__ )
 # @see the note in android-studio.toolchain.cmake
 ################################################################################
 
-set( TNUN_MALLOC_OVERCOMMIT_POLICY Full )
+set( PSI_MALLOC_OVERCOMMIT_POLICY Full )
 
 
 ################################################################################
-# TNUN_setup_target_for_arch()
+# PSI_setup_target_for_arch()
 ################################################################################
 
-function( TNUN_setup_target_for_arch target base_target_name arch )
-  include( "${TNUN_arch_include_dir}/${arch}.arch.cmake" )
+function( PSI_setup_target_for_arch target base_target_name arch )
+  include( "${PSI_arch_include_dir}/${arch}.arch.cmake" )
 
   # Standard Android directory layout for per-ABI libraries:
   # https://developer.android.com/ndk/guides/abis.html#sa
-  set( LIBRARY_OUTPUT_PATH "${TNUN_binary_dir}/lib/${ANDROID_NDK_ABI_NAME}" )
+  set( LIBRARY_OUTPUT_PATH "${PSI_binary_dir}/lib/${ANDROID_NDK_ABI_NAME}" )
   set_property( TARGET ${target} PROPERTY ARCHIVE_OUTPUT_DIRECTORY "${LIBRARY_OUTPUT_PATH}" )
   set_property( TARGET ${target} PROPERTY LIBRARY_OUTPUT_DIRECTORY "${LIBRARY_OUTPUT_PATH}" )
-  set_property( TARGET ${target} PROPERTY OUTPUT_NAME              "${base_target_name}_${TNUN_arch_suffix}_${TNUN_os_suffix}" )
+  set_property( TARGET ${target} PROPERTY OUTPUT_NAME              "${base_target_name}_${PSI_arch_suffix}_${PSI_os_suffix}" )
 
   set( runtime_libs_dir "${ANDROID_LLVM_ROOT}/libs/${ANDROID_NDK_ABI_NAME}" )
   link_directories      ( "${runtime_libs_dir}" ) #...mrmlj...no target_link_directories http://stackoverflow.com/questions/25164041/is-there-a-link-directories-or-equivilent-property-in-cmake
   target_link_libraries ( ${target} "${runtime_libs_dir}/libc++.a" )
-  target_compile_options( ${target} PRIVATE ${TNUN_arch_compiler_options} )
+  target_compile_options( ${target} PRIVATE ${PSI_arch_compiler_options} )
 endfunction()
 
 
@@ -307,6 +307,6 @@ macro( find_host_program )
 endmacro()
 
 #...mrmlj...ugh...
-if ( TNUN_internal_workaround_unset_abi )
-  unset( TNUN_ABI )
+if ( PSI_internal_workaround_unset_abi )
+  unset( PSI_ABI )
 endif()

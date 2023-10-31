@@ -1,6 +1,6 @@
 ################################################################################
 #
-# T:N.U.N. Main build (compiler&linker) options file.
+# PSI Main build (compiler&linker) options file.
 #
 # Copyright (c) 2016 - 2017. Domagoj Saric.
 #
@@ -15,7 +15,7 @@
 
 # Similar to the builtin add_compile_options, but receives build configuration as a first
 # parameter. Abstracts-away usage of generator expressions.
-function( TNUN_add_compile_options configuration )
+function( PSI_add_compile_options configuration )
     # Implementation note:
     # The builtin add_compile_options() seems broken (w/ CMake 3.5.2) when used
     # with multiple options: the "$<1" and ">" suffix end up in the compiler
@@ -29,7 +29,7 @@ function( TNUN_add_compile_options configuration )
     endforeach()
 endfunction()
 
-function( TNUN_target_compile_options configuration target visibility )
+function( PSI_target_compile_options configuration target visibility )
     foreach( arg ${ARGN} )
         target_compile_options( ${target} ${visibility} $<$<CONFIG:${configuration}>:${arg}> )
     endforeach()
@@ -37,7 +37,7 @@ endfunction()
 
 # Similar to the builtin add_compile_options, but applies given options
 # only to the c++ sources.
-function( TNUN_add_cxx_compile_options )
+function( PSI_add_cxx_compile_options )
     if( ${CMAKE_GENERATOR} MATCHES "Visual Studio" )
         add_compile_options( ${ARGV} )
     else()
@@ -47,10 +47,10 @@ function( TNUN_add_cxx_compile_options )
     endif()
 endfunction()
 
-# Behaves as the combination of TNUN_add_compile_options and
-# TNUN_add_cxx_compile_options - it applies given options to only
+# Behaves as the combination of PSI_add_compile_options and
+# PSI_add_cxx_compile_options - it applies given options to only
 # C++ sources for given build configuration.
-function( TNUN_add_cxx_compile_options_for_config configuration )
+function( PSI_add_cxx_compile_options_for_config configuration )
     if( ${CMAKE_GENERATOR} MATCHES "Visual Studio" )
         foreach( arg ${ARGN} )
             add_compile_options( $<$<CONFIG:${configuration}>:${arg}> )
@@ -63,8 +63,8 @@ function( TNUN_add_cxx_compile_options_for_config configuration )
 endfunction()
 
 # Removes already set compile options for given configuration.
-# Useful for unsetting flags set with the TNUN_add_compile_options
-function( TNUN_remove_compile_options_for_config configuration )
+# Useful for unsetting flags set with the PSI_add_compile_options
+function( PSI_remove_compile_options_for_config configuration )
     string( TOUPPER ${configuration} configuration )
     get_directory_property( current_compile_options COMPILE_OPTIONS )
     foreach( arg ${ARGN} )
@@ -76,7 +76,7 @@ endfunction()
 
 # Removes given compile options if they are already set.
 # Useful for undoing CMake's builtin add_compile_options.
-function( TNUN_remove_compile_options )
+function( PSI_remove_compile_options )
     get_directory_property( current_compile_options COMPILE_OPTIONS )
     foreach( option ${ARGN} )
         string( REPLACE "${option}" "" current_compile_options "${current_compile_options}" )
@@ -86,7 +86,7 @@ endfunction()
 
 # Removes given compile options from given target for given build type.
 # Useful for undoing CMake's builtin target_compile_options
-function( TNUN_target_remove_compile_options_for_config target configuration )
+function( PSI_target_remove_compile_options_for_config target configuration )
     string( TOUPPER ${configuration} configuration )
     get_target_property( current_compile_options ${target} COMPILE_OPTIONS )
     foreach( arg ${ARGN} )
@@ -98,7 +98,7 @@ endfunction()
 
 # Removes given compile options from given target.
 # Useful for undoing CMake's builtin target_compile_options
-function( TNUN_target_remove_compile_options target )
+function( PSI_target_remove_compile_options target )
     string( TOUPPER ${configuration} configuration )
     get_target_property( current_compile_options ${target} COMPILE_OPTIONS )
     foreach( arg ${ARGN} )
@@ -116,7 +116,7 @@ endfunction()
 
 # Similar to CMake's builtin add_link_options, but applies given options only
 # to given build type.
-function( TNUN_add_link_options configuration )
+function( PSI_add_link_options configuration )
     # Implementation note:
     # The documented feature of link_libraries(), that it also accepts linker
     # options, is (ab)used here to simulate add_compile_options() behaviour.
@@ -127,15 +127,15 @@ function( TNUN_add_link_options configuration )
     endforeach()
 endfunction()
 
-function( TNUN_target_link_options configuration target visibility )
+function( PSI_target_link_options configuration target visibility )
     foreach( arg ${ARGN} )
         target_link_options( ${target} ${visibility} $<$<CONFIG:${configuration}>:${arg}> )
     endforeach()
 endfunction()
 
 # Removes given link options for given build type.
-# Useful for undoing the effect of TNUN_add_link_options
-function( TNUN_remove_link_options_for_config configuration )
+# Useful for undoing the effect of PSI_add_link_options
+function( PSI_remove_link_options_for_config configuration )
     string( TOUPPER ${configuration} configuration )
     get_directory_property( current_link_options LINK_OPTIONS )
     foreach( arg ${ARGN} )
@@ -147,7 +147,7 @@ endfunction()
 
 # Removes given link options.
 # Useful for undoing CMake's builtin add_link_options.
-function( TNUN_remove_link_options )
+function( PSI_remove_link_options )
     get_directory_property( current_link_options LINK_OPTIONS )
     foreach( option ${ARGN} )
         string( REPLACE "${option}" "" current_link_options "${current_link_options}" )
@@ -157,7 +157,7 @@ endfunction()
 
 # Removes given link options from given target for given build type.
 # Useful for undoing CMake's builtin target_link_options.
-function( TNUN_target_remove_link_options_for_config target configuration )
+function( PSI_target_remove_link_options_for_config target configuration )
     string( TOUPPER ${configuration} configuration )
     get_target_property( current_link_options ${target} LINK_OPTIONS )
     foreach( arg ${ARGN} )
@@ -169,7 +169,7 @@ endfunction()
 
 # Removes given link options from given target.
 # Useful for undoing CMake's builtin target_link_options.
-function( TNUN_target_remove_link_options target )
+function( PSI_target_remove_link_options target )
     string( TOUPPER ${configuration} configuration )
     get_target_property( current_link_options ${target} LINK_OPTIONS )
     foreach( arg ${ARGN} )
@@ -192,7 +192,7 @@ elseif( APPLE AND NOT iOS )
     include( "${CMAKE_CURRENT_LIST_DIR}/toolchains/osx.toolchain.cmake" )
 elseif( ${CMAKE_SYSTEM_NAME} MATCHES "Linux" )
     include( "${CMAKE_CURRENT_LIST_DIR}/toolchains/linux.toolchain.cmake" )
-elseif( ANDROID_TOOLCHAIN ) # TNUN android.toolchain.cmake does not define this variable, while native Android Studio toolchain does
+elseif( ANDROID_TOOLCHAIN ) # PSI android.toolchain.cmake does not define this variable, while native Android Studio toolchain does
     include( "${CMAKE_CURRENT_LIST_DIR}/toolchains/android-studio.toolchain.cmake" )
 elseif( EMSCRIPTEN )
     include( "${CMAKE_CURRENT_LIST_DIR}/toolchains/emscripten.cmake" )
@@ -207,17 +207,17 @@ endif()
 # https://www.etalabs.net/overcommit.html
 ################################################################################
 
-list( APPEND TNUN_common_compile_definitions
-    TNUN_OVERCOMMIT_Disabled=0
-    TNUN_OVERCOMMIT_Partial=1
-    TNUN_OVERCOMMIT_Full=2
-    TNUN_MALLOC_OVERCOMMIT=TNUN_OVERCOMMIT_${TNUN_MALLOC_OVERCOMMIT_POLICY}
+list( APPEND PSI_common_compile_definitions
+    PSI_OVERCOMMIT_Disabled=0
+    PSI_OVERCOMMIT_Partial=1
+    PSI_OVERCOMMIT_Full=2
+    PSI_MALLOC_OVERCOMMIT=PSI_OVERCOMMIT_${PSI_MALLOC_OVERCOMMIT_POLICY}
 )
 
-if ( TNUN_MALLOC_OVERCOMMIT_POLICY STREQUAL Full )
-    list( APPEND TNUN_common_compile_definitions TNUN_NOEXCEPT_EXCEPT_BADALLOC=noexcept )
+if ( PSI_MALLOC_OVERCOMMIT_POLICY STREQUAL Full )
+    list( APPEND PSI_common_compile_definitions PSI_NOEXCEPT_EXCEPT_BADALLOC=noexcept )
 else()
-    list( APPEND TNUN_common_compile_definitions TNUN_NOEXCEPT_EXCEPT_BADALLOC= )
+    list( APPEND PSI_common_compile_definitions PSI_NOEXCEPT_EXCEPT_BADALLOC= )
 endif()
 
 # Implementation note:
@@ -231,20 +231,20 @@ else()
     set( install_configs Release )
 endif()
 
-set( TNUN_compiler_dev_release_flags ${TNUN_compiler_release_flags} )
+set( PSI_compiler_dev_release_flags ${PSI_compiler_release_flags} )
 if ( CMAKE_CXX_COMPILER_ID STREQUAL "MSVC"  ) # real MSVC, not clang-cl
-    string( REPLACE "MD" "MDd" TNUN_compiler_dev_release_flags "${TNUN_compiler_dev_release_flags}" )
+    string( REPLACE "MD" "MDd" PSI_compiler_dev_release_flags "${PSI_compiler_dev_release_flags}" )
 endif()
-list( APPEND TNUN_compiler_release_flags -DNDEBUG )
-if( NOT TNUN_DO_NOT_ADD_DEFAULT_BUILD_FLAGS )
-    TNUN_add_compile_options( Debug          ${TNUN_compiler_debug_flags}       ${TNUN_compiler_debug_symbols} )
-    TNUN_add_compile_options( Release        ${TNUN_compiler_release_flags}                                    )
-    TNUN_add_compile_options( RelWithDebInfo ${TNUN_compiler_dev_release_flags} ${TNUN_compiler_debug_symbols} )
+list( APPEND PSI_compiler_release_flags -DNDEBUG )
+if( NOT PSI_DO_NOT_ADD_DEFAULT_BUILD_FLAGS )
+    PSI_add_compile_options( Debug          ${PSI_compiler_debug_flags}       ${PSI_compiler_debug_symbols} )
+    PSI_add_compile_options( Release        ${PSI_compiler_release_flags}                                   )
+    PSI_add_compile_options( RelWithDebInfo ${PSI_compiler_dev_release_flags} ${PSI_compiler_debug_symbols} )
 
-    add_compile_options    ( ${TNUN_common_compiler_options} ${TNUN_default_warnings} )
-    add_compile_definitions( ${TNUN_common_compile_definitions}                       )
-    add_link_options       ( ${TNUN_common_link_options}                              )
-    TNUN_add_link_options  ( Debug          ${TNUN_linker_debug_flags}                )
-    TNUN_add_link_options  ( Release        ${TNUN_linker_release_flags}              )
-    TNUN_add_link_options  ( RelWithDebInfo ${TNUN_linker_dev_release_flags}          )
+    add_compile_options    ( ${PSI_common_compiler_options} ${PSI_default_warnings} )
+    add_compile_definitions( ${PSI_common_compile_definitions}                      )
+    add_link_options       ( ${PSI_common_link_options}                             )
+    PSI_add_link_options  ( Debug          ${PSI_linker_debug_flags}                )
+    PSI_add_link_options  ( Release        ${PSI_linker_release_flags}              )
+    PSI_add_link_options  ( RelWithDebInfo ${PSI_linker_dev_release_flags}          )
 endif()

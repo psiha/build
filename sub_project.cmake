@@ -1,6 +1,6 @@
 ################################################################################
 #
-# TNUN Build utility CMake functionality
+# PSI Build utility CMake functionality
 #
 # Copyright (c) 2016. Domagoj Saric. All rights reserved.
 #
@@ -18,12 +18,12 @@ cmake_minimum_required( VERSION 3.1 )
 
 
 ################################################################################
-# TNUN_add_abi_subproject()
+# PSI_add_abi_subproject()
 ################################################################################
 
-function( TNUN_add_abi_subproject project_name abi )
+function( PSI_add_abi_subproject project_name abi )
 
-  if ( TNUN_subproject_build )
+  if ( PSI_subproject_build )
     return()
   endif()
   
@@ -43,12 +43,12 @@ function( TNUN_add_abi_subproject project_name abi )
     )
   endif()
 
-  if ( abi STREQUAL TNUN_ABI )
+  if ( abi STREQUAL PSI_ABI )
     return()
   endif()
 
   set( binary_dir "${PROJECT_BINARY_DIR}/${abi}" ) #CACHE INTERNAL "Directory that contains the cache of the subproject" )
-  message( STATUS "[TNUN] Creating the separate * ${abi} * build tree:" )
+  message( STATUS "[PSI] Creating the separate * ${abi} * build tree:" )
 
   if ( CMAKE_BUILD_TYPE )
     list( APPEND extra_forwarded_variables -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE} )
@@ -71,9 +71,9 @@ function( TNUN_add_abi_subproject project_name abi )
   execute_process(
     COMMAND "${CMAKE_COMMAND}"
       -G ${generator}
-      -DTNUN_subproject_build:BOOL=true
-      -DTNUN_ABI:STRING=${abi}
-      -DTNUN_binary_dir:PATH=${PROJECT_BINARY_DIR}
+      -DPSI_subproject_build:BOOL=true
+      -DPSI_ABI:STRING=${abi}
+      -DPSI_binary_dir:PATH=${PROJECT_BINARY_DIR}
       ${extra_forwarded_variables}
       ${ARGN}
       "${CMAKE_SOURCE_DIR}"
@@ -83,7 +83,7 @@ function( TNUN_add_abi_subproject project_name abi )
   )
   message( STATUS ${stdout} )
   if ( stderr )
-    message( FATAL_ERROR "[TNUN] ${abi} build tree creation failure:\n${stderr}" )
+    message( FATAL_ERROR "[PSI] ${abi} build tree creation failure:\n${stderr}" )
   endif()
   if ( generator MATCHES Ninja )
     # Implementation note: limit/decrease the level of build parallelism to
@@ -120,12 +120,12 @@ endfunction()
 
 
 ################################################################################
-# TNUN_add_arch_library()
+# PSI_add_arch_library()
 ################################################################################
 
-function( TNUN_add_arch_library target_name target_label arch )
+function( PSI_add_arch_library target_name target_label arch )
 
-  if ( NOT TNUN_ABI )
+  if ( NOT PSI_ABI )
     # Implementation note: with makefile/non-IDE generators the 'root
     # invocation' does not use a default ABI/create any targets in order to have
     # a 'symmetrical' build (i.e. all binaries are built in subprojects).
@@ -139,27 +139,27 @@ function( TNUN_add_arch_library target_name target_label arch )
   cmake_policy( SET CMP0063 NEW )
 
   set( base_target_name ${target_name} )
-  list( LENGTH TNUN_ABIs      number_of_abis  )
-  list( LENGTH TNUN_cpu_archs number_of_archs )
+  list( LENGTH PSI_ABIs      number_of_abis  )
+  list( LENGTH PSI_cpu_archs number_of_archs )
   if ( ( number_of_archs GREATER 1 ) OR ( number_of_abis GREATER 1 ) )
     set( target_name  "${target_name}_${arch}"    )
     set( target_label "${target_label} (${arch})" )
   endif()
-  set( target_name "${target_name}_${TNUN_os_suffix}" )
+  set( target_name "${target_name}_${PSI_os_suffix}" )
   # Implementation note: Because CMake is so defficient this function cannot be
-  # generalised to TNUN_add_arch_target(), so that it supports both libraries
+  # generalised to PSI_add_arch_target(), so that it supports both libraries
   # and executables by using something like
   # add_${target_type}
   # instead of the 'hardcoded' add_library() call.
   #                                           (03.06.2016.) (Domagoj Saric)
   add_library( ${target_name} ${ARGN} )
   set_property( TARGET ${target_name} PROPERTY PROJECT_LABEL "${target_label}" )
-  TNUN_setup_target_for_arch( ${target_name} ${base_target_name} ${arch} )
+  PSI_setup_target_for_arch( ${target_name} ${base_target_name} ${arch} )
 
-  set( TNUN_all_arch_targets ${TNUN_all_arch_targets} ${target_name} PARENT_SCOPE )
+  set( PSI_all_arch_targets ${PSI_all_arch_targets} ${target_name} PARENT_SCOPE )
   
   if ( iOS )
-      TNUN_ios_add_universal_build( ${target_name} )
+      PSI_ios_add_universal_build( ${target_name} )
   endif()
 
 endfunction()

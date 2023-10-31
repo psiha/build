@@ -1,6 +1,6 @@
 ################################################################################
 #
-# T:N.U.N. iOS CMake tool chain file.
+# PSI iOS CMake tool chain file.
 #
 # Copyright (c) 2016. Domagoj Saric. All rights reserved.
 #
@@ -23,7 +23,7 @@ set( CMAKE_SYSTEM_NAME    iOS  )
 set( CMAKE_CROSSCOMPILING true )
 
 include( "${CMAKE_CURRENT_LIST_DIR}/apple.cmake" )
-unset( TNUN_native_optimization ) # This makes no sense when cross-compiling.
+unset( PSI_native_optimization ) # This makes no sense when cross-compiling.
 
 # Standard settings
 set( CPACK_SYSTEM_NAME      iOS    )
@@ -33,7 +33,7 @@ set( iOS                    true   )
 # CMake variables are case sensitive (unlike functions, macros and commands: https://cmake.org/cmake/help/latest/manual/cmake-language.7.html#variables
 set( IOS   true )
 
-set( TNUN_os_suffix iOS )
+set( PSI_os_suffix iOS )
 
 if ( XCODE )
     # Make sure all executables are bundles otherwise try compiles will fail.
@@ -48,7 +48,7 @@ endif()
 set( CMAKE_XCODE_EFFECTIVE_PLATFORMS "-universal;-iphonesimulator;-iphoneos;" )
 set( CMAKE_XCODE_ATTRIBUTE_SDKROOT   iphoneos ) # "Latest iOS"
 
-list( APPEND TNUN_compiler_optimize_for_size -mthumb ) #...mrmlj...this will cause (harmless) warnings on ARM64 builds...
+list( APPEND PSI_compiler_optimize_for_size -mthumb ) #...mrmlj...this will cause (harmless) warnings on ARM64 builds...
 #...mrmlj...this no longer appears to work (Xcode 8.2):
 # http://www.cmake.org/pipermail/cmake/2011-October/046737.html
 # http://stackoverflow.com/questions/1211854/xcode-conditional-build-settings-based-on-architecture-device-arm-vs-simulat
@@ -66,18 +66,18 @@ set( CMAKE_XCODE_ATTRIBUTE_OTHER_CPLUSPLUSFLAGS[arch=armv7s] "${XCODE_ATTRIBUTE_
 # ios.universal_build.sh script and then Xcode interprets this optimiser output
 # from the child-build process as errors.
 #                                             (13.05.2016.) (Domagoj Saric)
-string( REPLACE "-Rpass=loop-.*" "" TNUN_compiler_optimize_for_speed  "${TNUN_compiler_optimize_for_speed}" )
+string( REPLACE "-Rpass=loop-.*" "" PSI_compiler_optimize_for_speed  "${PSI_compiler_optimize_for_speed}" )
 
 ################################################################################
-# TNUN_ios_add_universal_build()
+# PSI_ios_add_universal_build()
 ################################################################################
-set( TNUN_toolchains_dir "${CMAKE_CURRENT_LIST_DIR}" )
-function( TNUN_ios_add_universal_build target )
+set( PSI_toolchains_dir "${CMAKE_CURRENT_LIST_DIR}" )
+function( PSI_ios_add_universal_build target )
     # Generate a 'universal'/'fat' (i.e. simulator+device) build:
     add_custom_command(
         TARGET ${target}
         POST_BUILD
-        COMMAND /bin/bash "${TNUN_toolchains_dir}/ios.universal_build.sh"
+        COMMAND /bin/bash "${PSI_toolchains_dir}/ios.universal_build.sh"
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         VERBATIM
     )
@@ -85,16 +85,16 @@ endfunction()
 
 
 ################################################################################
-# TNUN_setup_target_for_arch()
+# PSI_setup_target_for_arch()
 ################################################################################
 
-function( TNUN_setup_target_for_arch target base_target_name arch )
+function( PSI_setup_target_for_arch target base_target_name arch )
   #...mrmlj...doesn't play well w/ th universal_build script...
   #set_property( TARGET ${target} PROPERTY XCODE_ATTRIBUTE_OBJROOT "${PROJECT_BINARY_DIR}"     )
   #set_property( TARGET ${target} PROPERTY XCODE_ATTRIBUTE_SYMROOT "${PROJECT_BINARY_DIR}/lib" )
   #set_property( TARGET ${target} PROPERTY ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${PROJECT_BINARY_DIR}/lib" )
   #set_property( TARGET ${target} PROPERTY LIBRARY_OUTPUT_DIRECTORY_RELEASE "${PROJECT_BINARY_DIR}/lib" )
-  set_property( TARGET ${target} PROPERTY OUTPUT_NAME                      "${base_target_name}_${TNUN_os_suffix}" )
+  set_property( TARGET ${target} PROPERTY OUTPUT_NAME                      "${base_target_name}_${PSI_os_suffix}" )
 endfunction()
 
 

@@ -1,6 +1,6 @@
 ################################################################################
 #
-# T:N.U.N. Android Studio CMake tool chain file. This is to be used together
+# PSI Android Studio CMake tool chain file. This is to be used together
 # with the native android CMake toolchain bundled with Android studio 2.2+.
 # For uses without Android Studio, please use the android.toolchain.cmake file.
 #
@@ -16,9 +16,9 @@ if( APPLE )
     unset( APPLE )
 endif()
 
-set( TNUN_common_compile_definitions __ANDROID__ )
+set( PSI_common_compile_definitions __ANDROID__ )
 
-set( TNUN_os_suffix Android )
+set( PSI_os_suffix Android )
 
 set( CMAKE_CROSSCOMPILING true )
 
@@ -52,44 +52,44 @@ if("${ANDROID_TOOLCHAIN}" STREQUAL "clang")
     # For now, just disable sanitization on Android. I will investigate this
     # later.
     #                                         (11.08.2016. Nenad Miksa)
-    unset( TNUN_compiler_runtime_sanity_checks )
-    unset( TNUN_linker_runtime_sanity_checks )
-    unset( TNUN_compiler_runtime_integer_checks )
-    unset( TNUN_linker_runtime_integer_checks )
+    unset( PSI_compiler_runtime_sanity_checks )
+    unset( PSI_linker_runtime_sanity_checks )
+    unset( PSI_compiler_runtime_integer_checks )
+    unset( PSI_linker_runtime_integer_checks )
 else()
     include( "${CMAKE_CURRENT_LIST_DIR}/gcc.cmake" )
 endif()
 
 # Re-enable source fortification only in debug/development builds
-set( TNUN_compiler_assertions -D_FORTIFY_SOURCE=2 )
+set( PSI_compiler_assertions -D_FORTIFY_SOURCE=2 )
 
-set( TNUN_arch_include_dir "${CMAKE_CURRENT_LIST_DIR}/android" )
-set( TNUN_ABI  ${ANDROID_ABI} )
-set( TNUN_ARCH ${ANDROID_ABI} )
+set( PSI_arch_include_dir "${CMAKE_CURRENT_LIST_DIR}/android" )
+set( PSI_ABI  ${ANDROID_ABI} )
+set( PSI_ARCH ${ANDROID_ABI} )
 if( ANDROID_ABI STREQUAL "armeabi-v7a" )
-    set( TNUN_ABI arm-linux-androideabi )
+    set( PSI_ABI arm-linux-androideabi )
     if ( ANDROID_ARM_NEON )
-        set( TNUN_ARCH armv7-neon )
+        set( PSI_ARCH armv7-neon )
     else()
-        set( TNUN_ARCH armv7-vfp3d16 )
+        set( PSI_ARCH armv7-vfp3d16 )
     endif()
 elseif( ANDROID_ABI STREQUAL "arm64-v8a" )
-    set( TNUN_ABI  aarch64-linux-android )
-    set( TNUN_ARCH aarch64 )
+    set( PSI_ABI  aarch64-linux-android )
+    set( PSI_ARCH aarch64 )
 endif()
 
-if ( TNUN_ARCH )
-    include( "${TNUN_arch_include_dir}/${TNUN_ARCH}.arch.cmake" )
+if ( PSI_ARCH )
+    include( "${PSI_arch_include_dir}/${PSI_ARCH}.arch.cmake" )
 endif()
-if ( TNUN_ABI )
-    include( "${TNUN_arch_include_dir}/${TNUN_ABI}.abi.cmake" )
+if ( PSI_ABI )
+    include( "${PSI_arch_include_dir}/${PSI_ABI}.abi.cmake" )
 endif()
 
 # Some settings from android.toolchain.cmake which are better than in the
 # default toolchain shipped with Android Studio.
 
-list( APPEND TNUN_common_link_options $<$<CONFIG:RELEASE>:-Wl,--icf=all>     ) # http://research.google.com/pubs/pub36912.html Safe ICF: Pointer Safe and Unwinding Aware Identical Code Folding in Gold
-list( APPEND TNUN_common_link_options $<$<CONFIG:RELEASE>:-Wl,--gc-sections> )
+list( APPEND PSI_common_link_options $<$<CONFIG:RELEASE>:-Wl,--icf=all>     ) # http://research.google.com/pubs/pub36912.html Safe ICF: Pointer Safe and Unwinding Aware Identical Code Folding in Gold
+list( APPEND PSI_common_link_options $<$<CONFIG:RELEASE>:-Wl,--gc-sections> )
 
 
 ################################################################################
@@ -105,15 +105,15 @@ list( APPEND TNUN_common_link_options $<$<CONFIG:RELEASE>:-Wl,--gc-sections> )
 #                                             (01.05.2017. Domagoj Saric)
 ################################################################################
 
-set( TNUN_MALLOC_OVERCOMMIT_POLICY Full )
+set( PSI_MALLOC_OVERCOMMIT_POLICY Full )
 
 
 ################################################################################
-# TNUN_setup_target_for_arch()
+# PSI_setup_target_for_arch()
 ################################################################################
 
-function( TNUN_setup_target_for_arch target base_target_name arch )
+function( PSI_setup_target_for_arch target base_target_name arch )
   set_property( TARGET ${target} PROPERTY ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${PROJECT_BINARY_DIR}/lib" )
   set_property( TARGET ${target} PROPERTY LIBRARY_OUTPUT_DIRECTORY_RELEASE "${PROJECT_BINARY_DIR}/lib" )
-  set_property( TARGET ${target} PROPERTY OUTPUT_NAME                      "${base_target_name}_${TNUN_os_suffix}" )
+  set_property( TARGET ${target} PROPERTY OUTPUT_NAME                      "${base_target_name}_${PSI_os_suffix}" )
 endfunction()

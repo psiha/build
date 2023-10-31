@@ -1,6 +1,6 @@
 ################################################################################
 #
-# T:N.U.N. Android ARMv7 CPU config file.
+# PSI Android ARMv7 CPU config file.
 #
 # Copyright (c) 2016. Domagoj Saric. All rights reserved.
 #
@@ -8,11 +8,11 @@
 
 set( CMAKE_ANDROID_ARCH   armeabi-v7a     )
 set( ANDROID_NDK_ABI_NAME armeabi-v7a     )
-set( TNUN_arch_suffix     ARMv7a_VFP3-D16 )
+set( PSI_arch_suffix     ARMv7a_VFP3-D16 )
 
-list( APPEND TNUN_common_compiler_options -march=armv7-a -mtune=cortex-a53 )
-list( APPEND TNUN_compiler_optimize_for_size  -mthumb )
-list( APPEND TNUN_compiler_optimize_for_speed -marm   )
+list( APPEND PSI_common_compiler_options -march=armv7-a -mtune=cortex-a53 )
+list( APPEND PSI_compiler_optimize_for_size  -mthumb )
+list( APPEND PSI_compiler_optimize_for_speed -marm   )
 
 # Implementation note:
 #
@@ -30,12 +30,12 @@ list( APPEND TNUN_compiler_optimize_for_speed -marm   )
 #
 #                                             (01.09.2016. Nenad Miksa)
 
-option( TNUN_ANDROID_ARM7_HARDFLOAT_ABI "Use hardfloat ABI for armv7 binaries" false )
-if( ${TNUN_ANDROID_ARM7_HARDFLOAT_ABI} )
-    list( APPEND TNUN_common_compiler_options -mhard-float -D_NDK_MATH_NO_SOFTFP=1 )
-    list( APPEND TNUN_common_link_options     -Wl,--no-warn-mismatch -lm_hard )
+option( PSI_ANDROID_ARM7_HARDFLOAT_ABI "Use hardfloat ABI for armv7 binaries" false )
+if( ${PSI_ANDROID_ARM7_HARDFLOAT_ABI} )
+    list( APPEND PSI_common_compiler_options -mhard-float -D_NDK_MATH_NO_SOFTFP=1 )
+    list( APPEND PSI_common_link_options     -Wl,--no-warn-mismatch -lm_hard )
 endif()
 
 # this is *required* to use the following linker flags that routes around
 # a CPU bug in some Cortex-A8 implementations:
-list( APPEND TNUN_common_link_options "-Wl,--fix-cortex-a8" )
+list( APPEND PSI_common_link_options "-Wl,--fix-cortex-a8" )

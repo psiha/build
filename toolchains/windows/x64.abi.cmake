@@ -1,11 +1,11 @@
 ################################################################################
 #
-# T:N.U.N. MSVC ABI config file.
+# PSI MSVC ABI config file.
 #
 # Copyright (c) 2016. Domagoj Saric. All rights reserved.
 #
 ################################################################################
 
-set( TNUN_cpu_archs
+set( PSI_cpu_archs
   x86_64_sse2
 )

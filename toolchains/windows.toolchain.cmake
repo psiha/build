@@ -1,13 +1,13 @@
 ################################################################################
 #
-# T:N.U.N. Windows CMake toolchain file.
+# PSI Windows CMake toolchain file.
 #
 # Copyright (c) 2016 - 2017. Domagoj Saric.
 #
 ################################################################################
 
-set( TNUN_os_suffix    Windows           )
-set( CPACK_SYSTEM_NAME ${TNUN_os_suffix} )
+set( PSI_os_suffix    Windows           )
+set( CPACK_SYSTEM_NAME ${PSI_os_suffix} )
 
 ################################################################################
 # malloc overcommit policy
@@ -17,7 +17,7 @@ set( CPACK_SYSTEM_NAME ${TNUN_os_suffix} )
 #                                             (01.05.2017. Domagoj Saric)
 ################################################################################
 
-set( TNUN_MALLOC_OVERCOMMIT_POLICY Disabled )
+set( PSI_MALLOC_OVERCOMMIT_POLICY Disabled )
 
 # if using clang-cl, use msvc.toolchain.cmake
 if ( CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT MSVC )
