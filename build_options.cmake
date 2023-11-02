@@ -2,7 +2,7 @@
 #
 # PSI Main build (compiler&linker) options file.
 #
-# Copyright (c) 2016 - 2017. Domagoj Saric.
+# Copyright (c) Domagoj Saric.
 #
 ################################################################################
 
@@ -117,11 +117,6 @@ endfunction()
 # Similar to CMake's builtin add_link_options, but applies given options only
 # to given build type.
 function( PSI_add_link_options configuration )
-    # Implementation note:
-    # The documented feature of link_libraries(), that it also accepts linker
-    # options, is (ab)used here to simulate add_compile_options() behaviour.
-    # https://cmake.org/cmake/help/latest/prop_tgt/LINK_LIBRARIES.html
-    #                                         (01.06.2016.) (Domagoj Saric)
     foreach( arg ${ARGN} )
         add_link_options( $<$<CONFIG:${configuration}>:${arg}> )
     endforeach()
@@ -244,7 +239,7 @@ if( NOT PSI_DO_NOT_ADD_DEFAULT_BUILD_FLAGS )
     add_compile_options    ( ${PSI_common_compiler_options} ${PSI_default_warnings} )
     add_compile_definitions( ${PSI_common_compile_definitions}                      )
     add_link_options       ( ${PSI_common_link_options}                             )
-    PSI_add_link_options  ( Debug          ${PSI_linker_debug_flags}                )
-    PSI_add_link_options  ( Release        ${PSI_linker_release_flags}              )
-    PSI_add_link_options  ( RelWithDebInfo ${PSI_linker_dev_release_flags}          )
+    PSI_add_link_options   ( Debug          ${PSI_linker_debug_flags}               )
+    PSI_add_link_options   ( Release        ${PSI_linker_release_flags}             )
+    PSI_add_link_options   ( RelWithDebInfo ${PSI_linker_dev_release_flags}         )
 endif()
