@@ -2,7 +2,7 @@
 #
 # PSI build options common to all GCC-compatible compilers.
 #
-# Copyright (c) 2016. Domagoj Saric. All rights reserved.
+# Copyright (c) Domagoj Saric. All rights reserved.
 #
 ################################################################################
 
@@ -45,7 +45,7 @@ endif()
 # https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#logical-expressions
 
 list( APPEND PSI_common_compiler_options $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++2b> )
-list( APPEND PSI_common_compiler_options $<$<NOT:$<COMPILE_LANGUAGE:CXX>>:-std=gnu11> )
+list( APPEND PSI_common_compiler_options $<$<NOT:$<COMPILE_LANGUAGE:CXX>>:-std=gnu2x> )
 
 set( CMAKE_C_STANDARD   11 )
 set( CMAKE_CXX_STANDARD 14 )

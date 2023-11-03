@@ -2,7 +2,7 @@
 #
 # PSI Visual Studio/MSVC CMake tool chain file.
 #
-# Copyright (c) 2016 - 2019. Domagoj Saric.
+# Copyright (c) Domagoj Saric.
 #
 ################################################################################
 
@@ -44,7 +44,7 @@ set( PSI_common_compiler_options /permissive- -Oi -wd4324 -wd4373 -wd5104 -wd510
 set( PSI_common_compile_definitions )
 
 if ( CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" ) # real MSVC, not clang-cl
-    list( APPEND PSI_common_compiler_options /std:c++latest /MP )
+    list( APPEND PSI_common_compiler_options /std:c17 /std:c++latest /MP )
     if ( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "19.26" )
         list( APPEND PSI_common_compiler_options /Zc:preprocessor )
     else()
@@ -77,7 +77,7 @@ else()
     endif()
     # clang-cl does not recognize /std:c++latest flag
     list( APPEND PSI_common_compiler_options $<$<COMPILE_LANGUAGE:CXX>:/clang:-std=gnu++2b> )
-    list( APPEND PSI_common_compiler_options $<$<NOT:$<COMPILE_LANGUAGE:CXX>>:/clang:-std=gnu17> )
+    list( APPEND PSI_common_compiler_options $<$<NOT:$<COMPILE_LANGUAGE:CXX>>:/clang:-std=gnu2x> )
 
     set( THIN_LTO_SUPPORTED        ON                                                  )
     set( PSI_compiler_LTO         -flto=thin -fwhole-program-vtables                   )
