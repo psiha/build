@@ -2,7 +2,7 @@
 #
 # PSI Shared toolchain for Apple platforms.
 #
-# Copyright (c) 2016 - 2017. Domagoj Saric.
+# Copyright (c) Domagoj Saric.
 #
 ################################################################################
 
