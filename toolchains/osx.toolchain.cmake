@@ -2,7 +2,7 @@
 #
 # PSI Apple OS X CMake tool chain file.
 #
-# Copyright (c) 2016. Domagoj Saric. All rights reserved.
+# Copyright (c) Domagoj Saric. All rights reserved.
 #
 ################################################################################
 
@@ -19,7 +19,7 @@ include( "${CMAKE_CURRENT_LIST_DIR}/apple.cmake" )
 # cmake_policy( SET CMP0042 OLD )
 # set( CMAKE_MACOSX_RPATH 0 ) # even with the policy set CMake 3.5.2 still issues the warning?
 
-set( CMAKE_OSX_DEPLOYMENT_TARGET "10.14" )
+set( CMAKE_OSX_DEPLOYMENT_TARGET 11.0 )
 
 set( OSX true )
 
