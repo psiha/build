@@ -44,24 +44,5 @@ endif()
 list( APPEND PSI_common_compiler_options $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++2b> )
 list( APPEND PSI_common_compiler_options $<$<NOT:$<COMPILE_LANGUAGE:CXX>>:-std=gnu2x> )
 
-set( CMAKE_C_STANDARD   11 )
-set( CMAKE_CXX_STANDARD 14 )
-if ( CMAKE_VERSION VERSION_GREATER 3.7 )
-    set( CMAKE_CXX_STANDARD 17 )
-    if ( CMAKE_VERSION VERSION_GREATER 3.11 )
-        set( CMAKE_CXX_STANDARD 20 )
-        # workaround for bug in cmake (tested with 3.14.5) - on Apple Clang it will add
-        # -std=gnu++1z for CMAKE_CXX_STANDARD 20 as last compiler option,
-        # thus overriding the above add_compile_options statement
-        # Note: with CMake 3.21, the flag is set correctly
-        if ( CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" AND CMAKE_VERSION VERSION_LESS 3.21 )
-            unset( CMAKE_CXX_STANDARD )
-        endif()
-    endif()
-    if ( CMAKE_VERSION VERSION_GREATER 3.19 )
-        set( CMAKE_CXX_STANDARD 23 )
-    endif()
-endif()
-
 # https://cmake.org/cmake/help/v3.3/policy/CMP0063.html
 cmake_policy( SET CMP0063 NEW )

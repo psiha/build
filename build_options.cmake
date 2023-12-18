@@ -243,3 +243,6 @@ if( NOT PSI_DO_NOT_ADD_DEFAULT_BUILD_FLAGS )
     PSI_add_link_options   ( Release        ${PSI_linker_release_flags}             )
     PSI_add_link_options   ( RelWithDebInfo ${PSI_linker_dev_release_flags}         )
 endif()
+
+set( CMAKE_C_STANDARD   23 )
+set( CMAKE_CXX_STANDARD 26 )
