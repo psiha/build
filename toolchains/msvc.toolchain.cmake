@@ -36,20 +36,17 @@ set( PSI_warnings_as_errors                      -WX                            
 set( PSI_default_warnings                        -W4                                         )
 set( PSI_compiler_runtime_integer_checks         -RTCc -D_ALLOW_RTCc_IN_STL                  ) # A separate option as it can break valid code or code that relies on behaviour that these checks catch https://www.reddit.com/r/cpp/comments/46mhne/rtcc_rejects_conformant_code_with_visual_c_2015
 
-# w4373: '...': virtual function overrides '...', previous versions of the compiler did not override when parameters only differed by const/volatile qualifiers
-# w4324: 'structure was padded due to alignment specifier'
-# w5104: 'found 'L#x' in macro replacement list, did you mean 'L""#x'?' @ windows.h + experimental PP
-# w5105: 'macro expansion producing 'defined' has undefined behavior' @ windows.h + experimental PP
-set( PSI_common_compiler_options /permissive- -Oi -wd4324 -wd4373 -wd5104 -wd5105 )
+set( PSI_common_compiler_options /permissive- -Oi
+    -wd4324 # 'structure was padded due to alignment specifier'
+    -wd4373 # '...': virtual function overrides '...', previous versions of the compiler did not override when parameters only differed by const/volatile qualifiers
+    -wd5104 # 'found 'L#x' in macro replacement list, did you mean 'L""#x'?' @ windows.h + experimental PP
+    -wd5105 # 'macro expansion producing 'defined' has undefined behavior' @ windows.h + experimental PP
+)
 set( PSI_common_compile_definitions )
 
 if ( CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" ) # real MSVC, not clang-cl
     list( APPEND PSI_common_compiler_options /MP )
-    if ( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "19.26" )
-        list( APPEND PSI_common_compiler_options /Zc:preprocessor )
-    else()
-        list( APPEND PSI_common_compiler_options /experimental:preprocessor )
-    endif()
+    list( APPEND PSI_common_compiler_options /Zc:preprocessor )
 
     if ( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "19.28" )
         # Use Address Sanitizer instead of RTC (RTC is not compatible with ASan - compilation passes, but RTC throws a lot of false positives)
@@ -122,10 +119,9 @@ else()
 
         set( PSI_linker_runtime_sanity_checks clang_rt.asan_dynamic-x86_64.lib clang_rt.asan_dynamic_runtime_thunk-x86_64.lib )
 
-        list( APPEND PSI_common_compiler_options /clang:-msse3 /clang:-msse4 /clang:-mavx /clang:-mavx2 /clang:-mfma )
+        list( APPEND PSI_common_compiler_options /clang:-mavx /clang:-mfma )
     endif()
 
-    # Assumes Clang 11.0.0 or newer
     list( APPEND PSI_common_compiler_options /clang:-fenable-matrix )
 endif()
 

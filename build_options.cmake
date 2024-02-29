@@ -244,5 +244,9 @@ if( NOT PSI_DO_NOT_ADD_DEFAULT_BUILD_FLAGS )
     PSI_add_link_options   ( RelWithDebInfo ${PSI_linker_dev_release_flags}         )
 endif()
 
-set( CMAKE_C_STANDARD   23 )
-set( CMAKE_CXX_STANDARD 26 )
+# https://gitlab.kitware.com/cmake/cmake/-/issues/25725
+if ( NOT CLANG_CL )
+    set( CMAKE_C_STANDARD   23 )
+    set( CMAKE_CXX_STANDARD 26 )
+endif()
+set( CMAKE_CXX_EXTENSIONS ON )
