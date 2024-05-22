@@ -67,6 +67,9 @@ else()
 
     # https://github.com/llvm/llvm-project/issues/53259
     list( APPEND PSI_common_compile_definitions __GNUC__ )
+    
+    # https://clang.llvm.org/docs/UsersManual.html#strict-aliasing
+    list( APPEND PSI_common_compiler_options -fstrict-aliasing )
 
     # if using Visual Studio, then we need to add /MP. Ninja + clang-cl does not recognize this flag
     if ( ${CMAKE_GENERATOR} MATCHES "Visual Studio" )
