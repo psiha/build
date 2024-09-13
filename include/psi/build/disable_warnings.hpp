@@ -14,10 +14,16 @@
 #   define PSI_CMPLR clang
 #   define PSI_WARNING_CLANG_DISABLE( x ) PSI_WARNING_COMMAND( clang, ignored, #x )
 #   define PSI_WARNING_GCC_DISABLE(   x )
+#	ifdef _MSC_VER
+#		define PSI_WARNING_CLANGCL_DISABLE( x ) PSI_WARNING_COMMAND( clang, ignored, #x )
+#   else
+#       define PSI_WARNING_CLANGCL_DISABLE( x )
+#   endif
 #else
 #   define PSI_CMPLR GCC
-#   define PSI_WARNING_GCC_DISABLE(   x ) PSI_WARNING_COMMAND( gcc  , ignored, #x )
-#   define PSI_WARNING_CLANG_DISABLE( x )
+#   define PSI_WARNING_GCC_DISABLE(     x ) PSI_WARNING_COMMAND( gcc, ignored, #x )
+#   define PSI_WARNING_CLANG_DISABLE(   x )
+#   define PSI_WARNING_CLANGCL_DISABLE( x )
 #endif
 
 #   define PSI_WARNING_GCC_OR_CLANG_DISABLE( x ) PSI_WARNING_COMMAND( PSI_CMPLR, ignored, #x )
@@ -43,6 +49,7 @@
 #	define PSI_WARNING_GCC_OR_CLANG_DISABLE( x )
 #	define PSI_WARNING_GCC_DISABLE( x )
 #	define PSI_WARNING_CLANG_DISABLE( x )
+#	define PSI_WARNING_CLANGCL_DISABLE( x )
 
 	// Predefined often used utilities
 #	define PSI_WARNING_DISABLE_ALL_PUSH() _Pragma( "warning( push, 0 )" )
