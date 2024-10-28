@@ -36,7 +36,7 @@ set( PSI_warnings_as_errors                      -WX                            
 set( PSI_default_warnings                        -W4                                         )
 set( PSI_compiler_runtime_integer_checks         -RTCc -D_ALLOW_RTCc_IN_STL                  ) # A separate option as it can break valid code or code that relies on behaviour that these checks catch https://www.reddit.com/r/cpp/comments/46mhne/rtcc_rejects_conformant_code_with_visual_c_2015
 
-set( PSI_common_compiler_options /permissive- -Oi
+set( PSI_common_compiler_options /permissive- /Zc:__cplusplus -Oi
     -wd4324 # 'structure was padded due to alignment specifier'
     -wd4373 # '...': virtual function overrides '...', previous versions of the compiler did not override when parameters only differed by const/volatile qualifiers
     -wd5104 # 'found 'L#x' in macro replacement list, did you mean 'L""#x'?' @ windows.h + experimental PP
