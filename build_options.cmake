@@ -228,7 +228,7 @@ endif()
 
 set( PSI_compiler_dev_release_flags ${PSI_compiler_release_flags} )
 string( REPLACE "NDEBUG" "DEBUG" PSI_compiler_dev_release_flags "${PSI_compiler_dev_release_flags}" )
-if ( CMAKE_CXX_COMPILER_ID STREQUAL "MSVC"  ) # real MSVC, not clang-cl
+if ( MSVC )
     string( REPLACE "MD" "MDd" PSI_compiler_dev_release_flags "${PSI_compiler_dev_release_flags}" )
 endif()
 list( APPEND PSI_compiler_release_flags -DNDEBUG )
