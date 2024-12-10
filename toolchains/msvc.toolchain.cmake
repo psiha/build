@@ -53,6 +53,7 @@ if ( CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" ) # real MSVC, not clang-cl
     unset( PSI_compiler_runtime_integer_checks )  # RTCc not compatible with ASan, and we don't want to enable RTC in STL
 
     list( APPEND PSI_compiler_runtime_sanity_checks -fsanitize=address )
+    list( APPEND PSI_compiler_debug_flags -D_DEBUG )
 else()
     set( CLANG_CL true )
 
@@ -91,10 +92,12 @@ else()
 
     # remove unsupported compile flags
     list( REMOVE_ITEM PSI_compiler_release_flags -Gm- )
+    list( REMOVE_ITEM PSI_compiler_fastmath -Qfast_transcendentals )
     # clang sanitizers do not support MDd and MTd runtimes
     # also, on WOA64, MDd runtime does not exist (even with true msvc compiler)
     string( REPLACE "-MDd" "-MD" PSI_compiler_debug_flags "${PSI_compiler_debug_flags}" )
-    list( REMOVE_ITEM PSI_compiler_fastmath -Qfast_transcendentals )
+    # replace by at least the basic iterator debug level
+    list( APPEND PSI_compiler_debug_flags -D_ITERATOR_DEBUG_LEVEL=1 )
 
     list( APPEND PSI_default_warnings -Wno-error=unused-command-line-argument -Wno-macro-redefined )
 
