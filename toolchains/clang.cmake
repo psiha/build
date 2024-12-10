@@ -17,11 +17,6 @@ list( APPEND PSI_default_warnings -Wdocumentation )
 
 set( THIN_LTO_SUPPORTED ON )
 
-if ( DEFINED EMSCRIPTEN AND EMSCRIPTEN_VERSION VERSION_LESS "2.0.33" )
-    # https://github.com/emscripten-core/emscripten/issues/12763
-    set( THIN_LTO_SUPPORTED OFF )
-endif()
-
 if ( THIN_LTO_SUPPORTED )
     set( PSI_compiler_LTO -flto=thin )
     set( PSI_linker_LTO   -flto=thin )
