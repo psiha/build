@@ -69,12 +69,13 @@ endif()
 ################################################################################
 # malloc overcommit policy
 # Linux has a 'configurable' overcommit policy.
+# https://www.kernel.org/doc/html/v5.1/vm/overcommit-accounting.html
 # https://www.etalabs.net/overcommit.html
 # https://news.ycombinator.com/item?id=2544387
 # http://elinux.org/images/a/a3/CELF_AvoidOOM.pdf
 ################################################################################
 
-set( PSI_MALLOC_OVERCOMMIT_POLICY Partial )
+set( PSI_MALLOC_OVERCOMMIT_POLICY_default Partial )
 
 
 ################################################################################

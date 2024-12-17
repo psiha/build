@@ -239,7 +239,7 @@ add_definitions( -DANDROID -D__ANDROID__ )
 # @see the note in android-studio.toolchain.cmake
 ################################################################################
 
-set( PSI_MALLOC_OVERCOMMIT_POLICY Full )
+set( PSI_MALLOC_OVERCOMMIT_POLICY_default Full )
 
 
 ################################################################################

@@ -17,7 +17,7 @@ set( CPACK_SYSTEM_NAME ${PSI_os_suffix} )
 #                                             (01.05.2017. Domagoj Saric)
 ################################################################################
 
-set( PSI_MALLOC_OVERCOMMIT_POLICY Disabled )
+set( PSI_MALLOC_OVERCOMMIT_POLICY_default Disabled )
 
 # if using clang-cl, use msvc.toolchain.cmake
 if ( CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT MSVC )

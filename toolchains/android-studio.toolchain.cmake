@@ -105,7 +105,7 @@ list( APPEND PSI_common_link_options $<$<CONFIG:RELEASE>:-Wl,--gc-sections> )
 #                                             (01.05.2017. Domagoj Saric)
 ################################################################################
 
-set( PSI_MALLOC_OVERCOMMIT_POLICY Full )
+set( PSI_MALLOC_OVERCOMMIT_POLICY_default Full )
 
 
 ################################################################################

@@ -34,7 +34,7 @@ set( CMAKE_EXECUTABLE_SUFFIX ".html" )
 # depending on ABORTING_MALLOC and ALLOW_MEMORY_GROWTH emscripten settings
 # see: https://github.com/emscripten-core/emscripten/blob/master/src/settings.js
 
-set( PSI_MALLOC_OVERCOMMIT_POLICY Partial )
+set( PSI_MALLOC_OVERCOMMIT_POLICY_default Partial )
 
 # always use STRICT mode
 set( strict_mode "SHELL:-s STRICT=1" )

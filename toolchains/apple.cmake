@@ -13,16 +13,12 @@ set( CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY libc++ )
 set( CMAKE_XCODE_ATTRIBUTE_ARCHS            "$(ARCHS_STANDARD)" ) # http://www.cocoanetics.com/2014/10/xcode-6-drops-armv7s
 set( CMAKE_XCODE_ATTRIBUTE_VALID_ARCHS      "$(ARCHS_STANDARD)" )
 set( CMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH NO                  )
+set( CMAKE_OSX_ARCHITECTURES                "arm64;x86_64"      )
 
-# Xcode 14 no longer supports armv7 and i386
-if ( XCODE AND XCODE_VERSION VERSION_GREATER_EQUAL "14.0.0" )
-    set( CMAKE_OSX_ARCHITECTURES "arm64;x86_64" )
-endif()
-
-set( CMAKE_XCODE_ATTRIBUTE_GCC_C_LANGUAGE_STANDARD     gnu11   )
-set( CMAKE_XCODE_ATTRIBUTE_GCC_CXX_LANGUAGE_STANDARD   gnu++17 )
-set( CMAKE_XCODE_ATTRIBUTE_GCC_C++_LANGUAGE_STANDARD   gnu++17 )
-set( CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD gnu++17 )
+set( CMAKE_XCODE_ATTRIBUTE_GCC_C_LANGUAGE_STANDARD     gnu2x   )
+set( CMAKE_XCODE_ATTRIBUTE_GCC_CXX_LANGUAGE_STANDARD   gnu++2c )
+set( CMAKE_XCODE_ATTRIBUTE_GCC_C++_LANGUAGE_STANDARD   gnu++2c )
+set( CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD gnu++2c )
 
 # https://cmake.org/cmake/help/latest/policy/CMP0025.html
 # Required to distinguish AppleClang from true Clang on Apple platform
@@ -76,7 +72,7 @@ set( PSI_ABIs ${PSI_ABI} )
 #                                             (01.05.2017. Domagoj Saric)
 ################################################################################
 
-set( PSI_MALLOC_OVERCOMMIT_POLICY Full )
+set( PSI_MALLOC_OVERCOMMIT_POLICY_default Full )
 
 #...mrmlj...reinvestigate this...
 # set( CMAKE_XCODE_ATTRIBUTE_OBJROOT          "${PROJECT_BINARY_DIR}" )

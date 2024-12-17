@@ -202,13 +202,14 @@ endif()
 # https://www.etalabs.net/overcommit.html
 ################################################################################
 
+set( PSI_MALLOC_OVERCOMMIT_POLICY ${PSI_MALLOC_OVERCOMMIT_POLICY_default} CACHE STRING "Assumed OS policy/implementation WRT memory allocation overcommit" )
+set_property( CACHE PSI_MALLOC_OVERCOMMIT_POLICY PROPERTY STRINGS Disabled Partial Full )
 list( APPEND PSI_common_compile_definitions
     PSI_OVERCOMMIT_Disabled=0
     PSI_OVERCOMMIT_Partial=1
     PSI_OVERCOMMIT_Full=2
     PSI_MALLOC_OVERCOMMIT=PSI_OVERCOMMIT_${PSI_MALLOC_OVERCOMMIT_POLICY}
 )
-
 if ( PSI_MALLOC_OVERCOMMIT_POLICY STREQUAL Full )
     list( APPEND PSI_common_compile_definitions PSI_NOEXCEPT_EXCEPT_BADALLOC=noexcept )
 else()
