@@ -6,20 +6,6 @@
 #
 ################################################################################
 
-# https://developer.apple.com/library/mac/documentation/DeveloperTools/Reference/XcodeBuildSettingRef/1-Build_Setting_Reference/build_setting_ref.html
-
-set( CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY libc++ )
-
-set( CMAKE_XCODE_ATTRIBUTE_ARCHS            "$(ARCHS_STANDARD)" ) # http://www.cocoanetics.com/2014/10/xcode-6-drops-armv7s
-set( CMAKE_XCODE_ATTRIBUTE_VALID_ARCHS      "$(ARCHS_STANDARD)" )
-set( CMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH NO                  )
-set( CMAKE_OSX_ARCHITECTURES                "arm64;x86_64"      )
-
-set( CMAKE_XCODE_ATTRIBUTE_GCC_C_LANGUAGE_STANDARD     gnu2x   )
-set( CMAKE_XCODE_ATTRIBUTE_GCC_CXX_LANGUAGE_STANDARD   gnu++2c )
-set( CMAKE_XCODE_ATTRIBUTE_GCC_C++_LANGUAGE_STANDARD   gnu++2c )
-set( CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD gnu++2c )
-
 # https://cmake.org/cmake/help/latest/policy/CMP0025.html
 # Required to distinguish AppleClang from true Clang on Apple platform
 cmake_policy( SET CMP0025 NEW )
@@ -32,31 +18,7 @@ else()
     list( APPEND PSI_common_compiler_options -mconstant-cfstrings )
 endif()
 
-# Xcode (7 & 8) report that function-sections are incompatible embed-bitcode
-set( CMAKE_XCODE_ATTRIBUTE_ENABLE_BITCODE "NO" )
-macro( PSI_enable_bitcode )
-  # -ffunction-sections is not supported with -fembed-bitcode
-  # Also, on Xcode 8.2:
-  # -fno-function-sections is not supported with -fembed-bitcode
-  # So, we need to ensure this neither of those flag is ever set.
-
-    if ( XCODE )
-        list( REMOVE_ITEM PSI_compiler_release_flags -ffunction-sections )
-
-        set( CMAKE_XCODE_ATTRIBUTE_ENABLE_BITCODE[variant=Release]          "YES"     )
-        set( CMAKE_XCODE_ATTRIBUTE_BITCODE_GENERATION_MODE[variant=Release] "bitcode" ) # Without this, Xcode adds -fembed-bitcode-marker compile options instead of -fembed-bitcode
-
-        # -mllvm and -bitcode_bundle (Xcode setting ENABLE_BITCODE=YES) cannot be used together
-        list( REMOVE_ITEM PSI_linker_LTO -Wl,-mllvm,-threads=${PSI_linker_LTO_jobs} )
-    else()
-        list( APPEND PSI_common_compiler_options $<$<CONFIG:Release>:-fembed-bitcode> )
-    endif()
-endmacro()
-
 list( APPEND PSI_common_link_options $<$<CONFIG:RELEASE>:-dead_strip> )
-
-set( PSI_ABI   default   )
-set( PSI_ABIs ${PSI_ABI} )
 
 ################################################################################
 # malloc overcommit policy
@@ -74,10 +36,52 @@ set( PSI_ABIs ${PSI_ABI} )
 
 set( PSI_MALLOC_OVERCOMMIT_POLICY_default Full )
 
-#...mrmlj...reinvestigate this...
-# set( CMAKE_XCODE_ATTRIBUTE_OBJROOT          "${PROJECT_BINARY_DIR}" )
-# set( CMAKE_XCODE_ATTRIBUTE_BUILD_DIR        "${PROJECT_BINARY_DIR}" )
-# set( CMAKE_XCODE_ATTRIBUTE_BUILD_ROOT       "${PROJECT_BINARY_DIR}" )
-# set( CMAKE_XCODE_ATTRIBUTE_PROJECT_TEMP_DIR "${PROJECT_BINARY_DIR}" )
-# set( CMAKE_XCODE_ATTRIBUTE_SYMROOT          "${PROJECT_BINARY_DIR}/lib" )
-# set( CMAKE_XCODE_ATTRIBUTE_SYMROOT_RELEASE  "${PROJECT_BINARY_DIR}/lib" )
+
+# Xcode section
+# https://developer.apple.com/library/mac/documentation/DeveloperTools/Reference/XcodeBuildSettingRef/1-Build_Setting_Reference/build_setting_ref.html
+
+if ( XCODE )
+    set( CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY libc++ )
+
+    set( CMAKE_XCODE_ATTRIBUTE_ARCHS            "$(ARCHS_STANDARD)" ) # http://www.cocoanetics.com/2014/10/xcode-6-drops-armv7s
+    set( CMAKE_XCODE_ATTRIBUTE_VALID_ARCHS      "$(ARCHS_STANDARD)" )
+    set( CMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH NO                  )
+    set( CMAKE_OSX_ARCHITECTURES                "arm64;x86_64"      )
+
+    set( CMAKE_XCODE_ATTRIBUTE_GCC_C_LANGUAGE_STANDARD     gnu2x   )
+    set( CMAKE_XCODE_ATTRIBUTE_GCC_CXX_LANGUAGE_STANDARD   gnu++2c )
+    set( CMAKE_XCODE_ATTRIBUTE_GCC_C++_LANGUAGE_STANDARD   gnu++2c )
+    set( CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD gnu++2c )
+
+    # Xcode (7 & 8) report that function-sections are incompatible embed-bitcode
+    set( CMAKE_XCODE_ATTRIBUTE_ENABLE_BITCODE "NO" )
+    
+    set( PSI_ABI   default   )
+    set( PSI_ABIs ${PSI_ABI} )
+    
+    #...mrmlj...reinvestigate this...
+    # set( CMAKE_XCODE_ATTRIBUTE_OBJROOT          "${PROJECT_BINARY_DIR}" )
+    # set( CMAKE_XCODE_ATTRIBUTE_BUILD_DIR        "${PROJECT_BINARY_DIR}" )
+    # set( CMAKE_XCODE_ATTRIBUTE_BUILD_ROOT       "${PROJECT_BINARY_DIR}" )
+    # set( CMAKE_XCODE_ATTRIBUTE_PROJECT_TEMP_DIR "${PROJECT_BINARY_DIR}" )
+    # set( CMAKE_XCODE_ATTRIBUTE_SYMROOT          "${PROJECT_BINARY_DIR}/lib" )
+    # set( CMAKE_XCODE_ATTRIBUTE_SYMROOT_RELEASE  "${PROJECT_BINARY_DIR}/lib" )
+endif()
+
+macro( PSI_enable_bitcode )
+    # -ffunction-sections is not supported with -fembed-bitcode
+    # Also, on Xcode 8.2:
+    # -fno-function-sections is not supported with -fembed-bitcode
+    # So, we need to ensure this neither of those flag is ever set.
+    if ( XCODE )
+        list( REMOVE_ITEM PSI_compiler_release_flags -ffunction-sections )
+
+        set( CMAKE_XCODE_ATTRIBUTE_ENABLE_BITCODE[variant=Release]          "YES"     )
+        set( CMAKE_XCODE_ATTRIBUTE_BITCODE_GENERATION_MODE[variant=Release] "bitcode" ) # Without this, Xcode adds -fembed-bitcode-marker compile options instead of -fembed-bitcode
+
+        # -mllvm and -bitcode_bundle (Xcode setting ENABLE_BITCODE=YES) cannot be used together
+        list( REMOVE_ITEM PSI_linker_LTO -Wl,-mllvm,-threads=${PSI_linker_LTO_jobs} )
+    else()
+        list( APPEND PSI_common_compiler_options $<$<CONFIG:Release>:-fembed-bitcode> )
+    endif()
+endmacro()
