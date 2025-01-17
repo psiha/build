@@ -24,7 +24,6 @@ if( CLANG AND NOT EMSCRIPTEN )
         # https://libcxx.llvm.org/Hardening.html
         list( APPEND PSI_compiler_debug_flags
             -D_LIBCPP_DEBUG=2
-            -D_LIBCPP_ENABLE_ASSERTIONS=1
             -D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG # TODO make this level configurable
             -D_LIBCPP_ABI_BOUNDED_ITERATORS
             -D_LIBCPP_ABI_BOUNDED_ITERATORS_IN_STRING
