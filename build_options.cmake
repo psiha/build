@@ -48,8 +48,8 @@ function( PSI_add_cxx_compile_options )
 endfunction()
 
 # Behaves as the combination of PSI_add_compile_options and
-# PSI_add_cxx_compile_options - it applies given options to only
-# C++ sources for given build configuration.
+# PSI_add_cxx_compile_options - it applies given options only to
+# C++ sources for a given build configuration.
 function( PSI_add_cxx_compile_options_for_config configuration )
     if( ${CMAKE_GENERATOR} MATCHES "Visual Studio" )
         foreach( arg ${ARGN} )
@@ -62,7 +62,7 @@ function( PSI_add_cxx_compile_options_for_config configuration )
     endif()
 endfunction()
 
-# Removes already set compile options for given configuration.
+# Removes already set compile options for a given configuration.
 # Useful for unsetting flags set with the PSI_add_compile_options
 function( PSI_remove_compile_options_for_config configuration )
     string( TOUPPER ${configuration} configuration )
@@ -115,7 +115,7 @@ endfunction()
 ################################################################################
 
 # Similar to CMake's builtin add_link_options, but applies given options only
-# to given build type.
+# to the given build type.
 function( PSI_add_link_options configuration )
     foreach( arg ${ARGN} )
         add_link_options( $<$<CONFIG:${configuration}>:${arg}> )
@@ -172,6 +172,21 @@ function( PSI_target_remove_link_options target )
         string( REPLACE "${option}" "" current_link_options "${current_link_options}" )
     endforeach()
     set_target_properties( ${target} PROPERTIES LINK_OPTIONS "${current_link_options}" )
+endfunction()
+
+# w/ LTO enabled w/ non-Xcode generators/build environment debug symbols (i.e.
+# the intermediate files containing them) "vanish" - to workaround this we
+# order the linker to save the final .obj
+# https://clang.llvm.org/docs/CommandGuide/clang.html#cmdoption-flto
+# https://github.com/llvm/llvm-project/issues/113973
+# https://stackoverflow.com/questions/71610020/debugger-doesnt-locate-symbols-in-source-when-interprocedural-optimization-is-e
+# Have to place this function here (instead of the OSX toolchain) since there
+# is no way w/ CMake to checkwhether a function exists (and provide a dummy
+# implementation otherwise).
+function( PSI_target_fix_debug_symbols_for_osx_lto target )
+  if ( APPLE AND NOT CMAKE_GENERATOR STREQUAL "Xcode" ) # for simplicity do not check whether LTO is enabled 
+    target_link_options( ${target} PRIVATE -Wl,-object_path_lto,${CMAKE_BINARY_DIR}/${target}_lto.o )
+  endif()
 endfunction()
 
 ################################################################################
