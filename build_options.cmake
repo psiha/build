@@ -186,6 +186,11 @@ endfunction()
 function( PSI_target_fix_debug_symbols_for_osx_lto target )
   if ( APPLE AND NOT CMAKE_GENERATOR STREQUAL "Xcode" ) # for simplicity do not check whether LTO is enabled 
     target_link_options( ${target} PRIVATE -Wl,-object_path_lto,${CMAKE_BINARY_DIR}/${target}_lto.o )
+    # This step is not strictly necessary when using the default/Apple linker
+    # (it produces a single lto .o file which the debugger is able to pickup)
+    # but is with LLVM's lld (which produces an LTO directory with many .o
+    # files).
+    add_custom_command( TARGET ${target} POST_BUILD COMMAND dsymutil $<TARGET_FILE_DIR:${target}>/${target} VERBATIM )
   endif()
 endfunction()
 
@@ -231,16 +236,6 @@ else()
     list( APPEND PSI_common_compile_definitions PSI_NOEXCEPT_EXCEPT_BADALLOC= )
 endif()
 
-# Implementation note:
-# A workaround for the fact that the ios.universal_build.sh script uses
-# 'intermediate' configuration types (*-iphoneos and *-simulator) one of which
-# ends up being passed to CPack.
-#                                             (15.03.2016.) (Domagoj Saric)
-if ( iOS )
-    set( install_configs "" )
-else()
-    set( install_configs Release )
-endif()
 
 set( PSI_compiler_dev_release_flags ${PSI_compiler_release_flags} )
 string( REPLACE "NDEBUG" "DEBUG" PSI_compiler_dev_release_flags "${PSI_compiler_dev_release_flags}" )
