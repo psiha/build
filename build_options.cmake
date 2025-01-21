@@ -257,8 +257,6 @@ if( NOT PSI_DO_NOT_ADD_DEFAULT_BUILD_FLAGS )
 endif()
 
 # https://gitlab.kitware.com/cmake/cmake/-/issues/25725
-if ( NOT CLANG_CL )
-    set( CMAKE_C_STANDARD   23 )
-    set( CMAKE_CXX_STANDARD 26 )
-endif()
+set( CMAKE_C_STANDARD   23 )
+set( CMAKE_CXX_STANDARD 26 )
 set( CMAKE_CXX_EXTENSIONS ON )
