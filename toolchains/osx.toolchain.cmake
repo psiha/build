@@ -32,7 +32,7 @@ set_property( CACHE PSI_USE_LINKER PROPERTY STRINGS "default" "lld" ) # lld from
 if ( PSI_USE_LINKER STREQUAL "lld" )
     list( APPEND PSI_common_link_options -fuse-ld=${PSI_USE_LINKER} )
     list( APPEND PSI_common_link_options $<$<CONFIG:RELEASE>:-Wl,--icf=all> )
-    list( APPEND PSI_common_link_options $<$<CONFIG:RELEASE>:-Wl,--keep-icf-stabs> )
+    #list( APPEND PSI_common_link_options $<$<CONFIG:RELEASE>:-Wl,--keep-icf-stabs> ) awaiting Clang19 on GitHub
     list( APPEND PSI_common_link_options $<$<CONFIG:RELEASE>:-Wl,--deduplicate-strings> )
     list( APPEND PSI_common_link_options $<$<CONFIG:RELEASE>:-Wl,-O3> )
     list( APPEND PSI_linker_LTO -Wl,--lto-CGO3 ) # -Wl,--lto-O3 noticed badcodegen (19.1.7 arm64 simdjson)
