@@ -2,7 +2,7 @@
 #
 # PSI Linux CMake tool chain file.
 #
-# Copyright (c) 2016 - 2017. Domagoj Saric.
+# Copyright (c) Domagoj Saric.
 #
 ################################################################################
 
@@ -60,9 +60,14 @@ set_property( CACHE PSI_USE_LINKER PROPERTY STRINGS "default" "gold" "lld" )
 
 if ( NOT PSI_USE_LINKER STREQUAL "default" )
     list( APPEND PSI_common_link_options -fuse-ld=${PSI_USE_LINKER} )
+    list( APPEND PSI_common_link_options $<$<CONFIG:RELEASE>:-Wl,--icf=all> )
 
+    # https://clang.llvm.org/docs/LTOVisibility.html
     if ( PSI_USE_LINKER STREQUAL "gold" AND CLANG )
-        set( PSI_linker_LTO ${PSI_linker_LTO_gold} )
+        set( PSI_linker_LTO ${PSI_linker_LTO_gold} -plugin-opt=whole-program-visibility )
+    elseif ( PSI_USE_LINKER STREQUAL "lld" )
+        list( APPEND PSI_linker_LTO -Wl,--lto-whole-program-visibility -Wl,--lto-O3 -Wl,--lto-CGO3 )
+        list( APPEND PSI_common_link_options $<$<CONFIG:RELEASE>:-Wl,-O3> )
     endif()
 endif()
 
