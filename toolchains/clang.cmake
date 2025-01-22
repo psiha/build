@@ -2,7 +2,7 @@
 #
 # PSI Clang toolchain file.
 #
-# Copyright (c) 2016. Domagoj Saric. All rights reserved.
+# Copyright (c) Domagoj Saric. All rights reserved.
 #
 ################################################################################
 # http://stackoverflow.com/questions/15548023/clang-optimization-levels
@@ -103,7 +103,6 @@ list( APPEND PSI_default_warnings -Wheader-guard -fdiagnostics-color )
 
 set( PSI_compiler_time_trace "-ftime-trace" )
 
-# Assumes Clang 11.0.0 or newer (Apple clang 12.0.0 or newer)
-list( APPEND PSI_common_compiler_options -fenable-matrix )
+list( APPEND PSI_common_compiler_options -fenable-matrix ) # this option is supposedly orphaned (according to an Apple Clang developer)
 
 set( CLANG true )

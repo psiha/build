@@ -21,9 +21,8 @@ if( CLANG AND NOT EMSCRIPTEN )
     if( ${PSI_CPP_LIBRARY} STREQUAL "libc++" )
         list( APPEND PSI_common_compiler_options $<$<COMPILE_LANGUAGE:CXX>:-stdlib=libc++> )
         list( APPEND PSI_common_link_options -stdlib=libc++ )
-        # https://libcxx.llvm.org/Hardening.html
         list( APPEND PSI_compiler_debug_flags
-            -D_LIBCPP_DEBUG=2
+            # https://libcxx.llvm.org/Hardening.html
             -D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG # TODO make this level configurable
             -D_LIBCPP_ABI_BOUNDED_ITERATORS
             -D_LIBCPP_ABI_BOUNDED_ITERATORS_IN_STRING

@@ -27,7 +27,7 @@ set( PSI_compiler_report_optimization      -ftree-vectorizer-verbose=6          
 set( PSI_compiler_release_flags            -fomit-frame-pointer -ffunction-sections -fmerge-all-constants -fno-stack-protector )
 set( PSI_default_warnings                  -Wall -Wextra -Wconversion -Wshadow -Wstrict-aliasing                               )
 set( PSI_warnings_as_errors                -Werror                                                                             )
-set( PSI_native_optimization               -march=native -mtune=native                                                         )
+set( PSI_native_optimization               -march=native                                                                       )
 set( PSI_compiler_coverage                 -fprofile-arcs -ftest-coverage                                                      )
 
 set( PSI_common_compiler_options -fstrict-aliasing $<$<COMPILE_LANGUAGE:CXX>:-fstrict-enums> -fvisibility=hidden $<$<COMPILE_LANGUAGE:CXX>:-fvisibility-inlines-hidden> )
