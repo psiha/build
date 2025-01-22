@@ -27,6 +27,17 @@ set( PSI_os_suffix OSX )
 
 set( PSI_cpu_archs default )
 
+set( PSI_USE_LINKER "default" CACHE STRING "Linker to use" )
+set_property( CACHE PSI_USE_LINKER PROPERTY STRINGS "default" "lld" ) # lld from mainline llvm distributions
+if ( PSI_USE_LINKER STREQUAL "lld" )
+    list( APPEND PSI_common_link_options -fuse-ld=${PSI_USE_LINKER} )
+    list( APPEND PSI_common_link_options $<$<CONFIG:RELEASE>:-Wl,--icf=all> )
+    list( APPEND PSI_common_link_options $<$<CONFIG:RELEASE>:-Wl,--keep-icf-stabs> )
+    list( APPEND PSI_common_link_options $<$<CONFIG:RELEASE>:-Wl,--deduplicate-strings> )
+    list( APPEND PSI_common_link_options $<$<CONFIG:RELEASE>:-Wl,-O3> )
+    list( APPEND PSI_linker_LTO -Wl,--lto-CGO3 ) # -Wl,--lto-O3 noticed badcodegen (19.1.7 arm64 simdjson)
+endif()
+
 set( PSI_LIBCPP_LOCATION /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1 )
 include( ${CMAKE_CURRENT_LIST_DIR}/gcc_compatibles_stl.cmake )
 

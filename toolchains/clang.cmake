@@ -57,7 +57,7 @@ if ( THIN_LTO_SUPPORTED )
 
     set( PSI_linker_LTO_jobs ${LTO_JOBS} CACHE STRING "Number of LTO parallel jobs" )
 
-    if ( APPLE )
+    if ( APPLE AND PSI_USE_LINKER STREQUAL "default" )
         list( APPEND PSI_linker_LTO -Wl,-mllvm,-threads=${PSI_linker_LTO_jobs} )
     else()
         list( APPEND PSI_linker_LTO -Wl,--thinlto-jobs=${PSI_linker_LTO_jobs} )
