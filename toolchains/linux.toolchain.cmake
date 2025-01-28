@@ -30,7 +30,7 @@ if( NOT DEFINED PSI_ABI )
 
 endif()
 
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" )
     include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
 else()
     include( "${CMAKE_CURRENT_LIST_DIR}/gcc.cmake" )

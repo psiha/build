@@ -11,8 +11,18 @@
 cmake_policy( SET CMP0025 NEW )
 
 if( ${CMAKE_CXX_COMPILER_ID} MATCHES "Clang" )
+    set( PSI_USE_LINKER "default" CACHE STRING "Linker to use" )
+    set_property( CACHE PSI_USE_LINKER PROPERTY STRINGS "default" "lld" ) # lld from mainline llvm distributions
     include( "${CMAKE_CURRENT_LIST_DIR}/clang.cmake" )
     list( APPEND PSI_common_compiler_options -fconstant-cfstrings -fobjc-call-cxx-cdtors )
+    if ( PSI_USE_LINKER STREQUAL "lld" )
+        list( APPEND PSI_common_link_options -fuse-ld=${PSI_USE_LINKER} )
+        list( APPEND PSI_common_link_options $<$<CONFIG:RELEASE>:-Wl,--icf=all> )
+        #list( APPEND PSI_common_link_options $<$<CONFIG:RELEASE>:-Wl,--keep-icf-stabs> ) awaiting Clang19 on GitHub
+        list( APPEND PSI_common_link_options $<$<CONFIG:RELEASE>:-Wl,--deduplicate-strings> )
+        list( APPEND PSI_common_link_options $<$<CONFIG:RELEASE>:-Wl,-O3> )
+        list( APPEND PSI_linker_LTO -Wl,--lto-CGO3 ) # -Wl,--lto-O3 noticed badcodegen (19.1.7 arm64 simdjson)
+    endif()
 else()
     include( "${CMAKE_CURRENT_LIST_DIR}/gcc_compatibles.cmake" )
     list( APPEND PSI_common_compiler_options -mconstant-cfstrings )
@@ -43,7 +53,7 @@ set( PSI_MALLOC_OVERCOMMIT_POLICY_default Full )
 if ( XCODE )
     set( CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY libc++ )
 
-    set( CMAKE_XCODE_ATTRIBUTE_ARCHS            "$(ARCHS_STANDARD)" ) # http://www.cocoanetics.com/2014/10/xcode-6-drops-armv7s
+    set( CMAKE_XCODE_ATTRIBUTE_ARCHS            "$(ARCHS_STANDARD)" )
     set( CMAKE_XCODE_ATTRIBUTE_VALID_ARCHS      "$(ARCHS_STANDARD)" )
     set( CMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH NO                  )
     set( CMAKE_OSX_ARCHITECTURES                "arm64;x86_64"      )
