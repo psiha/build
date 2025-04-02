@@ -190,7 +190,7 @@ function( PSI_target_fix_debug_symbols_for_osx_lto target )
     # (it produces a single lto .o file which the debugger is able to pickup)
     # but is with LLVM's lld (which produces an LTO directory with many .o
     # files).
-    add_custom_command( TARGET ${target} POST_BUILD COMMAND dsymutil $<TARGET_FILE_DIR:${target}>/${target} VERBATIM )
+    add_custom_command( TARGET ${target} POST_BUILD COMMAND dsymutil $<TARGET_FILE:${target}> VERBATIM )
   endif()
 endfunction()
 
