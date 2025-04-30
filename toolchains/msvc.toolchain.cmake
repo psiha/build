@@ -101,9 +101,9 @@ else()
 
     list( APPEND PSI_default_warnings -Wno-error=unused-command-line-argument -Wno-macro-redefined )
 
-    # without those __cpp_rtti macro has incorrect definitions
-    list( APPEND PSI_compiler_rtti_on  /clang:-frtti    -D_HAS_STATIC_RTTI=1 )
-    list( APPEND PSI_compiler_rtti_off /clang:-fno-rtti -D_HAS_STATIC_RTTI=0 )
+    # without these __cpp_rtti macro has incorrect definitions
+    list( APPEND PSI_compiler_rtti_on  /clang:-frtti    )
+    list( APPEND PSI_compiler_rtti_off /clang:-fno-rtti )
 
     # argument unused during compilation - use default clang optimization flags, not the MSVC-emulated ones
     list( REMOVE_ITEM PSI_compiler_optimize_for_speed -Ob3 -Qpar )
