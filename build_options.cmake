@@ -236,6 +236,16 @@ else()
     list( APPEND PSI_common_compile_definitions PSI_NOEXCEPT_EXCEPT_BADALLOC= )
 endif()
 
+# https://gitlab.kitware.com/cmake/cmake/-/issues/25725
+# https://github.com/llvm/llvm-project/issues/83435
+#...and yet and yet...still w/ Clang 19.5 VS 17.14.16
+if ( CMAKE_CXX_COMPILER_ID MATCHES Clang AND CMAKE_CXX_COMPILER_FRONTEND_VARIANT MATCHES MSVC )
+    add_compile_options( $<$<COMPILE_LANGUAGE:CXX>:/clang:-std=gnu++2c> )
+else()
+    set( CMAKE_CXX_STANDARD 26 )
+endif()
+set( CMAKE_C_STANDARD     23 )
+set( CMAKE_CXX_EXTENSIONS ON )
 
 set( PSI_compiler_dev_release_flags ${PSI_compiler_release_flags} )
 string( REPLACE "NDEBUG" "DEBUG" PSI_compiler_dev_release_flags "${PSI_compiler_dev_release_flags}" )
@@ -255,8 +265,3 @@ if( NOT PSI_DO_NOT_ADD_DEFAULT_BUILD_FLAGS )
     PSI_add_link_options   ( Release    ${PSI_linker_release_flags}                             )
     PSI_add_link_options   ( DevRelease ${PSI_linker_release_flags} ${PSI_linker_debug_symbols} )
 endif()
-
-# https://gitlab.kitware.com/cmake/cmake/-/issues/25725
-set( CMAKE_C_STANDARD   23 )
-set( CMAKE_CXX_STANDARD 26 )
-set( CMAKE_CXX_EXTENSIONS ON )
