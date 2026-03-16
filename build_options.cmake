@@ -65,7 +65,9 @@ endfunction()
 # Removes already set compile options for a given configuration.
 # Useful for unsetting flags set with the PSI_add_compile_options
 function( PSI_remove_compile_options_for_config configuration )
-    string( TOUPPER ${configuration} configuration )
+    # NOTE: do NOT toupper — CONFIG generator expression is case-sensitive
+    # with VS generators and the actual options were set with mixed-case
+    # config names (e.g. DevRelease, not DEVRELEASE).
     get_directory_property( current_compile_options COMPILE_OPTIONS )
     foreach( arg ${ARGN} )
         set( option $<$<CONFIG:${configuration}>:${arg}> )
@@ -87,7 +89,7 @@ endfunction()
 # Removes given compile options from given target for given build type.
 # Useful for undoing CMake's builtin target_compile_options
 function( PSI_target_remove_compile_options_for_config target configuration )
-    string( TOUPPER ${configuration} configuration )
+    # NOTE: do NOT toupper — see PSI_remove_compile_options_for_config above.
     get_target_property( current_compile_options ${target} COMPILE_OPTIONS )
     foreach( arg ${ARGN} )
         set( option $<$<CONFIG:${configuration}>:${arg}> )
@@ -99,7 +101,7 @@ endfunction()
 # Removes given compile options from given target.
 # Useful for undoing CMake's builtin target_compile_options
 function( PSI_target_remove_compile_options target )
-    string( TOUPPER ${configuration} configuration )
+    # NOTE: do NOT toupper — CONFIG genexpr is case-sensitive with VS generators.
     get_target_property( current_compile_options ${target} COMPILE_OPTIONS )
     foreach( arg ${ARGN} )
         set( option ${arg} )
@@ -131,7 +133,7 @@ endfunction()
 # Removes given link options for given build type.
 # Useful for undoing the effect of PSI_add_link_options
 function( PSI_remove_link_options_for_config configuration )
-    string( TOUPPER ${configuration} configuration )
+    # NOTE: do NOT toupper — CONFIG genexpr is case-sensitive with VS generators.
     get_directory_property( current_link_options LINK_OPTIONS )
     foreach( arg ${ARGN} )
         set( option $<$<CONFIG:${configuration}>:${arg}> )
@@ -153,7 +155,7 @@ endfunction()
 # Removes given link options from given target for given build type.
 # Useful for undoing CMake's builtin target_link_options.
 function( PSI_target_remove_link_options_for_config target configuration )
-    string( TOUPPER ${configuration} configuration )
+    # NOTE: do NOT toupper — CONFIG genexpr is case-sensitive with VS generators.
     get_target_property( current_link_options ${target} LINK_OPTIONS )
     foreach( arg ${ARGN} )
         set( option $<$<CONFIG:${configuration}>:${arg}> )
@@ -165,7 +167,7 @@ endfunction()
 # Removes given link options from given target.
 # Useful for undoing CMake's builtin target_link_options.
 function( PSI_target_remove_link_options target )
-    string( TOUPPER ${configuration} configuration )
+    # NOTE: do NOT toupper — CONFIG genexpr is case-sensitive with VS generators.
     get_target_property( current_link_options ${target} LINK_OPTIONS )
     foreach( arg ${ARGN} )
         set( option ${arg} )
