@@ -20,7 +20,9 @@ set_property( CACHE PSI_CPP_LIBRARY PROPERTY STRINGS "libc++" "stdc++" )
 if( CLANG AND NOT EMSCRIPTEN )
     if( ${PSI_CPP_LIBRARY} STREQUAL "libc++" )
         list( APPEND PSI_common_compiler_options $<$<COMPILE_LANGUAGE:CXX>:-stdlib=libc++> )
-        list( APPEND PSI_common_link_options -stdlib=libc++ )
+        if( NOT APPLE )
+            list( APPEND PSI_common_link_options -stdlib=libc++ )
+        endif()
         list( APPEND PSI_compiler_debug_flags
             # https://libcxx.llvm.org/Hardening.html
             -D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG # TODO make this level configurable
