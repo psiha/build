@@ -41,7 +41,7 @@ endif()
 # + 'COMPILE_LANGUAGE' isn't supported by VS generators:
 # https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#logical-expressions
 
-list( APPEND PSI_common_compiler_options $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++2b> )
+list( APPEND PSI_common_compiler_options $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++2c> )
 list( APPEND PSI_common_compiler_options $<$<NOT:$<COMPILE_LANGUAGE:CXX>>:-std=gnu2x> )
 
 # https://cmake.org/cmake/help/v3.3/policy/CMP0063.html
