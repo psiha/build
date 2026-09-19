@@ -28,11 +28,37 @@ if ( THIN_LTO_SUPPORTED )
 
     # LTO cache folder - enables incremental LTO
     set( LTO_CACHE_DIR "${CMAKE_CURRENT_BINARY_DIR}/lto.cache" )
+
+    # LTO cache pruning policy - an incremental LTO cache with no pruning
+    # policy grows without bound across build directories, so bound it by
+    # default (projects needing different limits override the cache vars).
+    set( PSI_LTO_CACHE_SIZE        "8g"  CACHE STRING "Maximum on-disk size of the incremental LTO cache (lld/gold size syntax, e.g. 8g, 512m; ignored on Apple ld64, which has no absolute cache size limit)" )
+    set( PSI_LTO_CACHE_PRUNE_AFTER "72h" CACHE STRING "Evict incremental LTO cache entries unused for longer than this (Xs/Xm/Xh, e.g. 72h)" )
+
     if ( APPLE )
         list( APPEND PSI_linker_LTO "-Wl,-cache_path_lto,${LTO_CACHE_DIR}" )
+        # ld64 has no absolute cache size limit, only -max_relative_cache_size_lto
+        # (a percentage of free disk space), so PSI_LTO_CACHE_SIZE is not wired
+        # here; only the time-based eviction policy is, converted to seconds.
+        if ( PSI_LTO_CACHE_PRUNE_AFTER MATCHES "^([0-9]+)([smh])$" )
+            set( _psi_lto_prune_amount "${CMAKE_MATCH_1}" )
+            set( _psi_lto_prune_unit   "${CMAKE_MATCH_2}" )
+            if ( _psi_lto_prune_unit STREQUAL "h" )
+                math( EXPR _psi_lto_prune_after_seconds "${_psi_lto_prune_amount} * 3600" )
+            elseif ( _psi_lto_prune_unit STREQUAL "m" )
+                math( EXPR _psi_lto_prune_after_seconds "${_psi_lto_prune_amount} * 60" )
+            else()
+                set( _psi_lto_prune_after_seconds "${_psi_lto_prune_amount}" )
+            endif()
+            list( APPEND PSI_linker_LTO "-Wl,-prune_after_lto,${_psi_lto_prune_after_seconds}" )
+        else()
+            message( WARNING "PSI_LTO_CACHE_PRUNE_AFTER '${PSI_LTO_CACHE_PRUNE_AFTER}' is not of the form <N>[smh] - ld64 LTO cache pruning left at its default" )
+        endif()
     else()
         list( APPEND PSI_linker_LTO "-Wl,--thinlto-cache-dir=${CMAKE_CURRENT_BINARY_DIR}/lto.cache" )
+        list( APPEND PSI_linker_LTO "-Wl,--thinlto-cache-policy=cache_size_bytes=${PSI_LTO_CACHE_SIZE}:prune_after=${PSI_LTO_CACHE_PRUNE_AFTER}" )
         list( APPEND PSI_linker_LTO_gold "-Wl,-plugin-opt,cache-dir=${CMAKE_CURRENT_BINARY_DIR}/lto.cache" )
+        list( APPEND PSI_linker_LTO_gold "-Wl,-plugin-opt,cache-policy=cache_size_bytes=${PSI_LTO_CACHE_SIZE}:prune_after=${PSI_LTO_CACHE_PRUNE_AFTER}" )
     endif()
 
 
