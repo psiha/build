@@ -76,7 +76,15 @@ else()
     set( THIN_LTO_SUPPORTED        ON                                                  )
     set( PSI_compiler_LTO         -flto=thin -fwhole-program-vtables                   )
     set( PSI_compiler_disable_LTO -fno-lto   -fno-whole-program-vtables                )
+
+    # LTO cache pruning policy - an incremental LTO cache with no pruning
+    # policy grows without bound across build directories, so bound it by
+    # default (projects needing different limits override the cache vars).
+    set( PSI_LTO_CACHE_SIZE        "8g"  CACHE STRING "Maximum on-disk size of the incremental LTO cache (lld-link size syntax, e.g. 8g, 512m)" )
+    set( PSI_LTO_CACHE_PRUNE_AFTER "72h" CACHE STRING "Evict incremental LTO cache entries unused for longer than this (Xs/Xm/Xh, e.g. 72h)" )
+
     set( PSI_linker_LTO           "/lldltocache:${CMAKE_CURRENT_BINARY_DIR}/lto.cache" )
+    list( APPEND PSI_linker_LTO   "/lldltocachepolicy:cache_size_bytes=${PSI_LTO_CACHE_SIZE}:prune_after=${PSI_LTO_CACHE_PRUNE_AFTER}" )
 
     if ( DEFINED ENV{CMAKE_BUILD_PARALLEL_LEVEL} )
         set( LTO_JOBS $ENV{CMAKE_BUILD_PARALLEL_LEVEL} )
