@@ -31,9 +31,12 @@
 #   LTO_LINK_MACHINE_OUTLINER / LTO_LINK_HOT_COLD_SPLIT
 #                             ON|OFF force --enable-machine-outliner / --hot-cold-split into the
 #                                  LTO backend (ELF/Mach-O only, see "Caveats")
+#   COMPILE_INLINE_THRESHOLD  N    -inline-threshold given to the compile step of every target
+#                                  (-mllvm -inline-threshold=<N>), independent of the link-time one:
+#                                  the two stages decide different calls, see "Two stages"
 #   LTO_INLINE_THRESHOLD_AT_COMPILE
-#                             ON|OFF also give the inline threshold to the compile step
-#                                  (-mllvm -inline-threshold=<N>, see "Two stages")
+#                             ON|OFF shorthand: give the compile step the link-time threshold
+#                                  (ignored when COMPILE_INLINE_THRESHOLD is set)
 #
 # Everything is applied to the Release and DevRelease configurations unless
 # CONFIGS says otherwise, and only when PSI_BUILD_LTO_KNOBS (or the ENABLED
@@ -45,15 +48,16 @@
 # that are still pending at link (in practice the ones across translation
 # units); it cannot take back what the compile step has already inlined, so a
 # threshold *below* the default shrinks nothing inside a TU unless it is also
-# given to the compile step (LTO_INLINE_THRESHOLD_AT_COMPILE). The reverse also
-# holds: a compile-time threshold alone is undone by the link-time inliner at its
-# default. For a threshold sweep set both. The same holds for rustc, see below.
+# given to the compile step (COMPILE_INLINE_THRESHOLD, or LTO_INLINE_THRESHOLD_AT_COMPILE
+# to reuse the link-time value). The reverse also holds: a compile-time threshold alone
+# is undone by the link-time inliner at its default. For a threshold sweep set both;
+# the two values need not be equal. The same holds for rustc, see below.
 #
 # CMake usage
 #
 #   include( deps/psiha/build/lto_link_knobs.cmake )
 #   # one target: values come from the PSI_BUILD_* cache variables unless given
-#   PSI_lto_link_knobs( my_exe other_target LTO_LINK_O 3 LTO_LINK_INLINE_THRESHOLD 100 )
+#   PSI_lto_link_knobs( my_exe other_target LTO_LINK_O 3 LTO_LINK_INLINE_THRESHOLD 100 COMPILE_INLINE_THRESHOLD 100 )
 #   # all targets of a directory tree, after the add_subdirectory() that created them:
 #   add_subdirectory( deps/some_lib )
 #   PSI_lto_link_knobs_in_directory( deps/some_lib EXCLUDE tool_not_to_touch )
@@ -117,7 +121,7 @@ if( POLICY CMP0174 )
 endif()
 
 set( _psi_lto_knobs_value_keywords
-    LTO_LINK_O LTO_LINK_CGO LINKER_O LTO_LINK_INLINE_THRESHOLD FLAVOR ENABLED
+    LTO_LINK_O LTO_LINK_CGO LINKER_O LTO_LINK_INLINE_THRESHOLD COMPILE_INLINE_THRESHOLD FLAVOR ENABLED
 )
 set( _psi_lto_knobs_flag_keywords
     LINK_ICF_ALL
@@ -187,7 +191,7 @@ function( _psi_lto_knobs_entries entries_var compile_var spec )
     _psi_lto_knobs_load( spec )
     set( entries "" )
     set( compile "" )
-    foreach( check IN ITEMS "LTO_LINK_O|^[23]$" "LTO_LINK_CGO|^[23]$" "LINKER_O|^[012]$" "LTO_LINK_INLINE_THRESHOLD|^[0-9]+$" )
+    foreach( check IN ITEMS "LTO_LINK_O|^[23]$" "LTO_LINK_CGO|^[23]$" "LINKER_O|^[012]$" "LTO_LINK_INLINE_THRESHOLD|^[0-9]+$" "COMPILE_INLINE_THRESHOLD|^[0-9]+$" )
         string( REPLACE "|" ";" check "${check}" )
         list( GET check 0 name )
         list( GET check 1 regex )
@@ -210,9 +214,11 @@ function( _psi_lto_knobs_entries entries_var compile_var spec )
     endif()
     if( s_LTO_LINK_INLINE_THRESHOLD MATCHES "^[0-9]+$" )
         list( APPEND entries "llvm:-inline-threshold=${s_LTO_LINK_INLINE_THRESHOLD}" )
-        if( s_LTO_INLINE_THRESHOLD_AT_COMPILE )
-            list( APPEND compile "llvm:-inline-threshold=${s_LTO_LINK_INLINE_THRESHOLD}" )
-        endif()
+    endif()
+    if( s_COMPILE_INLINE_THRESHOLD MATCHES "^[0-9]+$" )
+        list( APPEND compile "llvm:-inline-threshold=${s_COMPILE_INLINE_THRESHOLD}" )
+    elseif( s_LTO_INLINE_THRESHOLD_AT_COMPILE AND s_LTO_LINK_INLINE_THRESHOLD MATCHES "^[0-9]+$" )
+        list( APPEND compile "llvm:-inline-threshold=${s_LTO_LINK_INLINE_THRESHOLD}" )
     endif()
     if( s_LTO_LINK_DISABLE_VECTORIZE )
         list( APPEND entries "llvm:-vectorize-loops=false" "llvm:-vectorize-slp=false" )
@@ -413,7 +419,13 @@ function( _psi_lto_knobs_print )
                 endforeach()
             endif()
         endforeach()
-        if( PSI_BUILD_RUSTC_LTO STREQUAL "linker-plugin" )
+        if( PSI_BUILD_RUSTC_LTO STREQUAL "fat" AND compile_entries AND NOT entries MATCHES "llvm:-inline-threshold" )
+            # one pipeline: a compile-step threshold without a link-time one is the only threshold
+            foreach( entry IN LISTS compile_entries )
+                string( REGEX REPLACE "^llvm:" "" option "${entry}" )
+                list( APPEND lines "-C llvm-args=${option}" )
+            endforeach()
+        elseif( PSI_BUILD_RUSTC_LTO STREQUAL "linker-plugin" )
             # the pre-link pipeline of rustc itself
             foreach( entry IN LISTS compile_entries )
                 string( REGEX REPLACE "^llvm:" "" option "${entry}" )
@@ -456,9 +468,11 @@ option( PSI_BUILD_LINK_ICF_ALL
     "Add -Wl,--icf=all to the link (lld/gold; not applied on Windows)"
     OFF )
 set( PSI_BUILD_LTO_LINK_INLINE_THRESHOLD "" CACHE STRING
-    "LLVM -inline-threshold of the LTO backend at link (empty = default; -Os-class is 50, O2-class 225); see also PSI_BUILD_LTO_INLINE_THRESHOLD_AT_COMPILE" )
+    "LLVM -inline-threshold of the LTO backend at link (empty = default; -Os-class is 50, O2-class 225); see also PSI_BUILD_COMPILE_INLINE_THRESHOLD" )
+set( PSI_BUILD_COMPILE_INLINE_THRESHOLD "" CACHE STRING
+    "LLVM -inline-threshold of the compile step (-mllvm; empty = default): the pre-link pipeline inlines inside a TU at the default threshold, and a lower link-time value is otherwise never seen. Independent of the link-time threshold" )
 option( PSI_BUILD_LTO_INLINE_THRESHOLD_AT_COMPILE
-    "Also give the inline threshold to the compile step (-mllvm): the pre-link pipeline inlines inside a TU at the default threshold, and a lower value is otherwise never seen"
+    "Shorthand: give the compile step the link-time threshold (ignored when PSI_BUILD_COMPILE_INLINE_THRESHOLD is set)"
     OFF )
 option( PSI_BUILD_LTO_LINK_DISABLE_VECTORIZE
     "Disable loop and SLP vectorization in the LTO backend at link"

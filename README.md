@@ -36,7 +36,7 @@ link, where the whole-program pipeline runs, instead of at the per-translation-u
 
 A link-time inline threshold governs the calls still pending at link (mostly the ones across translation
 units); inside a translation unit the compile step has already inlined at the default threshold, so lowering
-it there takes the compile-step option too. The header of the file explains this, the platform branches
+it there takes the compile-step option too (`COMPILE_INLINE_THRESHOLD`, independent of the link-time value). The header of the file explains this, the platform branches
 (ELF/Mach-O lld and clang-cl lld-link) and the caveats.
 
 ## Standard development environment
