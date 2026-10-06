@@ -34,9 +34,10 @@ link, where the whole-program pipeline runs, instead of at the per-translation-u
 * `cmake -DPSI_BUILD_...=... -DPSI_BUILD_FORMAT=rustc -P lto_link_knobs.cmake` prints the same options
   for consumers that are not CMake builds (linker options, compile step options or `rustc` flags).
 
-The inline threshold has to be given to both the compile step and the link to take effect below the
-default; the header of the file explains this, the platform branches (ELF/Mach-O lld and clang-cl
-lld-link) and the caveats.
+A link-time inline threshold governs the calls still pending at link (mostly the ones across translation
+units); inside a translation unit the compile step has already inlined at the default threshold, so lowering
+it there takes the compile-step option too. The header of the file explains this, the platform branches
+(ELF/Mach-O lld and clang-cl lld-link) and the caveats.
 
 ## Standard development environment
 * Tools:
