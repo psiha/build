@@ -37,6 +37,13 @@
 #   LTO_INLINE_THRESHOLD_AT_COMPILE
 #                             ON|OFF shorthand: give the compile step the link-time threshold
 #                                  (ignored when COMPILE_INLINE_THRESHOLD is set)
+#   LLVM_OPTIONS              list of LLVM options (-mllvm) given to the compile step *and* to the LTO
+#                                  backend at link: the options that shape the code of both pipelines
+#                                  (vectorizer, unroller, inliner details), which is where they have
+#                                  to be set to have their whole effect, see "Two stages"
+#   LTO_LINK_LLVM_OPTIONS     list of LLVM options given to the LTO backend at link only: the code
+#                                  generation options (tail duplication, loop alignment, ...) exist
+#                                  only there, where full LTO generates all the machine code
 #
 # Everything is applied to the Release and DevRelease configurations unless
 # CONFIGS says otherwise, and only when PSI_BUILD_LTO_KNOBS (or the ENABLED
@@ -49,7 +56,9 @@
 # units); it cannot take back what the compile step has already inlined, so a
 # threshold *below* the default shrinks nothing inside a TU unless it is also
 # given to the compile step (COMPILE_INLINE_THRESHOLD, or LTO_INLINE_THRESHOLD_AT_COMPILE
-# to reuse the link-time value). The reverse also holds: a compile-time threshold alone
+# to reuse the link-time value). The same holds for the vectorizer and the unroller: switching the
+# vectorizers off at link alone (LTO_LINK_DISABLE_VECTORIZE) saves much less than switching them off
+# at both stages (LLVM_OPTIONS -vectorize-loops=false -vectorize-slp=false). The reverse also holds: a compile-time threshold alone
 # is undone by the link-time inliner at its default. For a threshold sweep set both;
 # the two values need not be equal. The same holds for rustc, see below.
 #
@@ -123,6 +132,8 @@ endif()
 set( _psi_lto_knobs_value_keywords
     LTO_LINK_O LTO_LINK_CGO LINKER_O LTO_LINK_INLINE_THRESHOLD COMPILE_INLINE_THRESHOLD FLAVOR ENABLED
 )
+# keywords whose values are lists (kept in the resolved specification joined with commas)
+set( _psi_lto_knobs_list_keywords LLVM_OPTIONS LTO_LINK_LLVM_OPTIONS )
 set( _psi_lto_knobs_flag_keywords
     LINK_ICF_ALL
     LTO_LINK_DISABLE_VECTORIZE LTO_LINK_DISABLE_LOOP_VECTORIZE
@@ -143,7 +154,7 @@ macro( _psi_lto_knobs_resolve out_var )
     # (a macro: PARSE_ARGV reads the arguments of the calling function exactly as they were
     # passed, which keeps explicitly empty values that ${ARGN} would drop)
     cmake_parse_arguments( PARSE_ARGV 0 _psi_arg
-        "" "${_psi_lto_knobs_value_keywords};${_psi_lto_knobs_flag_keywords}" "CONFIGS;EXCLUDE" )
+        "" "${_psi_lto_knobs_value_keywords};${_psi_lto_knobs_flag_keywords}" "CONFIGS;EXCLUDE;${_psi_lto_knobs_list_keywords}" )
     set( ${out_var} "" )
     foreach( _psi_keyword IN LISTS _psi_lto_knobs_value_keywords _psi_lto_knobs_flag_keywords )
         if( DEFINED _psi_arg_${_psi_keyword} )
@@ -159,6 +170,16 @@ macro( _psi_lto_knobs_resolve out_var )
         else()
             set( _psi_value "${PSI_BUILD_${_psi_keyword}}" )
         endif()
+        list( APPEND ${out_var} "${_psi_keyword}=${_psi_value}" )
+    endforeach()
+    foreach( _psi_keyword IN LISTS _psi_lto_knobs_list_keywords )
+        if( DEFINED _psi_arg_${_psi_keyword} )
+            set( _psi_value "${_psi_arg_${_psi_keyword}}" )
+        else()
+            set( _psi_value "${PSI_BUILD_${_psi_keyword}}" )
+        endif()
+        string( REPLACE "\\" "" _psi_value "${_psi_value}" )   # (an element that is itself a list comes escaped)
+        string( REPLACE ";" "," _psi_value "${_psi_value}" )
         list( APPEND ${out_var} "${_psi_keyword}=${_psi_value}" )
     endforeach()
     if( _psi_arg_CONFIGS )
@@ -220,6 +241,15 @@ function( _psi_lto_knobs_entries entries_var compile_var spec )
     elseif( s_LTO_INLINE_THRESHOLD_AT_COMPILE AND s_LTO_LINK_INLINE_THRESHOLD MATCHES "^[0-9]+$" )
         list( APPEND compile "llvm:-inline-threshold=${s_LTO_LINK_INLINE_THRESHOLD}" )
     endif()
+    string( REPLACE "," ";" _psi_both "${s_LLVM_OPTIONS}" )
+    foreach( option IN LISTS _psi_both )
+        list( APPEND compile "llvm:${option}" )
+        list( APPEND entries "llvm:${option}" )
+    endforeach()
+    string( REPLACE "," ";" _psi_link_only "${s_LTO_LINK_LLVM_OPTIONS}" )
+    foreach( option IN LISTS _psi_link_only )
+        list( APPEND entries "llvm:${option}" )
+    endforeach()
     if( s_LTO_LINK_DISABLE_VECTORIZE )
         list( APPEND entries "llvm:-vectorize-loops=false" "llvm:-vectorize-slp=false" )
     elseif( s_LTO_LINK_DISABLE_LOOP_VECTORIZE )
@@ -419,11 +449,17 @@ function( _psi_lto_knobs_print )
                 endforeach()
             endif()
         endforeach()
-        if( PSI_BUILD_RUSTC_LTO STREQUAL "fat" AND compile_entries AND NOT entries MATCHES "llvm:-inline-threshold" )
-            # one pipeline: a compile-step threshold without a link-time one is the only threshold
+        if( PSI_BUILD_RUSTC_LTO STREQUAL "fat" )
+            # one pipeline: a compile-step threshold counts only without a link-time one, and an
+            # option that is already there (given to both stages) is not repeated
             foreach( entry IN LISTS compile_entries )
                 string( REGEX REPLACE "^llvm:" "" option "${entry}" )
-                list( APPEND lines "-C llvm-args=${option}" )
+                if( entry MATCHES "^llvm:-inline-threshold=" AND entries MATCHES "llvm:-inline-threshold=" )
+                    continue()
+                endif()
+                if( NOT "-C llvm-args=${option}" IN_LIST lines )
+                    list( APPEND lines "-C llvm-args=${option}" )
+                endif()
             endforeach()
         elseif( PSI_BUILD_RUSTC_LTO STREQUAL "linker-plugin" )
             # the pre-link pipeline of rustc itself
@@ -474,6 +510,10 @@ set( PSI_BUILD_COMPILE_INLINE_THRESHOLD "" CACHE STRING
 option( PSI_BUILD_LTO_INLINE_THRESHOLD_AT_COMPILE
     "Shorthand: give the compile step the link-time threshold (ignored when PSI_BUILD_COMPILE_INLINE_THRESHOLD is set)"
     OFF )
+set( PSI_BUILD_LLVM_OPTIONS "" CACHE STRING
+    "List of LLVM options (-mllvm) for the compile step and for the LTO backend at link, e.g. -unroll-threshold=150;-enable-epilogue-vectorization=false" )
+set( PSI_BUILD_LTO_LINK_LLVM_OPTIONS "" CACHE STRING
+    "List of LLVM options for the LTO backend at link only, e.g. the code generation options -disable-tail-duplicate;-align-loops=1" )
 option( PSI_BUILD_LTO_LINK_DISABLE_VECTORIZE
     "Disable loop and SLP vectorization in the LTO backend at link"
     OFF )
