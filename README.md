@@ -22,6 +22,23 @@ Reusable components for cross-platform project builds.
 * CMake can (but does not have to) be closed at this point.
 * Open the generated native project using the appropriate IDE.
 
+## LTO link-time knobs
+
+`lto_link_knobs.cmake` applies the options that steer the LTO backend (`--lto-O`/`--lto-CGO`,
+linker `-O`, ICF, inline threshold, vectorizer switches, machine outliner, hot/cold splitting) at the
+link, where the whole-program pipeline runs, instead of at the per-translation-unit compile:
+
+* `PSI_lto_link_knobs( <target>... )` applies them to given targets, `PSI_lto_link_knobs_in_directory( <dir> )`
+  to every target of a directory tree (e.g. a third party project added with `add_subdirectory()`);
+  the values come from the `PSI_BUILD_*` cache variables or from keyword arguments.
+* `cmake -DPSI_BUILD_...=... -DPSI_BUILD_FORMAT=rustc -P lto_link_knobs.cmake` prints the same options
+  for consumers that are not CMake builds (linker options, compile step options or `rustc` flags).
+
+A link-time inline threshold governs the calls still pending at link (mostly the ones across translation
+units); inside a translation unit the compile step has already inlined at the default threshold, so lowering
+it there takes the compile-step option too (`COMPILE_INLINE_THRESHOLD`, independent of the link-time value). The same goes for any option that shapes the code of both pipelines (vectorizer, unroller): `LLVM_OPTIONS` gives a list of LLVM options to the compile step and to the link, `LTO_LINK_LLVM_OPTIONS` to the link only (the code generation options, which exist only there). The header of the file explains this, the platform branches
+(ELF/Mach-O lld and clang-cl lld-link) and the caveats.
+
 ## Standard development environment
 * Tools:
     * [CMake](http://cmake.org)
