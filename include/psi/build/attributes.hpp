@@ -52,6 +52,12 @@
 //   (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=100409#c8). As with any
 //   pure/const call, a call whose result is unused may be removed together
 //   with its throw, and repeated calls with the same arguments may be merged.
+//   The C23-style [[gnu::reproducible]] / [[gnu::unsequenced]] (GCC 15+, also
+//   accepted in C++, unwinding kept) are not used instead: C23 lets such a
+//   function modify objects reached through pointer arguments, so GCC merges
+//   repeated calls only when every argument is passed by value - not with
+//   reference parameters or member functions (this), where pure/const do merge.
+//   Clang implements neither attribute (llvm-project#84406).
 //
 // - Clang (including Clang-CL; __clang__ must be checked before __GNUC__,
 //   which Clang also defines): the frontend marks every pure and const
@@ -59,11 +65,13 @@
 //   (https://github.com/llvm/llvm-project/blob/c649ccf1449e8f3af0fa5d38df212bd8af6ef51d/clang/lib/CodeGen/CGCall.cpp#L2841-L2858),
 //   so a call of one is emitted with no unwind entry: an exception thrown out
 //   of it is undefined behaviour (std::terminate, or cleanups for the wrong
-//   code region). The macros expand to nothing there until Clang keeps the
-//   memory effects without implying nounwind
-//   (https://github.com/llvm/llvm-project/issues/50365).
+//   code region). The same holds for __declspec(noalias). The macros expand
+//   to nothing there until Clang keeps the memory effects without implying
+//   nounwind (https://github.com/llvm/llvm-project/issues/50365).
 //
-// - MSVC (real cl.exe): no equivalent attribute; nothing.
+// - MSVC (real cl.exe): no attribute gives call merging. __declspec(noalias)
+//   has different semantics (only first-level pointer-parameter memory, no
+//   globals) and buys no call merging on cl.exe; nothing.
 #if defined( __clang__ )
 #   define PSI_PURE_MAY_THROW
 #   define PSI_CONST_MAY_THROW
