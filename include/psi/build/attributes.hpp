@@ -47,7 +47,9 @@
 //   not make it nothrow (that is the separate nothrow attribute). A call of a
 //   throwing pure/const function keeps its unwind entry, so the exception
 //   reaches the caller's handlers and cleanups (checked with GCC 16 at -O2
-//   and -O3). GCC's documentation does not say so explicitly. As with any
+//   and -O3). The documentation does not say so explicitly; the GCC
+//   developers state it is intended
+//   (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=100409#c8). As with any
 //   pure/const call, a call whose result is unused may be removed together
 //   with its throw, and repeated calls with the same arguments may be merged.
 //
@@ -58,7 +60,8 @@
 //   so a call of one is emitted with no unwind entry: an exception thrown out
 //   of it is undefined behaviour (std::terminate, or cleanups for the wrong
 //   code region). The macros expand to nothing there until Clang keeps the
-//   memory effects without implying nounwind.
+//   memory effects without implying nounwind
+//   (https://github.com/llvm/llvm-project/issues/50365).
 //
 // - MSVC (real cl.exe): no equivalent attribute; nothing.
 #if defined( __clang__ )
