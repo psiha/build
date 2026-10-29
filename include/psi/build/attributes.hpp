@@ -82,3 +82,28 @@
 #   define PSI_PURE_MAY_THROW
 #   define PSI_CONST_MAY_THROW
 #endif
+
+// PSI_LIFETIMEBOUND - the result of a function (or the object a constructor
+// makes) refers to what the marked parameter refers to, so a compiler that
+// knows the attribute warns when that parameter is bound to a temporary that
+// dies first (a view returned from a temporary container, a span made from
+// one). It goes after the declarator id of a parameter
+// (`T const & range PSI_LIFETIMEBOUND`), or after the qualifiers (and the
+// noexcept-specifier) of a member function, where it marks the object the
+// function is called on (`T * data() noexcept PSI_LIFETIMEBOUND`).
+//
+// - Clang (including Clang-CL, which takes this branch first):
+//   [[clang::lifetimebound]], checked by -Wdangling and its relatives.
+//
+// - MSVC (real cl.exe): [[msvc::lifetimebound]] where the compiler reports
+//   it, checked by the /analyze lifetime rules.
+//
+// - GCC: no such attribute (-Wdangling-reference is a heuristic, which
+//   [[gnu::no_dangling]] only silences); nothing.
+#if __has_cpp_attribute( clang::lifetimebound )
+#   define PSI_LIFETIMEBOUND [[ clang::lifetimebound ]]
+#elif __has_cpp_attribute( msvc::lifetimebound )
+#   define PSI_LIFETIMEBOUND [[ msvc::lifetimebound ]]
+#else
+#   define PSI_LIFETIMEBOUND
+#endif
