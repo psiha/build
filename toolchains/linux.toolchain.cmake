@@ -58,15 +58,40 @@ list( APPEND PSI_common_link_options $<$<CONFIG:RELEASE>:-Wl,--gc-sections> )
 set( PSI_USE_LINKER "default" CACHE STRING "Linker to use" )
 set_property( CACHE PSI_USE_LINKER PROPERTY STRINGS "default" "gold" "lld" )
 
+# Whole-program LTO visibility (lld/gold) - https://clang.llvm.org/docs/LTOVisibility.html
+# Caveat: it makes the link treat every class with default visibility - including
+# the C++ standard library's and any third-party library's - as if the link
+# saw all of its derived classes, so whole-program devirtualization turns a
+# virtual call with a single override inside the LTO unit into a direct call
+# to that override. That is only correct when no polymorphic object of such a
+# class is created or destroyed outside the LTO unit: not inside a shared
+# library (the standard library's own .so included: std::shared_ptr control
+# blocks, std::filesystem directory iterators, std::promise shared state) and
+# not by non-LTO objects linked in. Otherwise calls are devirtualized to the
+# wrong override - e.g. a std::shared_ptr destroyed with another type's
+# deleter. Enable it only for self-contained static links. Classes compiled
+# with hidden visibility (-fvisibility=hidden, the default here) keep
+# whole-program devirtualization without it; classes marked
+# [[clang::lto_visibility_public]] are excluded from it either way. Mach-O
+# and COFF links are not given this option (on COFF, LTO visibility does not
+# follow symbol visibility in the first place). With PSI_USE_LINKER "default"
+# the option has no effect.
+option( PSI_LTO_WHOLE_PROGRAM_VISIBILITY "Link LTO targets with whole-program visibility (lld/gold; unsafe when polymorphic objects are created outside the LTO unit, see the toolchain file)" OFF )
+
 if ( NOT PSI_USE_LINKER STREQUAL "default" )
     list( APPEND PSI_common_link_options -fuse-ld=${PSI_USE_LINKER} )
     list( APPEND PSI_common_link_options $<$<CONFIG:RELEASE>:-Wl,--icf=all> )
 
-    # https://clang.llvm.org/docs/LTOVisibility.html
     if ( PSI_USE_LINKER STREQUAL "gold" AND CLANG )
-        set( PSI_linker_LTO ${PSI_linker_LTO_gold} -plugin-opt=whole-program-visibility )
+        set( PSI_linker_LTO ${PSI_linker_LTO_gold} )
+        if ( PSI_LTO_WHOLE_PROGRAM_VISIBILITY )
+            list( APPEND PSI_linker_LTO -Wl,-plugin-opt,whole-program-visibility )
+        endif()
     elseif ( PSI_USE_LINKER STREQUAL "lld" )
-        list( APPEND PSI_linker_LTO -Wl,--lto-whole-program-visibility -Wl,--lto-O3 -Wl,--lto-CGO3 )
+        list( APPEND PSI_linker_LTO -Wl,--lto-O3 -Wl,--lto-CGO3 )
+        if ( PSI_LTO_WHOLE_PROGRAM_VISIBILITY )
+            list( APPEND PSI_linker_LTO -Wl,--lto-whole-program-visibility )
+        endif()
         list( APPEND PSI_common_link_options $<$<CONFIG:RELEASE>:-Wl,-O3> )
     endif()
 endif()
