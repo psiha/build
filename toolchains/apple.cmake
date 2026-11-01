@@ -30,6 +30,15 @@ endif()
 
 list( APPEND PSI_common_link_options $<$<CONFIG:RELEASE>:-dead_strip> )
 
+# Apple platforms require frame records: on arm64 x29 must always address a
+# valid one ("Writing ARM64 code for Apple platforms"), and the system tools
+# (backtraces, profilers, crash reports) walk them. Keeping the frame pointer
+# also keeps nearly every function expressible as a compact unwind entry;
+# without it most of them need a DWARF FDE instead, and ld64.lld's LTO link
+# drops some of those (LLVM 22 and 23), leaving the functions with no unwind
+# info at all, so an exception thrown through one terminates.
+list( REMOVE_ITEM PSI_compiler_release_flags -fomit-frame-pointer )
+
 ################################################################################
 # malloc overcommit policy
 #
